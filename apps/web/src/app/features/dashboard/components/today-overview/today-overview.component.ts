@@ -19,7 +19,7 @@ interface ActivityWithProgress {
 @Component({
   selector: 'ht-today-overview',
   standalone: true,
-  imports: [CommonModule, RouterLink, StreakCounterComponent, PhaseBadgeComponent],
+  imports: [CommonModule, RouterLink, PhaseBadgeComponent],
   templateUrl: './today-overview.component.html',
   styleUrl: './today-overview.component.scss',
 })

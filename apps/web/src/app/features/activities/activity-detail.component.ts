@@ -25,8 +25,6 @@ import { RelativeDatePipe } from '../../shared/pipes/relative-date.pipe';
     MatIconModule,
     MatDialogModule,
     PhaseBadgeComponent,
-    StreakCounterComponent,
-    ProgressRingComponent,
     DurationPipe,
     RelativeDatePipe,
   ],

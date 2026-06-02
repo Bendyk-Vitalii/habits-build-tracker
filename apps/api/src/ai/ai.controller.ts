@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions/v1';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SCIENCE_THRESHOLDS, AiSuggestRequest, AiSuggestResponse } from '@habits-tracker/shared';
-const cors = require('cors');
+import cors = require('cors');
 
 const corsMiddleware = cors({ origin: true });
 

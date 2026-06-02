@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 import * as webpush from 'web-push';
-const cors = require('cors');
+import cors = require('cors');
 
 const corsMiddleware = cors({ origin: true });
 
