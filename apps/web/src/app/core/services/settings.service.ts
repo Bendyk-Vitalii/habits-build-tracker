@@ -1,6 +1,7 @@
-import { Injectable, Signal } from '@angular/core';
+import { Injectable, Signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { from } from 'rxjs';
+import { from, of } from 'rxjs';
 import { liveQuery } from 'dexie';
 import { AppSettings, DEFAULT_SETTINGS } from '@habits-tracker/shared';
 import { db } from '../db/app.database';
@@ -13,11 +14,13 @@ import { db } from '../db/app.database';
  */
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
+  private platformId = inject(PLATFORM_ID);
+
   /** Reactive signal that mirrors the current settings row from IndexedDB. */
   readonly settings: Signal<AppSettings | undefined> = toSignal(
-    from(
-      liveQuery(() => db.appSettings.toCollection().first())
-    )
+    isPlatformBrowser(this.platformId)
+      ? from(liveQuery(() => db.appSettings.toCollection().first()))
+      : of(undefined)
   );
 
   /**

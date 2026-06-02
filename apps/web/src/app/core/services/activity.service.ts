@@ -1,6 +1,7 @@
-import { Injectable, Signal } from '@angular/core';
+import { Injectable, Signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { from } from 'rxjs';
+import { from, of } from 'rxjs';
 import { liveQuery } from 'dexie';
 import {
   Activity,
@@ -19,16 +20,20 @@ import { db } from '../db/app.database';
  */
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
+  private platformId = inject(PLATFORM_ID);
+
   /** Reactive signal of all non-archived activities, ordered by `order`. */
   readonly activities: Signal<Activity[]> = toSignal(
-    from(
-      liveQuery(() =>
-        db.activities
-          .where('isArchived')
-          .equals(0) // Dexie stores booleans as 0/1
-          .sortBy('order')
-      )
-    ),
+    isPlatformBrowser(this.platformId)
+      ? from(
+          liveQuery(() =>
+            db.activities
+              .where('isArchived')
+              .equals(0)
+              .sortBy('order')
+          )
+        )
+      : of([]),
     { initialValue: [] }
   );
 
@@ -92,7 +97,7 @@ export class ActivityService {
    * @param id Activity primary key.
    */
   async archiveActivity(id: number): Promise<void> {
-    await db.activities.update(id, { isArchived: true });
+    await db.activities.update(id, { isArchived: 1 });
   }
 
   /**
