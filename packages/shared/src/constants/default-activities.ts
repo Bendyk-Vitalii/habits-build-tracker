@@ -2,7 +2,7 @@ import { Activity } from '../models/activity.model';
 import { HabitPhase } from '../enums/habit-phase.enum';
 import { ActivityCategory } from '../enums/activity-category.enum';
 
-export const DEFAULT_ACTIVITIES: Omit<Activity, 'id' | 'createdAt' | 'phaseStartDate' | 'consecutiveDays'>[] = [
+export const DEFAULT_ACTIVITIES: Omit<Activity, 'id' | 'createdAt' | 'phaseStartDate'>[] = [
   {
     name: 'AWS Certification',
     category: ActivityCategory.ProfessionalGrowth,
@@ -11,6 +11,7 @@ export const DEFAULT_ACTIVITIES: Omit<Activity, 'id' | 'createdAt' | 'phaseStart
     weeklyGoalMinutes: 30,
     sessionsPerWeek: 3,
     currentPhase: HabitPhase.Establishing,
+    consecutiveDays: 0,
     isArchived: false,
     goal: 'Pass AWS SAA-C03 certification',
     order: 0,
@@ -22,7 +23,8 @@ export const DEFAULT_ACTIVITIES: Omit<Activity, 'id' | 'createdAt' | 'phaseStart
     color: '#4CAF50',
     weeklyGoalMinutes: 30,
     sessionsPerWeek: 3,
-    currentPhase: HabitPhase.Establishing,
+    currentPhase: HabitPhase.Forming,
+    consecutiveDays: 30,
     isArchived: false,
     goal: 'Solve 100 problems',
     order: 1,
@@ -34,7 +36,8 @@ export const DEFAULT_ACTIVITIES: Omit<Activity, 'id' | 'createdAt' | 'phaseStart
     color: '#00BCD4',
     weeklyGoalMinutes: 30,
     sessionsPerWeek: 3,
-    currentPhase: HabitPhase.Establishing,
+    currentPhase: HabitPhase.Established,
+    consecutiveDays: 70,
     isArchived: false,
     goal: 'Complete MongoDB University course',
     order: 2,
@@ -47,6 +50,7 @@ export const DEFAULT_ACTIVITIES: Omit<Activity, 'id' | 'createdAt' | 'phaseStart
     weeklyGoalMinutes: 30,
     sessionsPerWeek: 3,
     currentPhase: HabitPhase.Establishing,
+    consecutiveDays: 0,
     isArchived: false,
     goal: 'Master design patterns for backend development',
     order: 3,

@@ -143,6 +143,30 @@ export class ActivityService {
    */
   async seedDefaultActivities(): Promise<void> {
     const count = await db.activities.count();
+
+    // Auto-heal logic for users who already seeded the old 4 establishing activities
+    if (count === 4) {
+      const establishingCount = await db.activities
+        .filter((a) => a.currentPhase === HabitPhase.Establishing)
+        .count();
+      if (establishingCount === 4) {
+        const leetcode = await db.activities.where('name').equals('LeetCode').first();
+        if (leetcode) {
+          await db.activities.update(leetcode.id!, {
+            currentPhase: HabitPhase.Forming,
+            consecutiveDays: 30,
+          });
+        }
+        const mongodb = await db.activities.where('name').equals('MongoDB Tasks').first();
+        if (mongodb) {
+          await db.activities.update(mongodb.id!, {
+            currentPhase: HabitPhase.Established,
+            consecutiveDays: 70,
+          });
+        }
+      }
+    }
+
     if (count > 0) return;
 
     const now = new Date().toISOString();
@@ -150,7 +174,7 @@ export class ActivityService {
 
     const activitiesToSeed: Activity[] = DEFAULT_ACTIVITIES.map((a) => ({
       ...a,
-      consecutiveDays: 0,
+      consecutiveDays: a.consecutiveDays ?? 0,
       createdAt: now,
       phaseStartDate: today,
     })) as Activity[];
