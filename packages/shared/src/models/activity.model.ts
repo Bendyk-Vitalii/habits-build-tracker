@@ -13,7 +13,7 @@ export interface Activity {
   phaseStartDate: string;          // ISO date
   consecutiveDays: number;         // Days of consistency for phase tracking
   createdAt: string;               // ISO datetime
-  isArchived: boolean;
+  isArchived: 0 | 1;
   goal?: string;
   goalDeadline?: string;           // ISO date
   order: number;
