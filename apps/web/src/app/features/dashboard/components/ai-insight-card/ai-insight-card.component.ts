@@ -31,6 +31,6 @@ export class AiInsightCardComponent implements OnInit {
   }
 
   toggleExpand(): void {
-    this.isExpanded.update(v => !v);
+    this.isExpanded.update((v) => !v);
   }
 }

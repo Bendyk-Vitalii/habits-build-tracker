@@ -38,9 +38,9 @@ export const pushSubscribe = functions.https.onRequest((req, res) => {
       }
 
       const db = admin.firestore();
-      const docRef = db.collection('pushSubscriptions').doc(
-        Buffer.from(subscription.endpoint).toString('base64url').slice(0, 128)
-      );
+      const docRef = db
+        .collection('pushSubscriptions')
+        .doc(Buffer.from(subscription.endpoint).toString('base64url').slice(0, 128));
 
       await docRef.set({
         endpoint: subscription.endpoint,
@@ -114,10 +114,13 @@ export const pushTracked = functions.https.onRequest((req, res) => {
       const db = admin.firestore();
       const docId = Buffer.from(endpoint).toString('base64url').slice(0, 128);
 
-      await db.collection('pushSubscriptions').doc(docId).update({
-        trackedToday: true,
-        trackedDate: date || new Date().toISOString().split('T')[0],
-      });
+      await db
+        .collection('pushSubscriptions')
+        .doc(docId)
+        .update({
+          trackedToday: true,
+          trackedDate: date || new Date().toISOString().split('T')[0],
+        });
 
       res.status(200).json({ success: true });
     } catch (error) {

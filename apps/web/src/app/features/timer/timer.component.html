@@ -6,7 +6,11 @@
   <!-- Activity Selector -->
   <mat-form-field appearance="outline" class="activity-selector">
     <mat-label>Select Activity</mat-label>
-    <mat-select [ngModel]="selectedActivityId()" (ngModelChange)="selectedActivityId.set($event)" [disabled]="isRunning()">
+    <mat-select
+      [ngModel]="selectedActivityId()"
+      (ngModelChange)="selectedActivityId.set($event)"
+      [disabled]="isRunning()"
+    >
       <mat-option *ngFor="let act of activities()" [value]="act.id">
         <div class="activity-option">
           <mat-icon [style.color]="act.color">{{ act.icon }}</mat-icon>
@@ -18,7 +22,11 @@
 
   <!-- Mode Selector -->
   <div class="mode-selector">
-    <mat-button-toggle-group [ngModel]="mode()" (ngModelChange)="mode.set($event)" [disabled]="isRunning()">
+    <mat-button-toggle-group
+      [ngModel]="mode()"
+      (ngModelChange)="mode.set($event)"
+      [disabled]="isRunning()"
+    >
       <mat-button-toggle value="pomodoro">Pomodoro</mat-button-toggle>
       <mat-button-toggle value="stopwatch">Stopwatch</mat-button-toggle>
       <mat-button-toggle value="manual">Manual</mat-button-toggle>
@@ -29,9 +37,18 @@
   @if (mode() === 'pomodoro') {
     <div class="pomodoro-info">
       <span class="phase-badge" [attr.data-phase]="pomodoroPhase()">
-        {{ pomodoroPhase() === 'work' ? 'Work' : (pomodoroPhase() === 'shortBreak' ? 'Short Break' : 'Long Break') }}
+        {{
+          pomodoroPhase() === 'work'
+            ? 'Work'
+            : pomodoroPhase() === 'shortBreak'
+              ? 'Short Break'
+              : 'Long Break'
+        }}
       </span>
-      <span class="session-count">Session {{ pomodoroSessionsCompleted() + 1 }} / {{ settings()?.pomodoroSessionsBeforeLongBreak || 4 }}</span>
+      <span class="session-count"
+        >Session {{ pomodoroSessionsCompleted() + 1 }} /
+        {{ settings()?.pomodoroSessionsBeforeLongBreak || 4 }}</span
+      >
     </div>
   }
 
@@ -41,19 +58,31 @@
       <div class="timer-circle">
         <!-- SVG Ring -->
         <svg class="progress-ring" width="240" height="240">
-          <circle class="progress-ring__background" stroke-width="8" fill="transparent" r="116" cx="120" cy="120" />
-          <circle class="progress-ring__circle"
-                  stroke-width="8"
-                  fill="transparent"
-                  r="116"
-                  cx="120"
-                  cy="120"
-                  [attr.stroke-dasharray]="116 * 2 * Math.PI"
-                  [attr.stroke-dashoffset]="(116 * 2 * Math.PI) - ((mode() === 'pomodoro' ? progressPercent() : 100) / 100) * (116 * 2 * Math.PI)"
-                  [class.pomodoro]="mode() === 'pomodoro'"
-                  [class.stopwatch]="mode() === 'stopwatch'" />
+          <circle
+            class="progress-ring__background"
+            stroke-width="8"
+            fill="transparent"
+            r="116"
+            cx="120"
+            cy="120"
+          />
+          <circle
+            class="progress-ring__circle"
+            stroke-width="8"
+            fill="transparent"
+            r="116"
+            cx="120"
+            cy="120"
+            [attr.stroke-dasharray]="116 * 2 * Math.PI"
+            [attr.stroke-dashoffset]="
+              116 * 2 * Math.PI -
+              ((mode() === 'pomodoro' ? progressPercent() : 100) / 100) * (116 * 2 * Math.PI)
+            "
+            [class.pomodoro]="mode() === 'pomodoro'"
+            [class.stopwatch]="mode() === 'stopwatch'"
+          />
         </svg>
-        
+
         <div class="timer-text">{{ formattedTime() }}</div>
       </div>
     </div>
@@ -79,7 +108,12 @@
           <mat-icon>skip_next</mat-icon>
         </button>
       } @else {
-        <button mat-icon-button class="control-btn secondary" (click)="saveStopwatchSession()" [disabled]="stopwatchElapsedSeconds() < 60 || isRunning()">
+        <button
+          mat-icon-button
+          class="control-btn secondary"
+          (click)="saveStopwatchSession()"
+          [disabled]="stopwatchElapsedSeconds() < 60 || isRunning()"
+        >
           <mat-icon>save</mat-icon>
         </button>
       }
@@ -91,15 +125,32 @@
     <div class="manual-entry glass-card">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Duration (Minutes)</mat-label>
-        <input matInput type="number" [ngModel]="manualMinutes()" (ngModelChange)="manualMinutes.set($event)" min="1" />
+        <input
+          matInput
+          type="number"
+          [ngModel]="manualMinutes()"
+          (ngModelChange)="manualMinutes.set($event)"
+          min="1"
+        />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Notes (Optional)</mat-label>
-        <textarea matInput rows="3" [ngModel]="manualNotes()" (ngModelChange)="manualNotes.set($event)"></textarea>
+        <textarea
+          matInput
+          rows="3"
+          [ngModel]="manualNotes()"
+          (ngModelChange)="manualNotes.set($event)"
+        ></textarea>
       </mat-form-field>
 
-      <button mat-flat-button color="primary" class="full-width" (click)="saveManualSession()" [disabled]="!selectedActivityId() || manualMinutes() < 1">
+      <button
+        mat-flat-button
+        color="primary"
+        class="full-width"
+        (click)="saveManualSession()"
+        [disabled]="!selectedActivityId() || manualMinutes() < 1"
+      >
         Log Session
       </button>
     </div>

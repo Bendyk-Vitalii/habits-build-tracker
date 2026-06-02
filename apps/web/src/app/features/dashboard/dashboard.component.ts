@@ -47,9 +47,9 @@ export class DashboardComponent implements OnInit {
     const acts = this.activities();
     const sessions = this.todaySessions();
 
-    return acts.map(activity => {
+    return acts.map((activity) => {
       const todayMinutes = sessions
-        .filter(s => s.activityId === activity.id)
+        .filter((s) => s.activityId === activity.id)
         .reduce((sum, s) => sum + s.durationMinutes, 0);
 
       const dailyGoal = Math.round(activity.weeklyGoalMinutes / activity.sessionsPerWeek);

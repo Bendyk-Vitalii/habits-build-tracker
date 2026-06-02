@@ -3,5 +3,5 @@ export enum ActivityCategory {
   Health = 'Health',
   Creative = 'Creative',
   Learning = 'Learning',
-  Other = 'Other'
+  Other = 'Other',
 }

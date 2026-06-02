@@ -13,16 +13,15 @@
       <h3>Time Spent</h3>
       <div class="chart-wrapper">
         @if (view() === 'weekly' && weeklyChartData()) {
-          <canvas baseChart
-                  [data]="weeklyChartData()!"
-                  [options]="barChartOptions"
-                  [type]="'bar'">
+          <canvas baseChart [data]="weeklyChartData()!" [options]="barChartOptions" [type]="'bar'">
           </canvas>
         } @else if (view() === 'monthly' && monthlyChartData()) {
-          <canvas baseChart
-                  [data]="monthlyChartData()!"
-                  [options]="lineChartOptions"
-                  [type]="'line'">
+          <canvas
+            baseChart
+            [data]="monthlyChartData()!"
+            [options]="lineChartOptions"
+            [type]="'line'"
+          >
           </canvas>
         }
       </div>
@@ -33,13 +32,15 @@
       <h3>Weekly Goal Completion</h3>
       <div class="donut-wrapper">
         @if (completionDonutData()) {
-          <canvas baseChart
-                  [data]="completionDonutData()!"
-                  [options]="donutOptions"
-                  [type]="'doughnut'">
+          <canvas
+            baseChart
+            [data]="completionDonutData()!"
+            [options]="donutOptions"
+            [type]="'doughnut'"
+          >
           </canvas>
           <div class="donut-center-text">
-            <span>{{ completionDonutData()!.datasets[0].data[0] | number:'1.0-0' }}%</span>
+            <span>{{ completionDonutData()!.datasets[0].data[0] | number: '1.0-0' }}%</span>
           </div>
         }
       </div>
@@ -50,10 +51,11 @@
       <h3>Consistency Heatmap (90 Days)</h3>
       <div class="heatmap-grid">
         @for (cell of heatmapGrid(); track cell.date) {
-          <div class="heatmap-cell"
-               [style.opacity]="cell.opacity"
-               [title]="cell.date + ': ' + cell.value + ' sessions'">
-          </div>
+          <div
+            class="heatmap-cell"
+            [style.opacity]="cell.opacity"
+            [title]="cell.date + ': ' + cell.value + ' sessions'"
+          ></div>
         }
       </div>
       <div class="heatmap-legend">

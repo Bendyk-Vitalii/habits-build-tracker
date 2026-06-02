@@ -12,7 +12,7 @@
       <mat-icon color="primary">notifications</mat-icon>
       <h2>Notifications</h2>
     </div>
-    
+
     <div class="setting-row">
       <div class="setting-info">
         <h3>Daily Reminder</h3>
@@ -20,7 +20,8 @@
       </div>
       <mat-slide-toggle
         [ngModel]="localSettings().notificationEnabled"
-        (ngModelChange)="localSettings().notificationEnabled = $event">
+        (ngModelChange)="localSettings().notificationEnabled = $event"
+      >
       </mat-slide-toggle>
     </div>
 
@@ -28,13 +29,16 @@
       <div class="setting-row sub-setting">
         <mat-form-field appearance="outline">
           <mat-label>Reminder Time</mat-label>
-          <input matInput type="time"
-                 [ngModel]="localSettings().notificationTime"
-                 (ngModelChange)="localSettings().notificationTime = $event">
+          <input
+            matInput
+            type="time"
+            [ngModel]="localSettings().notificationTime"
+            (ngModelChange)="localSettings().notificationTime = $event"
+          />
         </mat-form-field>
       </div>
     }
-    
+
     @if (!hasPushPermission() && localSettings().notificationEnabled) {
       <p class="warning-text">Push notifications require browser permission.</p>
     }
@@ -46,15 +50,17 @@
       <mat-icon color="primary">timer</mat-icon>
       <h2>Pomodoro Timer</h2>
     </div>
-    
+
     <div class="setting-row block">
       <div class="setting-info">
         <h3>Work Duration ({{ localSettings().pomodoroWorkMinutes }} min)</h3>
       </div>
       <mat-slider min="5" max="60" step="5" discrete>
-        <input matSliderThumb
-               [ngModel]="localSettings().pomodoroWorkMinutes"
-               (ngModelChange)="localSettings().pomodoroWorkMinutes = $event">
+        <input
+          matSliderThumb
+          [ngModel]="localSettings().pomodoroWorkMinutes"
+          (ngModelChange)="localSettings().pomodoroWorkMinutes = $event"
+        />
       </mat-slider>
     </div>
 
@@ -63,9 +69,11 @@
         <h3>Short Break ({{ localSettings().pomodoroBreakMinutes }} min)</h3>
       </div>
       <mat-slider min="1" max="15" step="1" discrete>
-        <input matSliderThumb
-               [ngModel]="localSettings().pomodoroBreakMinutes"
-               (ngModelChange)="localSettings().pomodoroBreakMinutes = $event">
+        <input
+          matSliderThumb
+          [ngModel]="localSettings().pomodoroBreakMinutes"
+          (ngModelChange)="localSettings().pomodoroBreakMinutes = $event"
+        />
       </mat-slider>
     </div>
 
@@ -74,9 +82,11 @@
         <h3>Long Break ({{ localSettings().pomodoroLongBreakMinutes }} min)</h3>
       </div>
       <mat-slider min="5" max="30" step="5" discrete>
-        <input matSliderThumb
-               [ngModel]="localSettings().pomodoroLongBreakMinutes"
-               (ngModelChange)="localSettings().pomodoroLongBreakMinutes = $event">
+        <input
+          matSliderThumb
+          [ngModel]="localSettings().pomodoroLongBreakMinutes"
+          (ngModelChange)="localSettings().pomodoroLongBreakMinutes = $event"
+        />
       </mat-slider>
     </div>
   </section>
@@ -87,16 +97,19 @@
       <mat-icon color="primary">dark_mode</mat-icon>
       <h2>Display</h2>
     </div>
-    
+
     <div class="setting-row">
       <div class="setting-info">
         <h3>Theme</h3>
       </div>
       <mat-button-toggle-group
         [ngModel]="localSettings().theme"
-        (ngModelChange)="localSettings().theme = $event">
+        (ngModelChange)="localSettings().theme = $event"
+      >
         <mat-button-toggle value="light"><mat-icon>light_mode</mat-icon></mat-button-toggle>
-        <mat-button-toggle value="system"><mat-icon>settings_brightness</mat-icon></mat-button-toggle>
+        <mat-button-toggle value="system"
+          ><mat-icon>settings_brightness</mat-icon></mat-button-toggle
+        >
         <mat-button-toggle value="dark"><mat-icon>dark_mode</mat-icon></mat-button-toggle>
       </mat-button-toggle-group>
     </div>
@@ -108,7 +121,7 @@
       <mat-icon color="primary">storage</mat-icon>
       <h2>Data Management</h2>
     </div>
-    
+
     <div class="data-actions">
       <button mat-stroked-button (click)="exportData()">
         <mat-icon>download</mat-icon> Export Data

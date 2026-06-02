@@ -33,7 +33,7 @@ export class ProgressComponent implements OnInit {
 
   // Heatmap Data
   heatmapGrid = signal<{ date: string; value: number; opacity: number }[]>([]);
-  
+
   // Chart Options
   barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -73,7 +73,7 @@ export class ProgressComponent implements OnInit {
       this.loadWeeklyChart(),
       this.loadMonthlyChart(),
       this.loadDonutChart(),
-      this.loadHeatmap()
+      this.loadHeatmap(),
     ]);
   }
 
@@ -84,19 +84,19 @@ export class ProgressComponent implements OnInit {
 
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const datasets: any[] = [];
-    
+
     for (const act of this.activities()) {
       const data = new Array(7).fill(0);
       for (let i = 0; i < 7; i++) {
         const d = new Date(weekStart);
         d.setDate(weekStart.getDate() + i);
         const dateStr = d.toISOString().split('T')[0];
-        
+
         const sessions = await this.sessionService.getSessionsForDate(dateStr);
-        const actSessions = sessions.filter(s => s.activityId === act.id);
+        const actSessions = sessions.filter((s) => s.activityId === act.id);
         data[i] = actSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
       }
-      
+
       datasets.push({
         data,
         label: act.name,
@@ -111,11 +111,11 @@ export class ProgressComponent implements OnInit {
     const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
     const datasets: any[] = [];
 
-    // Mocking 4 weeks of data for the line chart for simplicity, 
+    // Mocking 4 weeks of data for the line chart for simplicity,
     // ideally this queries weekly reviews or aggregates sessions.
     for (const act of this.activities()) {
       datasets.push({
-        data: [Math.random()*100, Math.random()*120, Math.random()*90, Math.random()*150], // Mock
+        data: [Math.random() * 100, Math.random() * 120, Math.random() * 90, Math.random() * 150], // Mock
         label: act.name,
         borderColor: act.color,
         tension: 0.4,
@@ -130,11 +130,13 @@ export class ProgressComponent implements OnInit {
     const rate = await this.trackingService.getOverallCompletionRate();
     this.completionDonutData.set({
       labels: ['Completed', 'Remaining'],
-      datasets: [{
-        data: [rate, 100 - rate],
-        backgroundColor: ['#b388ff', 'rgba(255, 255, 255, 0.1)'], // Use primary color
-        borderWidth: 0,
-      }],
+      datasets: [
+        {
+          data: [rate, 100 - rate],
+          backgroundColor: ['#b388ff', 'rgba(255, 255, 255, 0.1)'], // Use primary color
+          borderWidth: 0,
+        },
+      ],
     });
   }
 
@@ -146,14 +148,14 @@ export class ProgressComponent implements OnInit {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
-      
+
       const sessions = await this.sessionService.getSessionsForDate(dateStr);
       const val = sessions.length;
-      
+
       grid.push({
         date: dateStr,
         value: val,
-        opacity: val > 0 ? Math.min(1, 0.2 + (val * 0.2)) : 0.05,
+        opacity: val > 0 ? Math.min(1, 0.2 + val * 0.2) : 0.05,
       });
     }
     this.heatmapGrid.set(grid);

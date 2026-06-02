@@ -27,23 +27,14 @@ export class ReviewService {
     const weekEndDate = this.addDays(weekStartDate, 6);
     const activities = this.activityService.activities();
 
-    const sessions = await this.sessionService.getSessionsForDateRange(
-      weekStartDate,
-      weekEndDate
-    );
+    const sessions = await this.sessionService.getSessionsForDateRange(weekStartDate, weekEndDate);
 
-    const totalMinutes = sessions.reduce(
-      (sum, s) => sum + s.durationMinutes,
-      0
-    );
+    const totalMinutes = sessions.reduce((sum, s) => sum + s.durationMinutes, 0);
 
     // Count how many activities met their weekly goal
     let activitiesCompleted = 0;
     for (const activity of activities) {
-      const mins = await this.sessionService.getTotalMinutesForWeek(
-        activity.id!,
-        weekStartDate
-      );
+      const mins = await this.sessionService.getTotalMinutesForWeek(activity.id!, weekStartDate);
       if (mins >= activity.weeklyGoalMinutes) {
         activitiesCompleted++;
       }
@@ -51,9 +42,7 @@ export class ReviewService {
 
     const activitiesTotal = activities.length;
     const completionRate =
-      activitiesTotal > 0
-        ? Math.round((activitiesCompleted / activitiesTotal) * 100)
-        : 0;
+      activitiesTotal > 0 ? Math.round((activitiesCompleted / activitiesTotal) * 100) : 0;
 
     return {
       weekStartDate,
@@ -110,15 +99,9 @@ export class ReviewService {
     const startDate = `${month}-01`;
     const endDate = this.lastDayOfMonth(month);
 
-    const sessions = await this.sessionService.getSessionsForDateRange(
-      startDate,
-      endDate
-    );
+    const sessions = await this.sessionService.getSessionsForDateRange(startDate, endDate);
 
-    const totalMinutes = sessions.reduce(
-      (sum, s) => sum + s.durationMinutes,
-      0
-    );
+    const totalMinutes = sessions.reduce((sum, s) => sum + s.durationMinutes, 0);
     const totalSessions = sessions.length;
 
     // Compute weekly completion averages for the month
@@ -131,10 +114,7 @@ export class ReviewService {
     for (const ws of weekStarts) {
       let weekCompleted = 0;
       for (const activity of activities) {
-        const mins = await this.sessionService.getTotalMinutesForWeek(
-          activity.id!,
-          ws
-        );
+        const mins = await this.sessionService.getTotalMinutesForWeek(activity.id!, ws);
         if (mins >= activity.weeklyGoalMinutes) {
           weekCompleted++;
         }
@@ -145,26 +125,20 @@ export class ReviewService {
       weekCount++;
     }
 
-    const averageWeeklyCompletion =
-      weekCount > 0 ? Math.round(weeklyCompletionSum / weekCount) : 0;
+    const averageWeeklyCompletion = weekCount > 0 ? Math.round(weeklyCompletionSum / weekCount) : 0;
 
     // Streak data per activity
     const streakData: Record<number, number> = {};
     for (const activity of activities) {
-      streakData[activity.id!] =
-        await this.trackingService.getLongestStreak(activity.id!);
+      streakData[activity.id!] = await this.trackingService.getLongestStreak(activity.id!);
     }
 
     // Phase transitions (simple text entries)
     const phaseTransitions: string[] = [];
     for (const activity of activities) {
-      const activitySessions = sessions.filter(
-        (s) => s.activityId === activity.id
-      );
+      const activitySessions = sessions.filter((s) => s.activityId === activity.id);
       if (activitySessions.length > 0) {
-        phaseTransitions.push(
-          `${activity.name}: ${activity.currentPhase}`
-        );
+        phaseTransitions.push(`${activity.name}: ${activity.currentPhase}`);
       }
     }
 
@@ -186,10 +160,7 @@ export class ReviewService {
    * @param review The MonthlyReview to save.
    */
   async saveMonthlyReview(review: MonthlyReview): Promise<number> {
-    const existing = await db.monthlyReviews
-      .where('month')
-      .equals(review.month)
-      .first();
+    const existing = await db.monthlyReviews.where('month').equals(review.month).first();
 
     if (existing) {
       review.id = existing.id;

@@ -43,7 +43,7 @@ export class SettingsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const s = await this.settingsService.getSettings();
     this.localSettings.set({ ...s });
-    
+
     // Check if browser supports push
     if ('Notification' in window) {
       this.hasPushPermission.set(Notification.permission === 'granted');
@@ -54,7 +54,7 @@ export class SettingsComponent implements OnInit {
     this.isSaving.set(true);
     try {
       await this.settingsService.updateSettings(this.localSettings());
-      
+
       // Handle theme change
       this.applyTheme(this.localSettings().theme);
 
@@ -67,9 +67,9 @@ export class SettingsComponent implements OnInit {
           await this.notificationService.subscribeToPush(this.localSettings().notificationTime);
         } else {
           // Revert toggle if denied
-          this.localSettings.update(s => ({
+          this.localSettings.update((s) => ({
             ...s,
-            notificationEnabled: false
+            notificationEnabled: false,
           }));
         }
       } else if (!this.localSettings().notificationEnabled && this.hasPushPermission()) {
@@ -91,7 +91,7 @@ export class SettingsComponent implements OnInit {
   private applyTheme(theme: 'light' | 'dark' | 'auto'): void {
     const body = document.body;
     body.classList.remove('theme-light', 'theme-dark');
-    
+
     if (theme === 'auto') {
       const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       body.classList.add(isDark ? 'theme-dark' : 'theme-light');
@@ -104,17 +104,22 @@ export class SettingsComponent implements OnInit {
 
   exportData(): void {
     // Basic export implementation (would normally export all DB tables)
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.localSettings()));
+    const dataStr =
+      'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.localSettings()));
     const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href",     dataStr);
-    downloadAnchorNode.setAttribute("download", "habits-tracker-export.json");
+    downloadAnchorNode.setAttribute('href', dataStr);
+    downloadAnchorNode.setAttribute('download', 'habits-tracker-export.json');
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
   }
 
   async clearData(): Promise<void> {
-    if (confirm('DANGER: This will delete ALL your habits, sessions, and history. This cannot be undone. Are you sure?')) {
+    if (
+      confirm(
+        'DANGER: This will delete ALL your habits, sessions, and history. This cannot be undone. Are you sure?',
+      )
+    ) {
       // In a real app we would call a DB clear method
       alert('Data cleared. Please reload the app.');
       window.location.reload();

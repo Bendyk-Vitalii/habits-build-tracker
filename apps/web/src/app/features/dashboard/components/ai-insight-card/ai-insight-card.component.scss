@@ -83,10 +83,22 @@
   background: var(--ht-surface-bright);
   color: var(--ht-text-primary);
 
-  &[data-action="add_activity"] { background: rgba(66, 165, 245, 0.2); color: #64b5f6; }
-  &[data-action="increase_duration"] { background: rgba(102, 187, 106, 0.2); color: #81c784; }
-  &[data-action="scale_back"] { background: rgba(255, 167, 38, 0.2); color: #ffb74d; }
-  &[data-action="celebrate"] { background: rgba(171, 71, 188, 0.2); color: #ba68c8; }
+  &[data-action='add_activity'] {
+    background: rgba(66, 165, 245, 0.2);
+    color: #64b5f6;
+  }
+  &[data-action='increase_duration'] {
+    background: rgba(102, 187, 106, 0.2);
+    color: #81c784;
+  }
+  &[data-action='scale_back'] {
+    background: rgba(255, 167, 38, 0.2);
+    color: #ffb74d;
+  }
+  &[data-action='celebrate'] {
+    background: rgba(171, 71, 188, 0.2);
+    color: #ba68c8;
+  }
 }
 
 // Skeleton Loader
@@ -98,15 +110,26 @@
 
 .skeleton-line {
   height: 14px;
-  background: linear-gradient(90deg, var(--ht-surface-container-high) 25%, var(--ht-surface-bright) 50%, var(--ht-surface-container-high) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--ht-surface-container-high) 25%,
+    var(--ht-surface-bright) 50%,
+    var(--ht-surface-container-high) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--ht-radius-full);
 
-  &.short { width: 60%; }
+  &.short {
+    width: 60%;
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

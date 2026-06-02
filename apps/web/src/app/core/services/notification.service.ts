@@ -52,9 +52,7 @@ export class NotificationService {
 
     // 1. Get VAPID public key
     const { publicKey } = await firstValueFrom(
-      this.http.get<VapidKeyResponse>(
-        `${environment.apiBaseUrl}/push/vapid-key`
-      )
+      this.http.get<VapidKeyResponse>(`${environment.apiBaseUrl}/push/vapid-key`),
     );
 
     // 2. Subscribe via PushManager
@@ -70,9 +68,7 @@ export class NotificationService {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
-    await firstValueFrom(
-      this.http.post(`${environment.apiBaseUrl}/push/subscribe`, payload)
-    );
+    await firstValueFrom(this.http.post(`${environment.apiBaseUrl}/push/subscribe`, payload));
   }
 
   /**
@@ -88,12 +84,7 @@ export class NotificationService {
         endpoint: subscription.endpoint,
       };
 
-      await firstValueFrom(
-        this.http.post(
-          `${environment.apiBaseUrl}/push/unsubscribe`,
-          payload
-        )
-      );
+      await firstValueFrom(this.http.post(`${environment.apiBaseUrl}/push/unsubscribe`, payload));
 
       await subscription.unsubscribe();
     }
@@ -138,9 +129,7 @@ export class NotificationService {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
-      await firstValueFrom(
-        this.http.post(`${environment.apiBaseUrl}/push/subscribe`, payload)
-      );
+      await firstValueFrom(this.http.post(`${environment.apiBaseUrl}/push/subscribe`, payload));
     }
   }
 
@@ -152,9 +141,7 @@ export class NotificationService {
    */
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);

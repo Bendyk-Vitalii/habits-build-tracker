@@ -11,7 +11,17 @@ export { SCIENCE_THRESHOLDS } from './constants/science-thresholds';
 export type { ScienceThresholds } from './constants/science-thresholds';
 export { DEFAULT_ACTIVITIES } from './constants/default-activities';
 export type { PhaseDefinition } from './constants/phase-definitions';
-export { PHASE_DEFINITIONS, getPhaseDefinition, getPhaseForDays, getPhaseProgress, } from './constants/phase-definitions';
-export type { PushSubscribeRequest, PushUnsubscribeRequest, PushTrackedRequest, VapidKeyResponse, } from './api/push.contracts';
-export type { ActivitySummary, AiSuggestRequest, AiSuggestResponse, } from './api/ai.contracts';
+export {
+  PHASE_DEFINITIONS,
+  getPhaseDefinition,
+  getPhaseForDays,
+  getPhaseProgress,
+} from './constants/phase-definitions';
+export type {
+  PushSubscribeRequest,
+  PushUnsubscribeRequest,
+  PushTrackedRequest,
+  VapidKeyResponse,
+} from './api/push.contracts';
+export type { ActivitySummary, AiSuggestRequest, AiSuggestResponse } from './api/ai.contracts';
 //# sourceMappingURL=index.d.ts.map

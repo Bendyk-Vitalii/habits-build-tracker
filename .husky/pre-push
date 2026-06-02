@@ -1,0 +1,45 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Checking for touched packages to build before push..."
+
+# Find files changed between current HEAD and origin/main
+# If origin/main doesn't exist, fallback to all changes
+CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null || git diff --name-only HEAD)
+
+NEEDS_API=0
+NEEDS_WEB=0
+NEEDS_SHARED=0
+
+for FILE in $CHANGED_FILES; do
+  if echo "$FILE" | grep -q "^apps/api/"; then
+    NEEDS_API=1
+  elif echo "$FILE" | grep -q "^apps/web/"; then
+    NEEDS_WEB=1
+  elif echo "$FILE" | grep -q "^packages/shared/"; then
+    NEEDS_SHARED=1
+  fi
+done
+
+if [ "$NEEDS_SHARED" -eq 1 ]; then
+  echo "Building @habits-tracker/shared..."
+  npm run build -w @habits-tracker/shared || { echo "Build failed!"; exit 1; }
+fi
+
+if [ "$NEEDS_API" -eq 1 ]; then
+  echo "Building @habits-tracker/api..."
+  if [ "$NEEDS_SHARED" -eq 0 ]; then
+    npm run build -w @habits-tracker/shared || { echo "Build failed!"; exit 1; }
+  fi
+  npm run build -w @habits-tracker/api || { echo "Build failed!"; exit 1; }
+fi
+
+if [ "$NEEDS_WEB" -eq 1 ]; then
+  echo "Building @habits-tracker/web..."
+  if [ "$NEEDS_SHARED" -eq 0 ]; then
+    npm run build -w @habits-tracker/shared || { echo "Build failed!"; exit 1; }
+  fi
+  npm run build -w @habits-tracker/web || { echo "Build failed!"; exit 1; }
+fi
+
+echo "Pre-push check passed!"

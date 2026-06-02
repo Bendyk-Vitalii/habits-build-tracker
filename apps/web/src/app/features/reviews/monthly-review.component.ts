@@ -10,13 +10,7 @@ import { MonthlyReview } from '@habits-tracker/shared';
 @Component({
   selector: 'ht-monthly-review',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatInputModule,
-    MatIconModule,
-  ],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatInputModule, MatIconModule],
   templateUrl: './monthly-review.component.html',
   styleUrl: './monthly-review.component.scss',
 })

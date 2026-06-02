@@ -9,42 +9,43 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+      import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
     path: 'activities',
     loadComponent: () =>
-      import('./features/activities/activity-list.component').then(m => m.ActivityListComponent),
+      import('./features/activities/activity-list.component').then((m) => m.ActivityListComponent),
   },
   {
     path: 'activities/:id',
     loadComponent: () =>
-      import('./features/activities/activity-detail.component').then(m => m.ActivityDetailComponent),
+      import('./features/activities/activity-detail.component').then(
+        (m) => m.ActivityDetailComponent,
+      ),
   },
   {
     path: 'timer',
-    loadComponent: () =>
-      import('./features/timer/timer.component').then(m => m.TimerComponent),
+    loadComponent: () => import('./features/timer/timer.component').then((m) => m.TimerComponent),
   },
   {
     path: 'progress',
     loadComponent: () =>
-      import('./features/progress/progress.component').then(m => m.ProgressComponent),
+      import('./features/progress/progress.component').then((m) => m.ProgressComponent),
   },
   {
     path: 'reviews',
     loadComponent: () =>
-      import('./features/reviews/weekly-review.component').then(m => m.WeeklyReviewComponent),
+      import('./features/reviews/weekly-review.component').then((m) => m.WeeklyReviewComponent),
   },
   {
     path: 'reviews/monthly',
     loadComponent: () =>
-      import('./features/reviews/monthly-review.component').then(m => m.MonthlyReviewComponent),
+      import('./features/reviews/monthly-review.component').then((m) => m.MonthlyReviewComponent),
   },
   {
     path: 'settings',
     loadComponent: () =>
-      import('./features/settings/settings.component').then(m => m.SettingsComponent),
+      import('./features/settings/settings.component').then((m) => m.SettingsComponent),
   },
   {
     path: '**',

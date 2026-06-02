@@ -48,9 +48,7 @@ export const sendScheduledNotifications = functions.pubsub
 
       // Skip if already notified today
       if (data.lastNotifiedAt) {
-        const lastNotified = data.lastNotifiedAt.toDate
-          ? data.lastNotifiedAt.toDate()
-          : new Date(data.lastNotifiedAt);
+        const lastNotified = data.lastNotifiedAt.toDate ? data.lastNotifiedAt.toDate() : new Date(data.lastNotifiedAt);
         if (lastNotified.toISOString().split('T')[0] === today) {
           continue;
         }
@@ -126,9 +124,7 @@ export const sendScheduledNotifications = functions.pubsub
     const currentUTCMinute = now.getUTCMinutes();
 
     if (currentUTCHour === 0 && currentUTCMinute === 0) {
-      const resetPromises = snapshot.docs.map((doc) =>
-        doc.ref.update({ trackedToday: false, trackedDate: null })
-      );
+      const resetPromises = snapshot.docs.map((doc) => doc.ref.update({ trackedToday: false, trackedDate: null }));
       await Promise.allSettled(resetPromises);
     }
   });

@@ -34,7 +34,9 @@
   gap: var(--ht-spacing-sm);
   background: var(--ht-surface-container);
   border-radius: var(--ht-radius-lg);
-  transition: transform var(--ht-transition-fast), box-shadow var(--ht-transition-fast);
+  transition:
+    transform var(--ht-transition-fast),
+    box-shadow var(--ht-transition-fast);
 
   &.cdk-drag-preview {
     box-shadow: var(--ht-shadow-lg);
@@ -70,7 +72,7 @@
   .card-wrapper {
     flex: 1;
     min-width: 0;
-    
+
     // Override the surface background of the inner card so we don't have double backgrounds
     ::ng-deep .surface-card {
       background: transparent;

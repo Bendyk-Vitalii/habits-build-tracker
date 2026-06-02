@@ -13,15 +13,17 @@ html {
   height: 100%;
   color-scheme: dark;
 
-  @include mat.theme((
-    color: (
-      theme-type: dark,
-      primary: mat.$violet-palette,
-      tertiary: mat.$cyan-palette,
-    ),
-    typography: Inter,
-    density: 0,
-  ));
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$violet-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: Inter,
+      density: 0,
+    )
+  );
 }
 
 // --- CSS Custom Properties (Design Tokens) ---
@@ -110,7 +112,11 @@ html {
 body {
   background-color: var(--ht-surface);
   color: var(--ht-text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   margin: 0;
   height: 100%;
   -webkit-font-smoothing: antialiased;
@@ -120,17 +126,35 @@ body {
 }
 
 // --- Typography ---
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 600;
   color: var(--ht-text-primary);
   margin: 0;
 }
 
-h1 { font-size: 1.75rem; line-height: 1.3; font-weight: 700; }
-h2 { font-size: 1.375rem; line-height: 1.35; }
-h3 { font-size: 1.125rem; line-height: 1.4; }
-h4 { font-size: 1rem; line-height: 1.45; }
+h1 {
+  font-size: 1.75rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+h2 {
+  font-size: 1.375rem;
+  line-height: 1.35;
+}
+h3 {
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+h4 {
+  font-size: 1rem;
+  line-height: 1.45;
+}
 
 p {
   color: var(--ht-text-secondary);
@@ -183,28 +207,54 @@ p {
 
 // --- Animations ---
 @keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 @keyframes streak-flame {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .animate-fade-in {
@@ -256,7 +306,8 @@ $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
 
 // Material Icons fallback override for Material Symbols Rounded compatibility
-.material-icons, mat-icon {
+.material-icons,
+mat-icon {
   font-family: 'Material Symbols Rounded' !important;
   font-weight: normal;
   font-style: normal;

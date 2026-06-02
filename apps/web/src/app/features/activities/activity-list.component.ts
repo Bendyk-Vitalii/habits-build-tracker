@@ -69,7 +69,7 @@ export class ActivityListComponent implements OnInit {
   async drop(event: CdkDragDrop<Activity[]>): Promise<void> {
     const currentActivities = [...this.activities()];
     moveItemInArray(currentActivities, event.previousIndex, event.currentIndex);
-    const orderedIds = currentActivities.map(a => a.id!).filter(id => id !== undefined);
+    const orderedIds = currentActivities.map((a) => a.id!).filter((id) => id !== undefined);
     await this.activityService.reorderActivities(orderedIds);
   }
 }
