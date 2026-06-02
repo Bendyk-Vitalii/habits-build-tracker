@@ -12,8 +12,10 @@ packages/shared/dist/
 firebase-debug.log*
 
 # Environment files (keep .example)
+.env
+.env.*
+!.env.example
 apps/api/.env
-.env.local
 
 # IDE
 .idea/
