@@ -1,0 +1,32 @@
+{
+  "/api/push/subscribe": {
+    "target": "http://127.0.0.1:5001/habits-build-tracker/us-central1/pushSubscribe",
+    "secure": false,
+    "pathRewrite": { "^/api/push/subscribe": "" },
+    "changeOrigin": true
+  },
+  "/api/push/unsubscribe": {
+    "target": "http://127.0.0.1:5001/habits-build-tracker/us-central1/pushUnsubscribe",
+    "secure": false,
+    "pathRewrite": { "^/api/push/unsubscribe": "" },
+    "changeOrigin": true
+  },
+  "/api/push/tracked": {
+    "target": "http://127.0.0.1:5001/habits-build-tracker/us-central1/pushTracked",
+    "secure": false,
+    "pathRewrite": { "^/api/push/tracked": "" },
+    "changeOrigin": true
+  },
+  "/api/push/vapid-key": {
+    "target": "http://127.0.0.1:5001/habits-build-tracker/us-central1/getVapidKey",
+    "secure": false,
+    "pathRewrite": { "^/api/push/vapid-key": "" },
+    "changeOrigin": true
+  },
+  "/api/ai/suggest": {
+    "target": "http://127.0.0.1:5001/habits-build-tracker/us-central1/aiSuggest",
+    "secure": false,
+    "pathRewrite": { "^/api/ai/suggest": "" },
+    "changeOrigin": true
+  }
+}

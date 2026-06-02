@@ -90,7 +90,7 @@ export class ActivityFormComponent implements OnInit {
           currentPhase: HabitPhase.Establishing,
           phaseStartDate: new Date().toISOString().split('T')[0],
           consecutiveDays: 0,
-          isArchived: false,
+          isArchived: 0,
           order: 999, // Will be placed at the end
         };
         await this.activityService.addActivity(newActivity);

@@ -256,6 +256,18 @@ $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
 
 // Material Icons fallback override for Material Symbols Rounded compatibility
-.material-icons {
+.material-icons, mat-icon {
   font-family: 'Material Symbols Rounded' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
 }
