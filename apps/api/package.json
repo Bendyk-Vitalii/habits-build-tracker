@@ -19,7 +19,8 @@
     "firebase-functions": "^6.0.0",
     "web-push": "^3.6.0",
     "@google/generative-ai": "^0.21.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "@habits-tracker/shared": "file:./habits-tracker-shared-1.0.0.tgz"
   },
   "devDependencies": {
     "typescript": "~5.7.0",
