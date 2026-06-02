@@ -5,9 +5,9 @@ export interface ActivitySummary {
   phase: HabitPhase;
   weeklyGoalMinutes: number;
   actualMinutesThisWeek: number;
-  completionRate: number;       // 0-100
-  currentStreak: number;        // days
-  consecutiveDays: number;      // total consistency days
+  completionRate: number; // 0-100
+  currentStreak: number; // days
+  consecutiveDays: number; // total consistency days
 }
 
 export interface AiSuggestRequest {
@@ -21,7 +21,7 @@ export interface AiSuggestRequest {
 export interface AiSuggestResponse {
   suggestion: string;
   actionType: 'add_activity' | 'increase_duration' | 'scale_back' | 'maintain' | 'celebrate';
-  confidence: number;          // 0-100
+  confidence: number; // 0-100
   reasoning: string;
-  isAiGenerated: boolean;      // false if rule-based fallback
+  isAiGenerated: boolean; // false if rule-based fallback
 }

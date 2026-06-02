@@ -26,12 +26,14 @@
     <div class="color-picker-section">
       <label>Color</label>
       <div class="color-options">
-        <button *ngFor="let c of presetColors"
-                type="button"
-                class="color-btn"
-                [style.background]="c"
-                [class.selected]="activityForm.get('color')?.value === c"
-                (click)="selectColor(c)">
+        <button
+          *ngFor="let c of presetColors"
+          type="button"
+          class="color-btn"
+          [style.background]="c"
+          [class.selected]="activityForm.get('color')?.value === c"
+          (click)="selectColor(c)"
+        >
           <mat-icon *ngIf="activityForm.get('color')?.value === c">check</mat-icon>
         </button>
       </div>

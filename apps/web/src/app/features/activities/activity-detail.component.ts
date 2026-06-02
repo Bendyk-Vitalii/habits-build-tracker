@@ -46,7 +46,7 @@ export class ActivityDetailComponent implements OnInit {
   weeklyMinutes = signal<number>(0);
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.loadData(Number(id));
@@ -66,7 +66,7 @@ export class ActivityDetailComponent implements OnInit {
     const streak = await this.trackingService.getStreak(id);
     const longestStreak = await this.trackingService.getLongestStreak(id);
     const weeklyRate = await this.trackingService.getWeeklyCompletionRate(id);
-    
+
     this.streak.set(streak);
     this.longestStreak.set(longestStreak);
     this.weeklyMinutes.set(Math.round((weeklyRate / 100) * act.weeklyGoalMinutes));
@@ -74,7 +74,10 @@ export class ActivityDetailComponent implements OnInit {
     // Load recent sessions (last 30 days roughly)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const sessions = await this.sessionService.getSessionsForActivity(id, thirtyDaysAgo.toISOString().split('T')[0]);
+    const sessions = await this.sessionService.getSessionsForActivity(
+      id,
+      thirtyDaysAgo.toISOString().split('T')[0],
+    );
     this.recentSessions.set(sessions.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5));
   }
 
@@ -99,7 +102,7 @@ export class ActivityDetailComponent implements OnInit {
   async archiveActivity(): Promise<void> {
     const currentActivity = this.activity();
     if (!currentActivity || !currentActivity.id) return;
-    
+
     if (confirm(`Are you sure you want to archive ${currentActivity.name}?`)) {
       await this.activityService.archiveActivity(currentActivity.id);
       this.router.navigate(['/activities']);
@@ -109,8 +112,12 @@ export class ActivityDetailComponent implements OnInit {
   async deleteActivity(): Promise<void> {
     const currentActivity = this.activity();
     if (!currentActivity || !currentActivity.id) return;
-    
-    if (confirm(`DANGER: Are you sure you want to permanently delete ${currentActivity.name} and all its sessions?`)) {
+
+    if (
+      confirm(
+        `DANGER: Are you sure you want to permanently delete ${currentActivity.name} and all its sessions?`,
+      )
+    ) {
       await this.activityService.deleteActivity(currentActivity.id);
       this.router.navigate(['/activities']);
     }

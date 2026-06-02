@@ -25,16 +25,9 @@ export class ActivityService {
   /** Reactive signal of all non-archived activities, ordered by `order`. */
   readonly activities: Signal<Activity[]> = toSignal(
     isPlatformBrowser(this.platformId)
-      ? from(
-          liveQuery(() =>
-            db.activities
-              .where('isArchived')
-              .equals(0)
-              .sortBy('order')
-          )
-        )
+      ? from(liveQuery(() => db.activities.where('isArchived').equals(0).sortBy('order')))
       : of([]),
-    { initialValue: [] }
+    { initialValue: [] },
   );
 
   /**
@@ -52,12 +45,8 @@ export class ActivityService {
    * @param data Activity data (without `id`, `createdAt`).
    * @throws Error when the establishing-phase limit would be exceeded.
    */
-  async addActivity(
-    data: Omit<Activity, 'id' | 'createdAt'>
-  ): Promise<number> {
-    if (
-      data.currentPhase === HabitPhase.Establishing
-    ) {
+  async addActivity(data: Omit<Activity, 'id' | 'createdAt'>): Promise<number> {
+    if (data.currentPhase === HabitPhase.Establishing) {
       const establishingCount = await db.activities
         .where('isArchived')
         .equals(0)
@@ -67,7 +56,7 @@ export class ActivityService {
       if (establishingCount >= SCIENCE_THRESHOLDS.limits.maxEstablishingHabits) {
         throw new Error(
           `Cannot add more than ${SCIENCE_THRESHOLDS.limits.maxEstablishingHabits} establishing habits at once. ` +
-          `Wait until an existing habit transitions to the Forming phase.`
+            `Wait until an existing habit transitions to the Forming phase.`,
         );
       }
     }
@@ -85,10 +74,7 @@ export class ActivityService {
    * @param id Activity primary key.
    * @param data Fields to update.
    */
-  async updateActivity(
-    id: number,
-    data: Partial<Activity>
-  ): Promise<void> {
+  async updateActivity(id: number, data: Partial<Activity>): Promise<void> {
     await db.activities.update(id, data);
   }
 

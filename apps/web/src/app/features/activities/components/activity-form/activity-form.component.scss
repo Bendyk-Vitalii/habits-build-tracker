@@ -43,7 +43,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform var(--ht-transition-fast), border-color var(--ht-transition-fast);
+    transition:
+      transform var(--ht-transition-fast),
+      border-color var(--ht-transition-fast);
 
     &:hover {
       transform: scale(1.1);
@@ -58,7 +60,7 @@
       width: 18px;
       height: 18px;
       color: white; // Assuming preset colors are dark enough for white icon
-      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
   }
 }

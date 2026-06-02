@@ -66,8 +66,12 @@
   z-index: 50;
   background: var(--ht-primary) !important;
   color: var(--ht-on-primary) !important;
-  box-shadow: var(--ht-shadow-lg), 0 0 24px rgba(179, 136, 255, 0.3);
-  transition: transform var(--ht-transition-fast), box-shadow var(--ht-transition-fast);
+  box-shadow:
+    var(--ht-shadow-lg),
+    0 0 24px rgba(179, 136, 255, 0.3);
+  transition:
+    transform var(--ht-transition-fast),
+    box-shadow var(--ht-transition-fast);
 
   &:active {
     transform: scale(0.92);

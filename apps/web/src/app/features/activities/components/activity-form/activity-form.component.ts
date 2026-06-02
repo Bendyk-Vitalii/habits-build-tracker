@@ -33,7 +33,7 @@ export class ActivityFormComponent implements OnInit {
   activityForm!: FormGroup;
   categories = Object.values(ActivityCategory);
   isEditMode = false;
-  
+
   // Some predefined colors for easy selection
   presetColors = [
     '#FF9800', // Orange
@@ -48,7 +48,7 @@ export class ActivityFormComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ActivityFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Activity | null
+    @Inject(MAT_DIALOG_DATA) public data: Activity | null,
   ) {
     this.isEditMode = !!data;
   }
@@ -63,8 +63,14 @@ export class ActivityFormComponent implements OnInit {
       category: [this.data?.category || ActivityCategory.ProfessionalGrowth, Validators.required],
       icon: [this.data?.icon || 'star', Validators.required],
       color: [this.data?.color || this.presetColors[0], Validators.required],
-      weeklyGoalMinutes: [this.data?.weeklyGoalMinutes || 30, [Validators.required, Validators.min(1)]],
-      sessionsPerWeek: [this.data?.sessionsPerWeek || 3, [Validators.required, Validators.min(1), Validators.max(21)]],
+      weeklyGoalMinutes: [
+        this.data?.weeklyGoalMinutes || 30,
+        [Validators.required, Validators.min(1)],
+      ],
+      sessionsPerWeek: [
+        this.data?.sessionsPerWeek || 3,
+        [Validators.required, Validators.min(1), Validators.max(21)],
+      ],
       goal: [this.data?.goal || '', Validators.maxLength(100)],
       goalDeadline: [this.data?.goalDeadline || null],
     });

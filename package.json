@@ -12,6 +12,8 @@
     "start": "concurrently \"npm run start:api\" \"npm run start:web\"",
     "start:web": "npm run dev -w @habits-tracker/web",
     "start:api": "npm run serve -w @habits-tracker/api",
+    "prettier:all": "prettier --write \"**/*.{ts,js,json,html,scss}\"",
+    "prepare": "husky",
     "build": "npm run build -w @habits-tracker/shared && npm run build -w @habits-tracker/web",
     "build:api": "npm run build -w @habits-tracker/shared && npm run build -w @habits-tracker/api",
     "build:all": "npm run build -w @habits-tracker/shared && npm run build -w @habits-tracker/web && npm run build -w @habits-tracker/api",
@@ -23,6 +25,9 @@
     "node": ">=20.0.0"
   },
   "devDependencies": {
-    "concurrently": "^10.0.3"
+    "concurrently": "^10.0.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.3"
   }
 }

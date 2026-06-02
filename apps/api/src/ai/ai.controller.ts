@@ -94,13 +94,13 @@ function buildPrompt(
   totalActiveHabits: number,
   weeksOfData: number,
   overallCompletionRate: number,
-  requestType: string
+  requestType: string,
 ): string {
   const activitySummaries = activities
     .map(
       (a: any) =>
         `- ${a.name} (Phase: ${a.phase}, Goal: ${a.weeklyGoalMinutes}min/week, Actual: ${a.actualMinutesThisWeek}min, ` +
-        `Completion: ${a.completionRate}%, Streak: ${a.currentStreak} days, Consistency: ${a.consecutiveDays} days)`
+        `Completion: ${a.completionRate}%, Streak: ${a.currentStreak} days, Consistency: ${a.consecutiveDays} days)`,
     )
     .join('\n');
 
@@ -140,12 +140,7 @@ Please provide a JSON response with these exact fields:
 Be encouraging, specific, and reference the science. Never suggest adding more than ${SCIENCE_THRESHOLDS.limits.maxEstablishingHabits} new habits at once.`;
 }
 
-function parseAiResponse(
-  text: string,
-  activities: any[],
-  overallCompletionRate: number,
-  weeksOfData: number
-): any {
+function parseAiResponse(text: string, activities: any[], overallCompletionRate: number, weeksOfData: number): any {
   try {
     // Try to extract JSON from the response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -167,35 +162,27 @@ function parseAiResponse(
   return generateRuleBasedSuggestion(activities, overallCompletionRate, weeksOfData);
 }
 
-function generateRuleBasedSuggestion(
-  activities: any[],
-  overallCompletionRate: number,
-  weeksOfData: number
-): any {
+function generateRuleBasedSuggestion(activities: any[], overallCompletionRate: number, weeksOfData: number): any {
   const { adherence, progressiveOverload } = SCIENCE_THRESHOLDS;
 
   // Check if all activities are at ≥80% for 3+ weeks
-  const allOnTrack = activities.every(
-    (a: any) => a.completionRate >= adherence.onTrackThreshold
-  );
+  const allOnTrack = activities.every((a: any) => a.completionRate >= adherence.onTrackThreshold);
   const hasEnoughData = weeksOfData >= adherence.weeksBeforeNewHabit;
 
   // Check if any activity is at 100% for 2+ weeks
   const anyAt100 = activities.some(
-    (a: any) => a.completionRate >= 100 && a.consecutiveDays >= progressiveOverload.weeksAt100BeforeIncrease * 7
+    (a: any) => a.completionRate >= 100 && a.consecutiveDays >= progressiveOverload.weeksAt100BeforeIncrease * 7,
   );
 
   // Check if any activity is below threshold
-  const anyBelowThreshold = activities.some(
-    (a: any) => a.completionRate < adherence.scaleBackThreshold
-  );
+  const anyBelowThreshold = activities.some((a: any) => a.completionRate < adherence.scaleBackThreshold);
 
   if (allOnTrack && hasEnoughData) {
     return {
       suggestion:
-        "Outstanding consistency! All your activities are above 80% completion for 3+ weeks. " +
+        'Outstanding consistency! All your activities are above 80% completion for 3+ weeks. ' +
         "Based on habit formation research, you're ready to consider adding a new skill-building activity. " +
-        "Start small — remember the Two-Minute Rule.",
+        'Start small — remember the Two-Minute Rule.',
       actionType: 'add_activity',
       confidence: 85,
       reasoning: 'Behavioral research shows habits are safe to stack after 3-4 weeks of consistent ≥80% adherence.',
@@ -205,7 +192,7 @@ function generateRuleBasedSuggestion(
 
   if (anyAt100) {
     const perfectActivity = activities.find(
-      (a: any) => a.completionRate >= 100 && a.consecutiveDays >= progressiveOverload.weeksAt100BeforeIncrease * 7
+      (a: any) => a.completionRate >= 100 && a.consecutiveDays >= progressiveOverload.weeksAt100BeforeIncrease * 7,
     );
     return {
       suggestion:
@@ -220,9 +207,7 @@ function generateRuleBasedSuggestion(
   }
 
   if (anyBelowThreshold) {
-    const strugglingActivity = activities.find(
-      (a: any) => a.completionRate < adherence.scaleBackThreshold
-    );
+    const strugglingActivity = activities.find((a: any) => a.completionRate < adherence.scaleBackThreshold);
     return {
       suggestion:
         `"${strugglingActivity?.name}" is below 80% completion this week. ` +
@@ -230,7 +215,8 @@ function generateRuleBasedSuggestion(
         `Consider reducing the weekly goal or splitting it into shorter, more frequent sessions.`,
       actionType: 'scale_back',
       confidence: 75,
-      reasoning: 'Lally 2010: Missing a single day does not significantly affect habit formation. Adjust, don\'t abandon.',
+      reasoning:
+        "Lally 2010: Missing a single day does not significantly affect habit formation. Adjust, don't abandon.",
       isAiGenerated: false,
     };
   }
@@ -238,7 +224,7 @@ function generateRuleBasedSuggestion(
   return {
     suggestion:
       "You're on track! Keep maintaining your current pace. " +
-      "Consistency is more important than perfection — your habits are forming well. " +
+      'Consistency is more important than perfection — your habits are forming well. ' +
       `Overall completion rate: ${overallCompletionRate}%.`,
     actionType: 'maintain',
     confidence: 70,

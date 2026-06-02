@@ -20,7 +20,7 @@ export class SettingsService {
   readonly settings: Signal<AppSettings | undefined> = toSignal(
     isPlatformBrowser(this.platformId)
       ? from(liveQuery(() => db.appSettings.toCollection().first()))
-      : of(undefined)
+      : of(undefined),
   );
 
   /**

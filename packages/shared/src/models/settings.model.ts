@@ -1,14 +1,14 @@
 export interface AppSettings {
   id?: number;
-  notificationTime: string;       // "HH:MM", default "21:00"
+  notificationTime: string; // "HH:MM", default "21:00"
   notificationEnabled: boolean;
-  pomodoroWorkMinutes: number;    // default: 25
-  pomodoroBreakMinutes: number;   // default: 5
+  pomodoroWorkMinutes: number; // default: 25
+  pomodoroBreakMinutes: number; // default: 5
   pomodoroLongBreakMinutes: number; // default: 15
   pomodoroSessionsBeforeLongBreak: number; // default: 4
   theme: 'dark' | 'light' | 'auto';
-  weeklyReviewDay: number;        // 0=Sunday
-  graceDaysPerWeek: number;       // default: 1
+  weeklyReviewDay: number; // 0=Sunday
+  graceDaysPerWeek: number; // default: 1
   installedOnHomeScreen: boolean;
 }
 

@@ -42,7 +42,7 @@ export const PHASE_DEFINITIONS: PhaseDefinition[] = [
 ];
 
 export function getPhaseDefinition(phase: HabitPhase): PhaseDefinition {
-  return PHASE_DEFINITIONS.find(p => p.phase === phase)!;
+  return PHASE_DEFINITIONS.find((p) => p.phase === phase)!;
 }
 
 export function getPhaseForDays(consecutiveDays: number): HabitPhase {

@@ -25,6 +25,6 @@ interface ActivityWithProgress {
 })
 export class TodayOverviewComponent {
   @Input() activities: ActivityWithProgress[] = [];
-  
+
   Math = Math;
 }

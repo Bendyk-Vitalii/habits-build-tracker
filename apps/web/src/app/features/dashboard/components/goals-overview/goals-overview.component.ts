@@ -19,8 +19,8 @@ export class GoalsOverviewComponent {
 
   goals = computed<GoalActivity[]>(() => {
     return this.activities
-      .filter(a => a.goal && a.goalDeadline)
-      .map(a => {
+      .filter((a) => a.goal && a.goalDeadline)
+      .map((a) => {
         // Calculate progress based on phaseStartDate and goalDeadline
         let progress = 0;
         if (a.phaseStartDate && a.goalDeadline) {

@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx lint-staged
+# Alternatively, to run it globally as requested:
+# npm run prettier:all && git add -u

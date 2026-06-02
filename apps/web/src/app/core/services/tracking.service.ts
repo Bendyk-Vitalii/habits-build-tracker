@@ -29,10 +29,7 @@ export class TrackingService {
    * @param mood  Optional mood rating 1–5.
    * @param reflection  Optional reflection text.
    */
-  async markDayTracked(
-    mood?: 1 | 2 | 3 | 4 | 5,
-    reflection?: string
-  ): Promise<void> {
+  async markDayTracked(mood?: 1 | 2 | 3 | 4 | 5, reflection?: string): Promise<void> {
     const today = this.todayISO();
     const existing = await db.dailyLogs.where('date').equals(today).first();
 
@@ -67,10 +64,7 @@ export class TrackingService {
    * @returns Current streak length in days.
    */
   async getStreak(activityId: number): Promise<number> {
-    const sessions = await db.sessions
-      .where('activityId')
-      .equals(activityId)
-      .toArray();
+    const sessions = await db.sessions.where('activityId').equals(activityId).toArray();
 
     if (sessions.length === 0) return 0;
 
@@ -127,10 +121,7 @@ export class TrackingService {
    * @returns Longest streak length in days.
    */
   async getLongestStreak(activityId: number): Promise<number> {
-    const sessions = await db.sessions
-      .where('activityId')
-      .equals(activityId)
-      .toArray();
+    const sessions = await db.sessions.where('activityId').equals(activityId).toArray();
 
     if (sessions.length === 0) return 0;
 
@@ -169,15 +160,9 @@ export class TrackingService {
     if (!activity || activity.weeklyGoalMinutes === 0) return 0;
 
     const weekStart = this.getWeekStartDate(new Date());
-    const totalMinutes = await this.sessionService.getTotalMinutesForWeek(
-      activityId,
-      weekStart
-    );
+    const totalMinutes = await this.sessionService.getTotalMinutesForWeek(activityId, weekStart);
 
-    return Math.min(
-      100,
-      Math.round((totalMinutes / activity.weeklyGoalMinutes) * 100)
-    );
+    return Math.min(100, Math.round((totalMinutes / activity.weeklyGoalMinutes) * 100));
   }
 
   /**

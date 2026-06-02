@@ -26,7 +26,11 @@
   <section class="glass-card section-card">
     <h3 class="section-title">Current Phase</h3>
     <div class="phase-container">
-      <ht-phase-badge [phase]="$any(act.currentPhase)" [consecutiveDays]="act.consecutiveDays" [showProgress]="true" />
+      <ht-phase-badge
+        [phase]="$any(act.currentPhase)"
+        [consecutiveDays]="act.consecutiveDays"
+        [showProgress]="true"
+      />
       <p class="phase-info">Started {{ act.phaseStartDate | relativeDate }}</p>
     </div>
   </section>
@@ -81,7 +85,12 @@
 
   <!-- Danger Zone -->
   <section class="danger-zone">
-    <button mat-stroked-button color="warn" class="danger-btn archive-btn" (click)="archiveActivity()">
+    <button
+      mat-stroked-button
+      color="warn"
+      class="danger-btn archive-btn"
+      (click)="archiveActivity()"
+    >
       <mat-icon>inventory_2</mat-icon> Archive Activity
     </button>
     <button mat-flat-button color="warn" class="danger-btn" (click)="deleteActivity()">

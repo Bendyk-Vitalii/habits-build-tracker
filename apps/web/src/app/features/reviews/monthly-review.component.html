@@ -21,13 +21,25 @@
 
   <section class="reflection-section glass-card">
     <h3>Monthly Reflection</h3>
-    
+
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Overall thoughts on this month</mat-label>
-      <textarea matInput rows="6" [ngModel]="notes()" (ngModelChange)="notes.set($event)" placeholder="Reflect on your overall progress..."></textarea>
+      <textarea
+        matInput
+        rows="6"
+        [ngModel]="notes()"
+        (ngModelChange)="notes.set($event)"
+        placeholder="Reflect on your overall progress..."
+      ></textarea>
     </mat-form-field>
 
-    <button mat-flat-button color="primary" class="save-btn" [disabled]="isSaving()" (click)="saveReview()">
+    <button
+      mat-flat-button
+      color="primary"
+      class="save-btn"
+      [disabled]="isSaving()"
+      (click)="saveReview()"
+    >
       {{ isSaving() ? 'Saving...' : 'Save Review' }}
     </button>
   </section>

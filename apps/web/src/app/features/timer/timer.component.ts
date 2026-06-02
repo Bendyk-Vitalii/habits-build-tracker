@@ -40,7 +40,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   // State
   mode = signal<TimerMode>('pomodoro');
   selectedActivityId = signal<number | null>(null);
-  
+
   // Expose Math for template
   Math = Math;
 
@@ -48,7 +48,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   isRunning = signal(false);
   timeRemainingSeconds = signal(0);
   stopwatchElapsedSeconds = signal(0);
-  
+
   // Pomodoro State
   pomodoroPhase = signal<PomodoroPhase>('work');
   pomodoroSessionsCompleted = signal(0);
@@ -62,7 +62,8 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   // Computed
   formattedTime = computed(() => {
-    const totalSeconds = this.mode() === 'stopwatch' ? this.stopwatchElapsedSeconds() : this.timeRemainingSeconds();
+    const totalSeconds =
+      this.mode() === 'stopwatch' ? this.stopwatchElapsedSeconds() : this.timeRemainingSeconds();
     const m = Math.floor(totalSeconds / 60);
     const s = totalSeconds % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -70,7 +71,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   progressPercent = computed(() => {
     if (this.mode() !== 'pomodoro') return 0;
-    
+
     const sets = this.settings();
     if (!sets) return 0;
 
@@ -129,18 +130,18 @@ export class TimerComponent implements OnInit, OnDestroy {
       alert('Please select an activity first');
       return;
     }
-    
+
     this.isRunning.set(true);
     this.requestWakeLock();
-    
+
     this.intervalId = setInterval(() => {
       if (this.mode() === 'pomodoro') {
-        this.timeRemainingSeconds.update(t => t - 1);
+        this.timeRemainingSeconds.update((t) => t - 1);
         if (this.timeRemainingSeconds() <= 0) {
           this.handlePomodoroPhaseComplete();
         }
       } else if (this.mode() === 'stopwatch') {
-        this.stopwatchElapsedSeconds.update(t => t + 1);
+        this.stopwatchElapsedSeconds.update((t) => t + 1);
       }
     }, 1000);
   }
@@ -193,7 +194,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
     // If we just finished a work session, log it
     if (this.pomodoroPhase() === 'work') {
-      this.pomodoroSessionsCompleted.update(c => c + 1);
+      this.pomodoroSessionsCompleted.update((c) => c + 1);
       await this.logSession(this.settings()?.pomodoroWorkMinutes || 25);
     }
 
@@ -246,16 +247,14 @@ export class TimerComponent implements OnInit, OnDestroy {
     if (!actId) return;
 
     try {
-      const typeStr = this.mode() === 'pomodoro' ? SessionType.Pomodoro : 
-                      this.mode() === 'stopwatch' ? SessionType.Stopwatch : 
-                      SessionType.Manual;
+      const typeStr =
+        this.mode() === 'pomodoro'
+          ? SessionType.Pomodoro
+          : this.mode() === 'stopwatch'
+            ? SessionType.Stopwatch
+            : SessionType.Manual;
 
-      await this.sessionService.logSession(
-        actId,
-        durationMinutes,
-        typeStr,
-        notes
-      );
+      await this.sessionService.logSession(actId, durationMinutes, typeStr, notes);
       alert(`Successfully logged ${durationMinutes} minutes!`);
     } catch (e) {
       console.error('Failed to log session', e);

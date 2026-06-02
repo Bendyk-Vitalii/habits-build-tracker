@@ -14,7 +14,8 @@
   }
 }
 
-.activity-selector, .mode-selector {
+.activity-selector,
+.mode-selector {
   width: 100%;
   max-width: 400px;
 }
@@ -58,9 +59,18 @@
     font-size: 0.875rem;
     font-weight: 600;
 
-    &[data-phase="work"] { background: rgba(239, 83, 80, 0.2); color: #ef5350; }
-    &[data-phase="shortBreak"] { background: rgba(102, 187, 106, 0.2); color: #66bb6a; }
-    &[data-phase="longBreak"] { background: rgba(66, 165, 245, 0.2); color: #42a5f5; }
+    &[data-phase='work'] {
+      background: rgba(239, 83, 80, 0.2);
+      color: #ef5350;
+    }
+    &[data-phase='shortBreak'] {
+      background: rgba(102, 187, 106, 0.2);
+      color: #66bb6a;
+    }
+    &[data-phase='longBreak'] {
+      background: rgba(66, 165, 245, 0.2);
+      color: #42a5f5;
+    }
   }
 
   .session-count {

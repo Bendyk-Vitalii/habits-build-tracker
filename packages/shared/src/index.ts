@@ -30,8 +30,4 @@ export type {
   PushTrackedRequest,
   VapidKeyResponse,
 } from './api/push.contracts';
-export type {
-  ActivitySummary,
-  AiSuggestRequest,
-  AiSuggestResponse,
-} from './api/ai.contracts';
+export type { ActivitySummary, AiSuggestRequest, AiSuggestResponse } from './api/ai.contracts';

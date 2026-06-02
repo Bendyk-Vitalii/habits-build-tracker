@@ -4,8 +4,8 @@ export interface PushSubscribeRequest {
     expirationTime?: number | null;
     keys: Record<string, string>;
   };
-  notificationTime: string;  // "HH:MM"
-  timezone: string;           // IANA timezone
+  notificationTime: string; // "HH:MM"
+  timezone: string; // IANA timezone
 }
 
 export interface PushUnsubscribeRequest {
@@ -14,7 +14,7 @@ export interface PushUnsubscribeRequest {
 
 export interface PushTrackedRequest {
   endpoint: string;
-  date: string;  // "YYYY-MM-DD"
+  date: string; // "YYYY-MM-DD"
 }
 
 export interface VapidKeyResponse {

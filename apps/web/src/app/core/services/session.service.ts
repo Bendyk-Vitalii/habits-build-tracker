@@ -24,7 +24,7 @@ export class SessionService {
     durationMinutes: number,
     type: SessionType,
     note?: string,
-    pomodorosCompleted?: number
+    pomodorosCompleted?: number,
   ): Promise<number> {
     const now = new Date();
     const date = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
@@ -56,14 +56,8 @@ export class SessionService {
    * @param startDate ISO date "YYYY-MM-DD".
    * @param endDate   ISO date "YYYY-MM-DD".
    */
-  async getSessionsForDateRange(
-    startDate: string,
-    endDate: string
-  ): Promise<Session[]> {
-    return db.sessions
-      .where('date')
-      .between(startDate, endDate, true, true)
-      .toArray();
+  async getSessionsForDateRange(startDate: string, endDate: string): Promise<Session[]> {
+    return db.sessions.where('date').between(startDate, endDate, true, true).toArray();
   }
 
   /**
@@ -75,17 +69,12 @@ export class SessionService {
   async getSessionsForActivity(
     activityId: number,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<Session[]> {
     if (startDate && endDate) {
       return db.sessions
         .where('[activityId+date]')
-        .between(
-          [activityId, startDate],
-          [activityId, endDate],
-          true,
-          true
-        )
+        .between([activityId, startDate], [activityId, endDate], true, true)
         .toArray();
     }
 
@@ -98,16 +87,9 @@ export class SessionService {
    * @param weekStartDate  Monday of the week "YYYY-MM-DD".
    * @returns Total minutes for the week.
    */
-  async getTotalMinutesForWeek(
-    activityId: number,
-    weekStartDate: string
-  ): Promise<number> {
+  async getTotalMinutesForWeek(activityId: number, weekStartDate: string): Promise<number> {
     const weekEnd = this.addDays(weekStartDate, 6);
-    const sessions = await this.getSessionsForActivity(
-      activityId,
-      weekStartDate,
-      weekEnd
-    );
+    const sessions = await this.getSessionsForActivity(activityId, weekStartDate, weekEnd);
     return sessions.reduce((sum, s) => sum + s.durationMinutes, 0);
   }
 

@@ -1,16 +1,16 @@
 export interface PushSubscribeRequest {
-    subscription: PushSubscriptionJSON;
-    notificationTime: string;
-    timezone: string;
+  subscription: PushSubscriptionJSON;
+  notificationTime: string;
+  timezone: string;
 }
 export interface PushUnsubscribeRequest {
-    endpoint: string;
+  endpoint: string;
 }
 export interface PushTrackedRequest {
-    endpoint: string;
-    date: string;
+  endpoint: string;
+  date: string;
 }
 export interface VapidKeyResponse {
-    publicKey: string;
+  publicKey: string;
 }
 //# sourceMappingURL=push.contracts.d.ts.map

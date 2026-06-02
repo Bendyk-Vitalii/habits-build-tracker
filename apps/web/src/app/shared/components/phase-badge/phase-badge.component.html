@@ -3,10 +3,7 @@
   <span class="phase-badge__label">{{ definition().label }}</span>
   @if (showProgress()) {
     <div class="phase-badge__progress">
-      <div
-        class="phase-badge__progress-fill"
-        [style.width.%]="progress()"
-      ></div>
+      <div class="phase-badge__progress-fill" [style.width.%]="progress()"></div>
     </div>
   }
 </div>

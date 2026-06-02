@@ -1,6 +1,10 @@
 <a class="activity-card surface-card" [routerLink]="['/activities', activity.id]">
   <div class="activity-card__header">
-    <div class="activity-card__icon" [style.background]="activity.color + '20'" [style.color]="activity.color">
+    <div
+      class="activity-card__icon"
+      [style.background]="activity.color + '20'"
+      [style.color]="activity.color"
+    >
       <span class="material-symbols-rounded">{{ activity.icon }}</span>
     </div>
     <div class="activity-card__title">
@@ -10,7 +14,10 @@
   </div>
 
   <div class="activity-card__badges">
-    <ht-phase-badge [phase]="$any(activity.currentPhase)" [consecutiveDays]="activity.consecutiveDays" />
+    <ht-phase-badge
+      [phase]="$any(activity.currentPhase)"
+      [consecutiveDays]="activity.consecutiveDays"
+    />
     <ht-streak-counter [count]="streak" size="sm" />
   </div>
 
@@ -20,7 +27,11 @@
       <span>{{ weeklyMinutes }}m / {{ weeklyGoal }}m</span>
     </div>
     <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="progressPercent" [style.background]="activity.color"></div>
+      <div
+        class="progress-fill"
+        [style.width.%]="progressPercent"
+        [style.background]="activity.color"
+      ></div>
     </div>
   </div>
 </a>

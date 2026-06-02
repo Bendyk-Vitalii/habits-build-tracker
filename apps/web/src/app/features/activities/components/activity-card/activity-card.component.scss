@@ -4,7 +4,9 @@
   gap: var(--ht-spacing-md);
   text-decoration: none;
   color: inherit;
-  transition: transform var(--ht-transition-fast), background var(--ht-transition-fast);
+  transition:
+    transform var(--ht-transition-fast),
+    background var(--ht-transition-fast);
 
   &:active {
     transform: scale(0.98);
