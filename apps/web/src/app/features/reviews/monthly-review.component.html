@@ -1,0 +1,34 @@
+<div class="review-container animate-fade-in" *ngIf="review() as rev">
+  <div class="header">
+    <h1>Monthly Review</h1>
+    <p class="subtitle">Month: {{ rev.month }}</p>
+  </div>
+
+  <section class="stats-overview">
+    <div class="stat-card glass-card">
+      <div class="stat-value">{{ rev.totalSessions }}</div>
+      <div class="stat-label">Sessions</div>
+    </div>
+    <div class="stat-card glass-card">
+      <div class="stat-value">{{ rev.totalMinutes }}</div>
+      <div class="stat-label">Minutes</div>
+    </div>
+    <div class="stat-card glass-card">
+      <div class="stat-value">{{ rev.phaseTransitions }}</div>
+      <div class="stat-label">Phase Ups</div>
+    </div>
+  </section>
+
+  <section class="reflection-section glass-card">
+    <h3>Monthly Reflection</h3>
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Overall thoughts on this month</mat-label>
+      <textarea matInput rows="6" [ngModel]="notes()" (ngModelChange)="notes.set($event)" placeholder="Reflect on your overall progress..."></textarea>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" class="save-btn" [disabled]="isSaving()" (click)="saveReview()">
+      {{ isSaving() ? 'Saving...' : 'Save Review' }}
+    </button>
+  </section>
+</div>

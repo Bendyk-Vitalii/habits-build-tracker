@@ -1,0 +1,34 @@
+<div class="ai-card glass-card" [class.expanded]="isExpanded()">
+  <div class="ai-card__header" (click)="toggleExpand()" matRipple>
+    <div class="ai-card__title">
+      <span class="material-symbols-rounded ai-icon">auto_awesome</span>
+      <h3>AI Insight</h3>
+    </div>
+    <span class="material-symbols-rounded expand-icon">
+      {{ isExpanded() ? 'expand_less' : 'expand_more' }}
+    </span>
+  </div>
+
+  <div class="ai-card__content" [class.show]="isExpanded()">
+    @if (isLoading()) {
+      <div class="skeleton-loader">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+    } @else if (suggestion()) {
+      <p class="suggestion-text">{{ suggestion()?.suggestion }}</p>
+      @if (suggestion()?.reasoning) {
+        <p class="reasoning-text">
+          <span class="material-symbols-rounded">science</span>
+          {{ suggestion()?.reasoning }}
+        </p>
+      }
+      <div class="action-badge" [attr.data-action]="suggestion()?.actionType">
+        {{ suggestion()?.actionType | titlecase }}
+      </div>
+    } @else {
+      <p class="suggestion-text">Keep up the good work! Track your habits consistently to get personalized insights.</p>
+    }
+  </div>
+</div>

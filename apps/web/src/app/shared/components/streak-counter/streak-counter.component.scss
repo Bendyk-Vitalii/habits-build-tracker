@@ -1,0 +1,62 @@
+.streak {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ht-spacing-xs);
+  color: var(--ht-text-disabled);
+
+  &--active {
+    color: var(--ht-streak-flame);
+
+    .streak__flame {
+      animation: streak-flame 1.5s ease-in-out infinite;
+    }
+  }
+
+  // Sizes
+  &--sm {
+    .streak__flame {
+      font-size: 0.875rem;
+    }
+    .streak__count {
+      font-size: 0.875rem;
+    }
+  }
+
+  &--md {
+    .streak__flame {
+      font-size: 1.25rem;
+    }
+    .streak__count {
+      font-size: 1.125rem;
+    }
+  }
+
+  &--lg {
+    .streak__flame {
+      font-size: 1.75rem;
+    }
+    .streak__count {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__flame {
+    line-height: 1;
+  }
+
+  &__count {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+}
+
+@keyframes streak-flame {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}

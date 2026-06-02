@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--ht-top-bar-height);
+  padding-top: var(--ht-safe-top);
+  background: var(--ht-glass-bg);
+  backdrop-filter: blur(var(--ht-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ht-glass-blur));
+  border-bottom: 1px solid var(--ht-glass-border);
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ht-text-primary);
+    letter-spacing: -0.01em;
+  }
+}

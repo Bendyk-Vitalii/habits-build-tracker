@@ -1,0 +1,20 @@
+<div class="summary-card glass-card">
+  <div class="summary-card__header">
+    <span class="material-symbols-rounded">bar_chart</span>
+    <h3>Weekly Summary</h3>
+  </div>
+  <div class="summary-card__stats">
+    <div class="stat-item">
+      <span class="stat-value">{{ activities.length }}</span>
+      <span class="stat-label">Active Habits</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ totalGoalMinutes() | duration }}</span>
+      <span class="stat-label">Goal Time</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ completionRate }}%</span>
+      <span class="stat-label">Completion</span>
+    </div>
+  </div>
+</div>

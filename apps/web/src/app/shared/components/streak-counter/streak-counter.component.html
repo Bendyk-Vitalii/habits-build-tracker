@@ -1,0 +1,10 @@
+<div
+  class="streak"
+  [class.streak--active]="isActive()"
+  [class.streak--sm]="size() === 'sm'"
+  [class.streak--md]="size() === 'md'"
+  [class.streak--lg]="size() === 'lg'"
+>
+  <span class="streak__flame">🔥</span>
+  <span class="streak__count">{{ count() }}</span>
+</div>

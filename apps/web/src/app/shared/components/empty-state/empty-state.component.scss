@@ -1,0 +1,30 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ht-spacing-2xl) var(--ht-spacing-md);
+  text-align: center;
+  min-height: 200px;
+
+  &__icon {
+    font-size: 48px;
+    color: var(--ht-text-disabled);
+    margin-bottom: var(--ht-spacing-md);
+    opacity: 0.6;
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ht-text-primary);
+    margin-bottom: var(--ht-spacing-sm);
+  }
+
+  &__message {
+    font-size: 0.875rem;
+    color: var(--ht-text-secondary);
+    max-width: 280px;
+    line-height: 1.5;
+  }
+}

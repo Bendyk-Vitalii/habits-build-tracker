@@ -1,0 +1,110 @@
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ht-spacing-lg);
+  padding-bottom: var(--ht-spacing-2xl);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  mat-button-toggle-group {
+    height: 32px;
+    align-items: center;
+  }
+}
+
+.charts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ht-spacing-md);
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ht-spacing-md);
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--ht-spacing-md);
+  }
+}
+
+.span-full {
+  @media (min-width: 768px) {
+    grid-column: 1 / -1;
+  }
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.donut-card {
+  align-items: center;
+}
+
+.donut-wrapper {
+  position: relative;
+  height: 200px;
+  width: 200px;
+
+  .donut-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ht-text-primary);
+  }
+}
+
+.heatmap-card {
+  align-items: center;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr); // roughly 13 weeks in 90 days
+  grid-auto-rows: 1fr;
+  grid-auto-flow: column;
+  gap: 4px;
+  margin-bottom: var(--ht-spacing-sm);
+}
+
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  background-color: var(--ht-primary);
+  border-radius: 2px;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--ht-spacing-sm);
+  font-size: 0.75rem;
+  color: var(--ht-text-secondary);
+
+  .legend-scale {
+    display: flex;
+    gap: 4px;
+  }
+}

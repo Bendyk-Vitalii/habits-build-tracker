@@ -1,0 +1,20 @@
+{
+  "name": "@habits-tracker/shared",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared types, models, enums, constants, and API contracts for the habits tracker",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.0"
+  }
+}

@@ -1,0 +1,70 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Activity' : 'New Activity' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="activityForm" class="form-container">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Activity Name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g., AWS Certification" />
+      <mat-error *ngIf="activityForm.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Icon (Material Symbol)</mat-label>
+        <input matInput formControlName="icon" placeholder="e.g., cloud" />
+        <mat-icon matSuffix>{{ activityForm.get('icon')?.value }}</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="color-picker-section">
+      <label>Color</label>
+      <div class="color-options">
+        <button *ngFor="let c of presetColors"
+                type="button"
+                class="color-btn"
+                [style.background]="c"
+                [class.selected]="activityForm.get('color')?.value === c"
+                (click)="selectColor(c)">
+          <mat-icon *ngIf="activityForm.get('color')?.value === c">check</mat-icon>
+        </button>
+      </div>
+      <input type="hidden" formControlName="color" />
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Weekly Goal (Minutes)</mat-label>
+        <input matInput type="number" formControlName="weeklyGoalMinutes" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Sessions per Week</mat-label>
+        <input matInput type="number" formControlName="sessionsPerWeek" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Specific Goal (Optional)</mat-label>
+      <input matInput formControlName="goal" placeholder="e.g., Pass SAA-C03 exam" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Goal Deadline (Optional)</mat-label>
+      <input matInput type="date" formControlName="goalDeadline" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="primary" [disabled]="activityForm.invalid" (click)="onSubmit()">
+    {{ isEditMode ? 'Save Changes' : 'Create Activity' }}
+  </button>
+</mat-dialog-actions>

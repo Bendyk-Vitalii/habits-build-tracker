@@ -1,0 +1,54 @@
+import { Activity } from '../models/activity.model';
+import { HabitPhase } from '../enums/habit-phase.enum';
+import { ActivityCategory } from '../enums/activity-category.enum';
+
+export const DEFAULT_ACTIVITIES: Omit<Activity, 'id' | 'createdAt' | 'phaseStartDate' | 'consecutiveDays'>[] = [
+  {
+    name: 'AWS Certification',
+    category: ActivityCategory.ProfessionalGrowth,
+    icon: 'cloud',
+    color: '#FF9800',
+    weeklyGoalMinutes: 30,
+    sessionsPerWeek: 3,
+    currentPhase: HabitPhase.Establishing,
+    isArchived: false,
+    goal: 'Pass AWS SAA-C03 certification',
+    order: 0,
+  },
+  {
+    name: 'LeetCode',
+    category: ActivityCategory.ProfessionalGrowth,
+    icon: 'code',
+    color: '#4CAF50',
+    weeklyGoalMinutes: 30,
+    sessionsPerWeek: 3,
+    currentPhase: HabitPhase.Establishing,
+    isArchived: false,
+    goal: 'Solve 100 problems',
+    order: 1,
+  },
+  {
+    name: 'MongoDB Tasks',
+    category: ActivityCategory.ProfessionalGrowth,
+    icon: 'storage',
+    color: '#00BCD4',
+    weeklyGoalMinutes: 30,
+    sessionsPerWeek: 3,
+    currentPhase: HabitPhase.Establishing,
+    isArchived: false,
+    goal: 'Complete MongoDB University course',
+    order: 2,
+  },
+  {
+    name: 'Backend Patterns',
+    category: ActivityCategory.ProfessionalGrowth,
+    icon: 'architecture',
+    color: '#9C27B0',
+    weeklyGoalMinutes: 30,
+    sessionsPerWeek: 3,
+    currentPhase: HabitPhase.Establishing,
+    isArchived: false,
+    goal: 'Master design patterns for backend development',
+    order: 3,
+  },
+];

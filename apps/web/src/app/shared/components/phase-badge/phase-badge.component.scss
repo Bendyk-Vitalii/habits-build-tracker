@@ -1,0 +1,61 @@
+.phase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ht-spacing-xs);
+  padding: var(--ht-spacing-xs) var(--ht-spacing-sm);
+  border-radius: var(--ht-radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+
+  &--establishing {
+    color: var(--ht-phase-establishing);
+    background: var(--ht-phase-establishing-bg);
+  }
+
+  &--forming {
+    color: var(--ht-phase-forming);
+    background: var(--ht-phase-forming-bg);
+  }
+
+  &--established {
+    color: var(--ht-phase-established);
+    background: var(--ht-phase-established-bg);
+  }
+
+  &__emoji {
+    font-size: 0.875rem;
+    line-height: 1;
+  }
+
+  &__label {
+    white-space: nowrap;
+  }
+
+  &__progress {
+    width: 40px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--ht-radius-full);
+    overflow: hidden;
+    margin-left: var(--ht-spacing-xs);
+  }
+
+  &__progress-fill {
+    height: 100%;
+    border-radius: var(--ht-radius-full);
+    transition: width var(--ht-transition-slow);
+  }
+
+  &--establishing &__progress-fill {
+    background: var(--ht-phase-establishing);
+  }
+
+  &--forming &__progress-fill {
+    background: var(--ht-phase-forming);
+  }
+
+  &--established &__progress-fill {
+    background: var(--ht-phase-established);
+  }
+}

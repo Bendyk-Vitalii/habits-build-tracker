@@ -1,0 +1,85 @@
+.activity-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ht-spacing-lg);
+  padding-bottom: var(--ht-spacing-2xl);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .add-button {
+    background: var(--ht-primary);
+    color: var(--ht-on-primary);
+    border-radius: var(--ht-radius-full);
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ht-spacing-sm);
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ht-spacing-sm);
+  background: var(--ht-surface-container);
+  border-radius: var(--ht-radius-lg);
+  transition: transform var(--ht-transition-fast), box-shadow var(--ht-transition-fast);
+
+  &.cdk-drag-preview {
+    box-shadow: var(--ht-shadow-lg);
+    opacity: 0.9;
+  }
+
+  &.cdk-drag-placeholder {
+    opacity: 0;
+  }
+
+  &.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .drag-handle {
+    padding: var(--ht-spacing-sm) 0 var(--ht-spacing-sm) var(--ht-spacing-sm);
+    color: var(--ht-text-disabled);
+    cursor: grab;
+    display: flex;
+    align-items: center;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .card-wrapper {
+    flex: 1;
+    min-width: 0;
+    
+    // Override the surface background of the inner card so we don't have double backgrounds
+    ::ng-deep .surface-card {
+      background: transparent;
+      box-shadow: none;
+      padding-left: 0;
+    }
+  }
+}
+
+.list.cdk-drop-list-dragging .list-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

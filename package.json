@@ -1,0 +1,22 @@
+{
+  "name": "habits-build-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Science-backed habit and skill tracker PWA",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @habits-tracker/web",
+    "build": "npm run build -w @habits-tracker/shared && npm run build -w @habits-tracker/web",
+    "build:api": "npm run build -w @habits-tracker/shared && npm run build -w @habits-tracker/api",
+    "build:all": "npm run build -w @habits-tracker/shared && npm run build -w @habits-tracker/web && npm run build -w @habits-tracker/api",
+    "test": "npm run test -w @habits-tracker/web",
+    "lint": "npm run lint -w @habits-tracker/web",
+    "deploy": "npm run build:all && firebase deploy"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

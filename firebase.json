@@ -1,0 +1,60 @@
+{
+  "hosting": {
+    "public": "apps/web/dist/web/browser",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/api/push/subscribe",
+        "function": "pushSubscribe"
+      },
+      {
+        "source": "/api/push/unsubscribe",
+        "function": "pushUnsubscribe"
+      },
+      {
+        "source": "/api/push/tracked",
+        "function": "pushTracked"
+      },
+      {
+        "source": "/api/push/vapid-key",
+        "function": "getVapidKey"
+      },
+      {
+        "source": "/api/ai/suggest",
+        "function": "aiSuggest"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(js|css|svg|png|jpg|webp|woff2)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      }
+    ]
+  },
+  "functions": {
+    "source": "apps/api",
+    "runtime": "nodejs20"
+  }
+}

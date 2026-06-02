@@ -1,0 +1,33 @@
+<div class="activity-list-container animate-fade-in">
+  <div class="header">
+    <h1>Activities</h1>
+    <button mat-flat-button class="add-button" (click)="openAddActivityDialog()">
+      <mat-icon>add</mat-icon> New Activity
+    </button>
+  </div>
+
+  @if (activities().length === 0) {
+    <ht-empty-state
+      icon="checklist"
+      title="No activities yet"
+      message="Start building a new habit by adding an activity."
+    />
+  } @else {
+    <div class="list" cdkDropList (cdkDropListDropped)="drop($event)">
+      @for (activity of activities(); track activity.id) {
+        <div class="list-item" cdkDrag>
+          <div class="drag-handle" cdkDragHandle>
+            <mat-icon>drag_indicator</mat-icon>
+          </div>
+          <ht-activity-card
+            class="card-wrapper"
+            [activity]="activity"
+            [streak]="activityStats()[activity.id!]?.streak || 0"
+            [weeklyMinutes]="activityStats()[activity.id!]?.weeklyMinutes || 0"
+            [weeklyGoal]="activity.weeklyGoalMinutes"
+          />
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,38 @@
+@if (activities.length === 0) {
+  <div class="empty-state">
+    <span class="material-symbols-rounded empty-icon">checklist</span>
+    <p>No activities yet. Add your first habit!</p>
+  </div>
+} @else {
+  <div class="activity-list">
+    @for (activity of activities; track activity.id) {
+      <a class="activity-card surface-card" [routerLink]="['/activities', activity.id]">
+        <div class="activity-card__icon" [style.background]="activity.color + '20'" [style.color]="activity.color">
+          <span class="material-symbols-rounded">{{ activity.icon }}</span>
+        </div>
+
+        <div class="activity-card__info">
+          <h4>{{ activity.name }}</h4>
+          <div class="activity-card__progress-bar">
+            <div
+              class="activity-card__progress-fill"
+              [style.width.%]="activity.dailyGoal > 0 ? Math.min(100, (activity.todayMinutes / activity.dailyGoal) * 100) : 0"
+              [style.background]="activity.color"
+            ></div>
+          </div>
+          <span class="activity-card__time">
+            {{ activity.todayMinutes }}m / {{ activity.dailyGoal }}m
+          </span>
+        </div>
+
+        <div class="activity-card__status">
+          @if (activity.todayComplete) {
+            <span class="material-symbols-rounded check-icon">check_circle</span>
+          } @else {
+            <ht-phase-badge [phase]="$any(activity.currentPhase)" [consecutiveDays]="activity.consecutiveDays" />
+          }
+        </div>
+      </a>
+    }
+  </div>
+}

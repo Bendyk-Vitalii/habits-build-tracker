@@ -1,0 +1,261 @@
+@use '@angular/material' as mat;
+
+// ============================================================
+// CUSTOM MATERIAL 3 DARK THEME — Habits Build Tracker
+// ============================================================
+// Deep indigo/violet primary with teal accents.
+// Science-backed habit phase colors integrated as CSS custom properties.
+
+// Google Fonts: Inter + JetBrains Mono (loaded in index.html)
+
+// --- Material 3 Theme ---
+html {
+  height: 100%;
+  color-scheme: dark;
+
+  @include mat.theme((
+    color: (
+      theme-type: dark,
+      primary: mat.$violet-palette,
+      tertiary: mat.$cyan-palette,
+    ),
+    typography: Inter,
+    density: 0,
+  ));
+}
+
+// --- CSS Custom Properties (Design Tokens) ---
+:root {
+  // Surface colors
+  --ht-surface: #0f0d15;
+  --ht-surface-container: #1a1726;
+  --ht-surface-container-high: #252231;
+  --ht-surface-container-highest: #302d3b;
+  --ht-surface-bright: #3a3647;
+
+  // Brand colors
+  --ht-primary: #b388ff;
+  --ht-primary-dim: #9c6fff;
+  --ht-on-primary: #1a0033;
+  --ht-secondary: #80cbc4;
+  --ht-on-secondary: #003330;
+  --ht-tertiary: #ffab91;
+  --ht-on-tertiary: #3e1500;
+  --ht-error: #ef5350;
+  --ht-on-error: #fff;
+
+  // Text colors
+  --ht-text-primary: #ece6f0;
+  --ht-text-secondary: #b0aab8;
+  --ht-text-disabled: #6b6574;
+
+  // Habit phase colors
+  --ht-phase-establishing: #66bb6a;
+  --ht-phase-establishing-bg: rgba(102, 187, 106, 0.12);
+  --ht-phase-forming: #42a5f5;
+  --ht-phase-forming-bg: rgba(66, 165, 245, 0.12);
+  --ht-phase-established: #ab47bc;
+  --ht-phase-established-bg: rgba(171, 71, 188, 0.12);
+
+  // Streak / gamification
+  --ht-streak-flame: #ffab91;
+  --ht-streak-flame-glow: rgba(255, 171, 145, 0.3);
+  --ht-success: #66bb6a;
+  --ht-warning: #ffa726;
+
+  // Spacing
+  --ht-spacing-xs: 4px;
+  --ht-spacing-sm: 8px;
+  --ht-spacing-md: 16px;
+  --ht-spacing-lg: 24px;
+  --ht-spacing-xl: 32px;
+  --ht-spacing-2xl: 48px;
+
+  // Border radius
+  --ht-radius-sm: 8px;
+  --ht-radius-md: 12px;
+  --ht-radius-lg: 16px;
+  --ht-radius-xl: 24px;
+  --ht-radius-full: 9999px;
+
+  // Shadows
+  --ht-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --ht-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --ht-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --ht-shadow-glow: 0 0 20px rgba(179, 136, 255, 0.15);
+
+  // Glassmorphism
+  --ht-glass-bg: rgba(26, 23, 38, 0.72);
+  --ht-glass-border: rgba(179, 136, 255, 0.08);
+  --ht-glass-blur: 16px;
+
+  // Transitions
+  --ht-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ht-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ht-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  // iOS safe areas
+  --ht-safe-top: env(safe-area-inset-top, 0px);
+  --ht-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ht-safe-left: env(safe-area-inset-left, 0px);
+  --ht-safe-right: env(safe-area-inset-right, 0px);
+
+  // Layout
+  --ht-bottom-nav-height: 64px;
+  --ht-top-bar-height: 56px;
+  --ht-max-content-width: 600px;
+}
+
+// --- Base Styles ---
+body {
+  background-color: var(--ht-surface);
+  color: var(--ht-text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  // Prevent pull-to-refresh and overscroll in PWA
+  overscroll-behavior: none;
+}
+
+// --- Typography ---
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--ht-text-primary);
+  margin: 0;
+}
+
+h1 { font-size: 1.75rem; line-height: 1.3; font-weight: 700; }
+h2 { font-size: 1.375rem; line-height: 1.35; }
+h3 { font-size: 1.125rem; line-height: 1.4; }
+h4 { font-size: 1rem; line-height: 1.45; }
+
+p {
+  color: var(--ht-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+// --- Utility Classes ---
+.glass-card {
+  background: var(--ht-glass-bg);
+  backdrop-filter: blur(var(--ht-glass-blur));
+  -webkit-backdrop-filter: blur(var(--ht-glass-blur));
+  border: 1px solid var(--ht-glass-border);
+  border-radius: var(--ht-radius-lg);
+  padding: var(--ht-spacing-md);
+}
+
+.surface-card {
+  background: var(--ht-surface-container);
+  border-radius: var(--ht-radius-lg);
+  padding: var(--ht-spacing-md);
+}
+
+.surface-card-elevated {
+  background: var(--ht-surface-container-high);
+  border-radius: var(--ht-radius-lg);
+  padding: var(--ht-spacing-md);
+  box-shadow: var(--ht-shadow-sm);
+}
+
+// Phase badge colors
+.phase-establishing {
+  color: var(--ht-phase-establishing);
+  background: var(--ht-phase-establishing-bg);
+}
+
+.phase-forming {
+  color: var(--ht-phase-forming);
+  background: var(--ht-phase-forming-bg);
+}
+
+.phase-established {
+  color: var(--ht-phase-established);
+  background: var(--ht-phase-established-bg);
+}
+
+// --- Animations ---
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes streak-flame {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-fade-in {
+  animation: fade-in var(--ht-transition-normal) ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up var(--ht-transition-slow) ease-out;
+}
+
+// --- Scrollbar Styling ---
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ht-surface-bright);
+  border-radius: var(--ht-radius-full);
+}
+
+// --- Material Overrides for Dark Theme ---
+// Override dialog backdrop
+.cdk-overlay-dark-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+// Bottom sheet styling for mobile
+.mat-bottom-sheet-container {
+  background: var(--ht-surface-container) !important;
+  border-radius: var(--ht-radius-xl) var(--ht-radius-xl) 0 0 !important;
+  padding-bottom: calc(var(--ht-spacing-md) + var(--ht-safe-bottom)) !important;
+}
+
+// PWA standalone mode adjustments
+@media (display-mode: standalone) {
+  body {
+    // Account for iOS status bar in standalone mode
+    padding-top: var(--ht-safe-top);
+  }
+}
+
+// Mobile-first responsive breakpoints
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+
+// Material Icons fallback override for Material Symbols Rounded compatibility
+.material-icons {
+  font-family: 'Material Symbols Rounded' !important;
+}

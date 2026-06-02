@@ -1,0 +1,43 @@
+<div class="review-container animate-fade-in" *ngIf="review() as rev">
+  <div class="header">
+    <h1>Weekly Review</h1>
+    <p class="subtitle">Week of {{ rev.weekStartDate }}</p>
+  </div>
+
+  <section class="stats-overview">
+    <div class="stat-card glass-card">
+      <div class="stat-value">{{ rev.totalSessions }}</div>
+      <div class="stat-label">Sessions</div>
+    </div>
+    <div class="stat-card glass-card">
+      <div class="stat-value">{{ rev.totalMinutes }}</div>
+      <div class="stat-label">Minutes</div>
+    </div>
+    <div class="stat-card glass-card">
+      <div class="stat-value">{{ completionRate() | number:'1.0-0' }}%</div>
+      <div class="stat-label">Completion</div>
+    </div>
+  </section>
+
+  <section class="ai-section">
+    <ht-ai-insight-card />
+  </section>
+
+  <section class="reflection-section glass-card">
+    <h3>Reflection</h3>
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>What went well this week?</mat-label>
+      <textarea matInput rows="4" [ngModel]="notesWell()" (ngModelChange)="notesWell.set($event)" placeholder="E.g., I was very consistent with morning coding."></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width mt-3">
+      <mat-label>What could be improved?</mat-label>
+      <textarea matInput rows="4" [ngModel]="notesImprove()" (ngModelChange)="notesImprove.set($event)" placeholder="E.g., Missed some evening reading sessions due to tiredness."></textarea>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" class="save-btn" [disabled]="isSaving()" (click)="saveReview()">
+      {{ isSaving() ? 'Saving...' : 'Save Review' }}
+    </button>
+  </section>
+</div>

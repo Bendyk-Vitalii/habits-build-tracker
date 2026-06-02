@@ -1,0 +1,87 @@
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ht-spacing-sm);
+}
+
+.goal-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ht-spacing-md);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-spacing-sm);
+  }
+
+  &__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--ht-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .material-symbols-rounded {
+      font-size: 20px;
+    }
+  }
+
+  &__title {
+    h4 {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--ht-text-primary);
+      margin-bottom: 2px;
+    }
+
+    .goal-item__activity {
+      font-size: 0.75rem;
+      color: var(--ht-text-secondary);
+    }
+  }
+
+  &__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .progress-bar {
+      height: 6px;
+      background: var(--ht-surface-bright);
+      border-radius: var(--ht-radius-full);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--ht-radius-full);
+      transition: width var(--ht-transition-normal);
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+
+      .progress-percent {
+        font-weight: 600;
+        color: var(--ht-text-primary);
+      }
+
+      .deadline {
+        color: var(--ht-text-secondary);
+      }
+    }
+  }
+}
+
+.no-goals {
+  font-size: 0.875rem;
+  color: var(--ht-text-secondary);
+  text-align: center;
+  padding: var(--ht-spacing-md);
+  font-style: italic;
+}

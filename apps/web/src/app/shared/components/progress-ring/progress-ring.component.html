@@ -1,0 +1,28 @@
+<div class="progress-ring" [style.width.px]="size()" [style.height.px]="size()">
+  <svg [attr.viewBox]="viewBox()">
+    <!-- Background track -->
+    <circle
+      class="progress-ring__track"
+      [attr.cx]="center()"
+      [attr.cy]="center()"
+      [attr.r]="radius()"
+      [attr.stroke-width]="strokeWidth()"
+      fill="none"
+    />
+    <!-- Progress arc -->
+    <circle
+      class="progress-ring__progress"
+      [attr.cx]="center()"
+      [attr.cy]="center()"
+      [attr.r]="radius()"
+      [attr.stroke-width]="strokeWidth()"
+      [style.stroke]="color()"
+      [style.stroke-dasharray]="circumference()"
+      [style.stroke-dashoffset]="dashOffset()"
+      fill="none"
+    />
+  </svg>
+  @if (label()) {
+    <span class="progress-ring__label">{{ label() }}</span>
+  }
+</div>

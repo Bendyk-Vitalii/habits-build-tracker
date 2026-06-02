@@ -1,0 +1,55 @@
+<div class="dashboard animate-fade-in">
+  <!-- Greeting -->
+  <header class="dashboard-header">
+    <h1>{{ greeting() }} 👋</h1>
+    <p>Let's build some skills today</p>
+  </header>
+
+  <!-- Weekly Progress Ring -->
+  <section class="weekly-progress glass-card">
+    <div class="weekly-progress__ring">
+      <ht-progress-ring
+        [progress]="weeklyCompletionRate()"
+        [size]="100"
+        [strokeWidth]="8"
+        [label]="weeklyCompletionRate() + '%'"
+      />
+    </div>
+    <div class="weekly-progress__info">
+      <h3>Weekly Progress</h3>
+      <p>{{ activities().length }} active activities</p>
+    </div>
+  </section>
+
+  <!-- Today's Activities -->
+  <section class="today-section">
+    <h2 class="section-title">Today's Activities</h2>
+    <ht-today-overview [activities]="activitiesWithProgress()" />
+  </section>
+
+  <!-- Weekly Summary -->
+  <section class="summary-section">
+    <ht-weekly-summary-card
+      [activities]="activities()"
+      [completionRate]="weeklyCompletionRate()"
+    />
+  </section>
+
+  <!-- AI Insight -->
+  <section class="ai-section">
+    <ht-ai-insight-card />
+  </section>
+
+  <!-- Goals -->
+  @if (activities().length > 0) {
+    <section class="goals-section">
+      <h2 class="section-title">Goals</h2>
+      <ht-goals-overview [activities]="activities()" />
+    </section>
+  }
+
+  <!-- FAB: Quick Log / Start Timer -->
+  <a mat-fab class="fab-timer" routerLink="/timer" aria-label="Start Timer">
+    <mat-icon>timer</mat-icon>
+  </a>
+</div>

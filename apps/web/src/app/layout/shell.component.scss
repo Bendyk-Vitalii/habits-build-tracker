@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100dvh;
+}
+
+.shell-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--ht-spacing-md);
+  padding-top: calc(var(--ht-top-bar-height) + var(--ht-spacing-md));
+  padding-bottom: calc(var(--ht-bottom-nav-height) + var(--ht-spacing-md) + var(--ht-safe-bottom));
+  max-width: var(--ht-max-content-width);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
