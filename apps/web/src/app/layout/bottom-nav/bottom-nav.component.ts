@@ -19,6 +19,7 @@ export class BottomNavComponent {
     { route: '/dashboard', icon: 'home', label: 'Home' },
     { route: '/activities', icon: 'checklist', label: 'Activities' },
     { route: '/timer', icon: 'timer', label: 'Timer' },
+    { route: '/tasks', icon: 'task_alt', label: 'Tasks' },
     { route: '/progress', icon: 'bar_chart', label: 'Progress' },
     { route: '/settings', icon: 'settings', label: 'Settings' },
   ];

@@ -6,6 +6,7 @@ import {
   WeeklyReview,
   MonthlyReview,
   AppSettings,
+  Task,
 } from '@habits-tracker/shared';
 
 /**
@@ -18,6 +19,7 @@ import {
  *   weeklyReviews  – ++id, &weekStartDate
  *   monthlyReviews – ++id, &month
  *   appSettings    – ++id
+ *   tasks          – ++id, isCompleted, priority, createdAt
  */
 export class AppDatabase extends Dexie {
   activities!: EntityTable<Activity, 'id'>;
@@ -26,6 +28,7 @@ export class AppDatabase extends Dexie {
   weeklyReviews!: EntityTable<WeeklyReview, 'id'>;
   monthlyReviews!: EntityTable<MonthlyReview, 'id'>;
   appSettings!: EntityTable<AppSettings, 'id'>;
+  tasks!: EntityTable<Task, 'id'>;
 
   constructor() {
     super('HabitsBuildTracker');
@@ -36,6 +39,9 @@ export class AppDatabase extends Dexie {
       weeklyReviews: '++id, &weekStartDate',
       monthlyReviews: '++id, &month',
       appSettings: '++id',
+    });
+    this.version(2).stores({
+      tasks: '++id, isCompleted, priority, createdAt',
     });
   }
 }

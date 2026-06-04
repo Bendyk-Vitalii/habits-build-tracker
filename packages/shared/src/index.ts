@@ -10,6 +10,7 @@ export type { DailyLog } from './models/daily-log.model';
 export type { WeeklyReview, MonthlyReview } from './models/review.model';
 export type { AppSettings } from './models/settings.model';
 export { DEFAULT_SETTINGS } from './models/settings.model';
+export type { Task, TaskPriority } from './models/task.model';
 
 // Constants
 export { SCIENCE_THRESHOLDS } from './constants/science-thresholds';

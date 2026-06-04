@@ -28,6 +28,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/timer/timer.component').then((m) => m.TimerComponent),
   },
   {
+    path: 'tasks',
+    loadComponent: () => import('./features/tasks/tasks.component').then((m) => m.TasksComponent),
+  },
+  {
     path: 'progress',
     loadComponent: () =>
       import('./features/progress/progress.component').then((m) => m.ProgressComponent),
