@@ -1,7 +1,9 @@
 {
-  "name": "web",
-  "short_name": "web",
+  "name": "Habits Build Tracker",
+  "short_name": "Habits",
   "display": "standalone",
+  "theme_color": "#0f0d15",
+  "background_color": "#0f0d15",
   "scope": "./",
   "start_url": "./",
   "icons": [

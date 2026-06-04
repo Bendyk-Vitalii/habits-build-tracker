@@ -18,6 +18,12 @@
   -webkit-backdrop-filter: blur(var(--ht-glass-blur));
   border-bottom: 1px solid var(--ht-glass-border);
 
+  &__logo {
+    width: 24px;
+    height: 24px;
+    margin-right: var(--ht-spacing-sm);
+  }
+
   &__title {
     font-size: 1.125rem;
     font-weight: 600;
