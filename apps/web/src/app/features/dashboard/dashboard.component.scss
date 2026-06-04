@@ -18,6 +18,93 @@
   }
 }
 
+.reminder-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ht-spacing-md);
+  margin-bottom: var(--ht-spacing-sm);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--ht-radius-lg);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: var(--ht-radius-lg);
+    background: linear-gradient(45deg, var(--ht-primary), transparent, var(--ht-secondary));
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+    animation: border-rotate 4s linear infinite;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-spacing-md);
+    z-index: 1;
+
+    .pulse-icon {
+      color: var(--ht-primary);
+      animation: pulse 2s infinite;
+    }
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      strong {
+        font-size: 1rem;
+        color: var(--ht-text-primary);
+      }
+
+      span {
+        font-size: 0.875rem;
+        color: var(--ht-text-secondary);
+      }
+    }
+  }
+
+  button {
+    z-index: 1;
+    color: var(--ht-text-secondary);
+  }
+}
+
+@keyframes border-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .weekly-progress {
   display: flex;
   align-items: center;
