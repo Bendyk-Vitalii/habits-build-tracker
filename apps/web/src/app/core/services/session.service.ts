@@ -17,6 +17,7 @@ export class SessionService {
    * @param type  Session type (pomodoro, manual, stopwatch).
    * @param note  Optional free-text note.
    * @param pomodorosCompleted  Optional pomodoro count.
+   * @param date  Optional ISO date "YYYY-MM-DD" for backdating. Defaults to today.
    * @returns The id of the newly created session.
    */
   async logSession(
@@ -25,13 +26,14 @@ export class SessionService {
     type: SessionType,
     note?: string,
     pomodorosCompleted?: number,
+    date?: string,
   ): Promise<number> {
     const now = new Date();
-    const date = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+    const sessionDate = date || now.toISOString().split('T')[0]; // "YYYY-MM-DD"
 
     const session: Session = {
       activityId,
-      date,
+      date: sessionDate,
       durationMinutes,
       type,
       createdAt: now.toISOString(),

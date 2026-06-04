@@ -56,11 +56,26 @@ export class TimerComponent implements OnInit, OnDestroy {
   // Manual Entry State
   manualMinutes = signal<number>(30);
   manualNotes = signal<string>('');
+  manualDate = signal<string>(this.getLocalISODateString(new Date()));
 
   private intervalId: any;
   private wakeLock: any = null;
 
+  private getLocalISODateString(d: Date): string {
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   // Computed
+  isToday = computed(() => this.manualDate() === this.getLocalISODateString(new Date()));
+  manualDateFormatted = computed(() => {
+    if (this.isToday()) return 'Today';
+    const d = new Date(this.manualDate() + 'T00:00:00');
+    return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  });
+
   formattedTime = computed(() => {
     const totalSeconds =
       this.mode() === 'stopwatch' ? this.stopwatchElapsedSeconds() : this.timeRemainingSeconds();
@@ -164,6 +179,14 @@ export class TimerComponent implements OnInit, OnDestroy {
     }
   }
 
+  // --- Date Stepper ---
+
+  changeDate(deltaDays: number): void {
+    const d = new Date(this.manualDate() + 'T00:00:00');
+    d.setDate(d.getDate() + deltaDays);
+    this.manualDate.set(this.getLocalISODateString(d));
+  }
+
   // --- Pomodoro Logic ---
 
   skipPhase(): void {
@@ -235,14 +258,14 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   async saveManualSession(): Promise<void> {
     if (this.manualMinutes() > 0) {
-      await this.logSession(this.manualMinutes(), this.manualNotes());
+      await this.logSession(this.manualMinutes(), this.manualNotes(), this.manualDate());
       this.manualNotes.set('');
     }
   }
 
   // --- Common Logic ---
 
-  private async logSession(durationMinutes: number, notes?: string): Promise<void> {
+  private async logSession(durationMinutes: number, notes?: string, date?: string): Promise<void> {
     const actId = this.selectedActivityId();
     if (!actId) return;
 
@@ -254,7 +277,7 @@ export class TimerComponent implements OnInit, OnDestroy {
             ? SessionType.Stopwatch
             : SessionType.Manual;
 
-      await this.sessionService.logSession(actId, durationMinutes, typeStr, notes);
+      await this.sessionService.logSession(actId, durationMinutes, typeStr, notes, undefined, date);
       alert(`Successfully logged ${durationMinutes} minutes!`);
     } catch (e) {
       console.error('Failed to log session', e);
