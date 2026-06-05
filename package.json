@@ -9,9 +9,11 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @habits-tracker/web",
-    "start": "concurrently \"npm run start:api\" \"npm run start:web\"",
-    "start:web": "npm run dev -w @habits-tracker/web",
+    "start": "npm run build:shared && concurrently -n shared,api,web -c blue,yellow,green \"npm run start:shared\" \"npm run start:api\" \"npm run start:web\"",
+    "start:shared": "npm run build:watch -w @habits-tracker/shared",
+    "start:web": "npm run start -w @habits-tracker/web",
     "start:api": "npm run serve -w @habits-tracker/api",
+    "build:shared": "npm run build -w @habits-tracker/shared",
     "prettier:all": "prettier --write \"**/*.{ts,js,json,html,scss}\"",
     "prepare": "husky",
     "build": "npm run build -w @habits-tracker/shared && npm run build -w @habits-tracker/web",
