@@ -3,6 +3,8 @@
   flex-direction: column;
   gap: var(--ht-spacing-lg);
   padding-bottom: var(--ht-spacing-2xl);
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .header {
@@ -25,6 +27,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--ht-spacing-md);
+  min-width: 0;
+  max-width: 100%;
 
   @media (min-width: 768px) {
     display: grid;
@@ -36,6 +40,8 @@
   display: flex;
   flex-direction: column;
   padding: var(--ht-spacing-md);
+  min-width: 0;
+  overflow: hidden;
 
   h3 {
     font-size: 1rem;
@@ -54,6 +60,8 @@
   position: relative;
   height: 250px;
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .donut-card {
@@ -82,11 +90,13 @@
 
 .heatmap-grid {
   display: grid;
-  grid-template-columns: repeat(13, 1fr); // roughly 13 weeks in 90 days
-  grid-auto-rows: 1fr;
+  grid-template-columns: repeat(13, 12px);
+  grid-template-rows: repeat(7, 12px);
   grid-auto-flow: column;
   gap: 4px;
   margin-bottom: var(--ht-spacing-sm);
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .heatmap-cell {
@@ -94,6 +104,7 @@
   height: 12px;
   background-color: var(--ht-primary);
   border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .heatmap-legend {

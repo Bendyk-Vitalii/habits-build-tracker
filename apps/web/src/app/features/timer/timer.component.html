@@ -123,6 +123,30 @@
   <!-- Manual Entry -->
   @if (mode() === 'manual') {
     <div class="manual-entry glass-card">
+      <div class="date-stepper-container">
+        <button
+          type="button"
+          mat-icon-button
+          class="stepper-btn"
+          (click)="changeDate(-1)"
+          aria-label="Previous Day"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="current-date">{{ manualDateFormatted() }}</span>
+        <button
+          type="button"
+          mat-icon-button
+          class="stepper-btn"
+          (click)="changeDate(1)"
+          [disabled]="isToday()"
+          [class.hidden]="isToday()"
+          aria-label="Next Day"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Duration (Minutes)</mat-label>
         <input

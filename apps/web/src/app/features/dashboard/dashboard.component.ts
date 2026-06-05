@@ -12,6 +12,7 @@ import { ProgressRingComponent } from '../../shared/components/progress-ring/pro
 import { ActivityService } from '../../core/services/activity.service';
 import { SessionService } from '../../core/services/session.service';
 import { TrackingService } from '../../core/services/tracking.service';
+import { SettingsService } from '../../core/services/settings.service';
 import { Activity, Session } from '@habits-tracker/shared';
 
 @Component({
@@ -36,11 +37,29 @@ export class DashboardComponent implements OnInit {
   private activityService = inject(ActivityService);
   private sessionService = inject(SessionService);
   private trackingService = inject(TrackingService);
+  private settingsService = inject(SettingsService);
 
   activities = this.activityService.activities;
+  settings = this.settingsService.settings;
   todaySessions = signal<Session[]>([]);
   weeklyCompletionRate = signal(0);
   greeting = signal('');
+  reminderDismissed = signal(false);
+
+  showReminder = computed(() => {
+    if (this.reminderDismissed()) return false;
+    if (this.todaySessions().length > 0) return false;
+
+    const sets = this.settings();
+    if (!sets?.notificationTime) return false;
+
+    const [notifHour, notifMinute] = sets.notificationTime.split(':').map(Number);
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    return currentHour > notifHour || (currentHour === notifHour && currentMinute >= notifMinute);
+  });
 
   /** Computed: activities with their today's progress */
   activitiesWithProgress = computed(() => {

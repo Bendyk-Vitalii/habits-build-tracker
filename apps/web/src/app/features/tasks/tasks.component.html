@@ -1,0 +1,94 @@
+<div class="tasks-container animate-fade-in">
+  <div class="header">
+    <h1>Tasks</h1>
+  </div>
+
+  <!-- Add Task Form -->
+  <div class="add-task-form surface-card">
+    <mat-form-field appearance="outline" class="title-field">
+      <mat-label>What needs to be done?</mat-label>
+      <input
+        matInput
+        [(ngModel)]="newTaskTitle"
+        (keyup.enter)="addTask()"
+        placeholder="Task title"
+      />
+    </mat-form-field>
+
+    <div class="form-actions">
+      <mat-form-field appearance="outline" class="priority-field">
+        <mat-label>Priority</mat-label>
+        <mat-select [(ngModel)]="newTaskPriority">
+          <mat-option value="high">High</mat-option>
+          <mat-option value="medium">Medium</mat-option>
+          <mat-option value="low">Low</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        class="add-btn"
+        (click)="addTask()"
+        [disabled]="!newTaskTitle().trim()"
+      >
+        <mat-icon>add</mat-icon> Add
+      </button>
+    </div>
+  </div>
+
+  <!-- Pending Tasks List -->
+  <div class="task-list">
+    @for (task of tasks(); track task.id) {
+      <div
+        class="task-item surface-card animate-slide-up"
+        [class.priority-high]="task.priority === 'high'"
+        [class.priority-medium]="task.priority === 'medium'"
+        [class.priority-low]="task.priority === 'low'"
+      >
+        <mat-checkbox [checked]="task.isCompleted" (change)="toggleTaskCompletion(task.id!)">
+        </mat-checkbox>
+        <div class="task-content">
+          <span class="task-title">{{ task.title }}</span>
+          <span class="task-priority badge-{{ task.priority }}">{{ task.priority }}</span>
+        </div>
+        <button mat-icon-button class="delete-btn" (click)="deleteTask(task.id!)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+
+    @if (tasks().length === 0) {
+      <div class="empty-state">
+        <mat-icon>check_circle</mat-icon>
+        <p>You're all caught up!</p>
+      </div>
+    }
+  </div>
+
+  <!-- Completed Tasks Section -->
+  @if (completedTasks().length > 0) {
+    <div class="completed-section">
+      <button class="toggle-completed-btn" (click)="toggleCompletedSection()">
+        <mat-icon>{{ showCompleted() ? 'expand_more' : 'chevron_right' }}</mat-icon>
+        <span>Completed ({{ completedTasks().length }})</span>
+      </button>
+
+      @if (showCompleted()) {
+        <div class="task-list completed-list">
+          @for (task of completedTasks(); track task.id) {
+            <div class="task-item surface-card animate-slide-up completed">
+              <mat-checkbox [checked]="task.isCompleted" (change)="toggleTaskCompletion(task.id!)">
+              </mat-checkbox>
+              <div class="task-content">
+                <span class="task-title">{{ task.title }}</span>
+              </div>
+              <button mat-icon-button class="delete-btn" (click)="deleteTask(task.id!)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

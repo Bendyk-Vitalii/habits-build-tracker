@@ -1,4 +1,19 @@
 <div class="dashboard animate-fade-in">
+  @if (showReminder()) {
+    <div class="reminder-banner glass-card animate-slide-up">
+      <div class="reminder-banner__content">
+        <mat-icon class="pulse-icon">notifications_active</mat-icon>
+        <div class="text">
+          <strong>Time to build habits!</strong>
+          <span>You haven't logged any sessions today.</span>
+        </div>
+      </div>
+      <button mat-icon-button (click)="reminderDismissed.set(true)" aria-label="Dismiss">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+
   <!-- Greeting -->
   <header class="dashboard-header">
     <h1>{{ greeting() }} 👋</h1>

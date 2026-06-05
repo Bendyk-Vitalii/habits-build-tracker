@@ -4,10 +4,20 @@
   gap: var(--ht-spacing-md);
   padding-bottom: var(--ht-spacing-2xl);
   align-items: center;
+  min-height: 100vh;
+
+  @supports (min-height: 100dvh) {
+    min-height: 100dvh;
+  }
+
+  @supports (min-height: 100svh) {
+    min-height: 100svh;
+  }
 }
 
 .header {
   width: 100%;
+
   h1 {
     font-size: 1.5rem;
     font-weight: 700;
@@ -39,6 +49,7 @@
 
   mat-button-toggle {
     border: none;
+
     &.mat-button-toggle-checked {
       background: var(--ht-primary);
       color: var(--ht-on-primary);
@@ -63,10 +74,12 @@
       background: rgba(239, 83, 80, 0.2);
       color: #ef5350;
     }
+
     &[data-phase='shortBreak'] {
       background: rgba(102, 187, 106, 0.2);
       color: #66bb6a;
     }
+
     &[data-phase='longBreak'] {
       background: rgba(66, 165, 245, 0.2);
       color: #42a5f5;
@@ -112,6 +125,7 @@
     &.pomodoro {
       stroke: var(--ht-primary);
     }
+
     &.stopwatch {
       stroke: var(--ht-tertiary);
     }
@@ -140,6 +154,7 @@
 
   .main-btn {
     transform: scale(1.2);
+
     mat-icon {
       font-size: 32px;
       width: 32px;
@@ -159,4 +174,33 @@
 
 .full-width {
   width: 100%;
+}
+
+.date-stepper-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ht-surface-container);
+  border-radius: var(--ht-radius-md);
+  padding: var(--ht-spacing-xs) var(--ht-spacing-sm);
+  margin-bottom: var(--ht-spacing-sm);
+
+  .stepper-btn {
+    color: var(--ht-text-secondary);
+
+    &.hidden {
+      visibility: hidden;
+    }
+
+    &:not([disabled]):hover {
+      color: var(--ht-primary);
+      background: var(--ht-surface-container-high);
+    }
+  }
+
+  .current-date {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ht-text-primary);
+  }
 }
