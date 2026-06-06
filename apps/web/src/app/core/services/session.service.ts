@@ -1,95 +1,106 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Firestore, addDoc, deleteDoc, getDocs, query, where } from '@angular/fire/firestore';
 import { Session, SessionType } from '@habits-tracker/shared';
-import { db } from '../db/app.database';
+import { userCollection, userDoc } from '../db/firestore.helpers';
+import { AuthService } from './auth.service';
 
 /**
- * Manages session (work-log) entries stored in IndexedDB.
- *
- * Every time a user completes a pomodoro, manual entry, or stopwatch
- * session, a `Session` record is created through this service.
+ * Manages session (work-log) entries stored in Firestore.
  */
 @Injectable({ providedIn: 'root' })
 export class SessionService {
+  private firestore = inject(Firestore);
+  private authService = inject(AuthService);
+
   /**
    * Creates a new session record for a given activity.
-   * @param activityId  The activity this session belongs to.
-   * @param durationMinutes  How long the session lasted.
-   * @param type  Session type (pomodoro, manual, stopwatch).
-   * @param note  Optional free-text note.
-   * @param pomodorosCompleted  Optional pomodoro count.
-   * @param date  Optional ISO date "YYYY-MM-DD" for backdating. Defaults to today.
-   * @returns The id of the newly created session.
    */
   async logSession(
-    activityId: number,
+    activityId: string | number,
     durationMinutes: number,
     type: SessionType,
     note?: string,
     pomodorosCompleted?: number,
     date?: string,
-  ): Promise<number> {
-    const now = new Date();
-    const sessionDate = date || now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+  ): Promise<string> {
+    const uid = this.authService.uid();
+    if (!uid) throw new Error('Not authenticated');
 
-    const session: Session = {
-      activityId,
+    const now = new Date();
+    const sessionDate = date || now.toISOString().split('T')[0];
+
+    const session: Record<string, any> = {
+      activityId: String(activityId),
       date: sessionDate,
       durationMinutes,
       type,
       createdAt: now.toISOString(),
-      ...(note !== undefined && { note }),
-      ...(pomodorosCompleted !== undefined && { pomodorosCompleted }),
     };
+    if (note !== undefined) session['note'] = note;
+    if (pomodorosCompleted !== undefined) session['pomodorosCompleted'] = pomodorosCompleted;
 
-    const id = await db.sessions.add(session);
-    return id as number;
+    const col = userCollection(this.firestore, uid, 'sessions');
+    const docRef = await addDoc(col, session);
+    return docRef.id;
   }
 
   /**
    * Returns all sessions recorded on a specific date.
-   * @param date ISO date string "YYYY-MM-DD".
    */
   async getSessionsForDate(date: string): Promise<Session[]> {
-    return db.sessions.where('date').equals(date).toArray();
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'sessions');
+    const q = query(col, where('date', '==', date));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
   }
 
   /**
    * Returns all sessions within a date range (inclusive).
-   * @param startDate ISO date "YYYY-MM-DD".
-   * @param endDate   ISO date "YYYY-MM-DD".
    */
   async getSessionsForDateRange(startDate: string, endDate: string): Promise<Session[]> {
-    return db.sessions.where('date').between(startDate, endDate, true, true).toArray();
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'sessions');
+    const q = query(col, where('date', '>=', startDate), where('date', '<=', endDate));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
   }
 
   /**
    * Returns sessions for a specific activity, optionally filtered by date range.
-   * @param activityId Activity primary key.
-   * @param startDate  Optional lower bound "YYYY-MM-DD".
-   * @param endDate    Optional upper bound "YYYY-MM-DD".
    */
   async getSessionsForActivity(
-    activityId: number,
+    activityId: string | number,
     startDate?: string,
     endDate?: string,
   ): Promise<Session[]> {
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'sessions');
+    const constraints: any[] = [where('activityId', '==', String(activityId))];
+
     if (startDate && endDate) {
-      return db.sessions
-        .where('[activityId+date]')
-        .between([activityId, startDate], [activityId, endDate], true, true)
-        .toArray();
+      constraints.push(where('date', '>=', startDate));
+      constraints.push(where('date', '<=', endDate));
     }
 
-    return db.sessions.where('activityId').equals(activityId).toArray();
+    const q = query(col, ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
   }
 
   /**
    * Sums total minutes logged for an activity in a given week.
-   * @param activityId   Activity primary key.
-   * @param weekStartDate  Monday of the week "YYYY-MM-DD".
-   * @returns Total minutes for the week.
    */
-  async getTotalMinutesForWeek(activityId: number, weekStartDate: string): Promise<number> {
+  async getTotalMinutesForWeek(
+    activityId: string | number,
+    weekStartDate: string,
+  ): Promise<number> {
     const weekEnd = this.addDays(weekStartDate, 6);
     const sessions = await this.getSessionsForActivity(activityId, weekStartDate, weekEnd);
     return sessions.reduce((sum, s) => sum + s.durationMinutes, 0);
@@ -105,15 +116,16 @@ export class SessionService {
 
   /**
    * Hard-deletes a session by id.
-   * @param id Session primary key.
    */
-  async deleteSession(id: number): Promise<void> {
-    await db.sessions.delete(id);
+  async deleteSession(id: string | number): Promise<void> {
+    const uid = this.authService.uid();
+    if (!uid) return;
+    const docRef = userDoc(this.firestore, uid, 'sessions', String(id));
+    await deleteDoc(docRef);
   }
 
   // ── helpers ───────────────────────────────────────────────
 
-  /** Adds `days` to an ISO date string and returns the new ISO date string. */
   private addDays(date: string, days: number): string {
     const d = new Date(date + 'T00:00:00');
     d.setDate(d.getDate() + days);
