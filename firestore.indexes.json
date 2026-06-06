@@ -7,11 +7,6 @@
         { "fieldPath": "activityId", "order": "ASCENDING" },
         { "fieldPath": "date", "order": "ASCENDING" }
       ]
-    },
-    {
-      "collectionGroup": "sessions",
-      "queryScope": "COLLECTION",
-      "fields": [{ "fieldPath": "date", "order": "ASCENDING" }]
     }
   ],
   "fieldOverrides": []
