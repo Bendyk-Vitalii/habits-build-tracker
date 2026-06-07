@@ -1,6 +1,15 @@
 import { inject, Injectable } from '@angular/core';
+import {
+  Firestore,
+  setDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit as firestoreLimit,
+} from '@angular/fire/firestore';
 import { WeeklyReview, MonthlyReview } from '@habits-tracker/shared';
-import { db } from '../db/app.database';
+import { userCollection, userDoc } from '../db/firestore.helpers';
+import { AuthService } from './auth.service';
 import { SessionService } from './session.service';
 import { TrackingService } from './tracking.service';
 import { ActivityService } from './activity.service';
@@ -11,6 +20,8 @@ import { ActivityService } from './activity.service';
  */
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
+  private readonly firestore = inject(Firestore);
+  private readonly authService = inject(AuthService);
   private readonly sessionService = inject(SessionService);
   private readonly trackingService = inject(TrackingService);
   private readonly activityService = inject(ActivityService);
@@ -19,9 +30,6 @@ export class ReviewService {
 
   /**
    * Compiles statistics for a given week and returns a `WeeklyReview`.
-   * Does **not** persist automatically — call `saveWeeklyReview()` to store.
-   *
-   * @param weekStartDate Monday of the target week "YYYY-MM-DD".
    */
   async generateWeeklyReview(weekStartDate: string): Promise<WeeklyReview> {
     const weekEndDate = this.addDays(weekStartDate, 6);
@@ -31,7 +39,6 @@ export class ReviewService {
 
     const totalMinutes = sessions.reduce((sum, s) => sum + s.durationMinutes, 0);
 
-    // Count how many activities met their weekly goal
     let activitiesCompleted = 0;
     for (const activity of activities) {
       const mins = await this.sessionService.getTotalMinutesForWeek(activity.id!, weekStartDate);
@@ -57,43 +64,38 @@ export class ReviewService {
   }
 
   /**
-   * Persists a weekly review in IndexedDB.
-   * If one already exists for the same week, it is replaced.
-   *
-   * @param review The WeeklyReview to save.
+   * Persists a weekly review in Firestore using weekStartDate as doc ID.
    */
-  async saveWeeklyReview(review: WeeklyReview): Promise<number> {
-    const existing = await db.weeklyReviews
-      .where('weekStartDate')
-      .equals(review.weekStartDate)
-      .first();
+  async saveWeeklyReview(review: WeeklyReview): Promise<string> {
+    const uid = this.authService.uid();
+    if (!uid) throw new Error('Not authenticated');
 
-    if (existing) {
-      review.id = existing.id;
-    }
-
-    return (await db.weeklyReviews.put(review)) as number;
+    const { id, ...data } = review as any;
+    const docRef = userDoc(this.firestore, uid, 'weeklyReviews', review.weekStartDate);
+    await setDoc(docRef, data);
+    return review.weekStartDate;
   }
 
   /**
    * Returns past weekly reviews, most-recent first.
-   * @param limit Max number of reviews to return (default: all).
    */
   async getWeeklyReviews(limit?: number): Promise<WeeklyReview[]> {
-    let collection = db.weeklyReviews.orderBy('weekStartDate').reverse();
-    if (limit) {
-      collection = collection.limit(limit);
-    }
-    return collection.toArray();
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'weeklyReviews');
+    const constraints: any[] = [orderBy('weekStartDate', 'desc')];
+    if (limit) constraints.push(firestoreLimit(limit));
+
+    const q = query(col, ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as WeeklyReview);
   }
 
   // ── monthly reviews ───────────────────────────────────────
 
   /**
    * Compiles statistics for a given month and returns a `MonthlyReview`.
-   * Does **not** persist automatically — call `saveMonthlyReview()` to store.
-   *
-   * @param month Target month "YYYY-MM".
    */
   async generateMonthlyReview(month: string): Promise<MonthlyReview> {
     const startDate = `${month}-01`;
@@ -104,7 +106,6 @@ export class ReviewService {
     const totalMinutes = sessions.reduce((sum, s) => sum + s.durationMinutes, 0);
     const totalSessions = sessions.length;
 
-    // Compute weekly completion averages for the month
     const weekStarts = this.getWeekStartsInMonth(month);
     const activities = this.activityService.activities();
 
@@ -127,16 +128,14 @@ export class ReviewService {
 
     const averageWeeklyCompletion = weekCount > 0 ? Math.round(weeklyCompletionSum / weekCount) : 0;
 
-    // Streak data per activity
-    const streakData: Record<number, number> = {};
+    const streakData: Record<string, number> = {};
     for (const activity of activities) {
-      streakData[activity.id!] = await this.trackingService.getLongestStreak(activity.id!);
+      streakData[String(activity.id!)] = await this.trackingService.getLongestStreak(activity.id!);
     }
 
-    // Phase transitions (simple text entries)
     const phaseTransitions: string[] = [];
     for (const activity of activities) {
-      const activitySessions = sessions.filter((s) => s.activityId === activity.id);
+      const activitySessions = sessions.filter((s) => String(s.activityId) === String(activity.id));
       if (activitySessions.length > 0) {
         phaseTransitions.push(`${activity.name}: ${activity.currentPhase}`);
       }
@@ -154,54 +153,48 @@ export class ReviewService {
   }
 
   /**
-   * Persists a monthly review in IndexedDB.
-   * If one already exists for the same month, it is replaced.
-   *
-   * @param review The MonthlyReview to save.
+   * Persists a monthly review in Firestore using month as doc ID.
    */
-  async saveMonthlyReview(review: MonthlyReview): Promise<number> {
-    const existing = await db.monthlyReviews.where('month').equals(review.month).first();
+  async saveMonthlyReview(review: MonthlyReview): Promise<string> {
+    const uid = this.authService.uid();
+    if (!uid) throw new Error('Not authenticated');
 
-    if (existing) {
-      review.id = existing.id;
-    }
-
-    return (await db.monthlyReviews.put(review)) as number;
+    const { id, ...data } = review as any;
+    const docRef = userDoc(this.firestore, uid, 'monthlyReviews', review.month);
+    await setDoc(docRef, data);
+    return review.month;
   }
 
   /**
    * Returns past monthly reviews, most-recent first.
-   * @param limit Max number of reviews to return (default: all).
    */
   async getMonthlyReviews(limit?: number): Promise<MonthlyReview[]> {
-    let collection = db.monthlyReviews.orderBy('month').reverse();
-    if (limit) {
-      collection = collection.limit(limit);
-    }
-    return collection.toArray();
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'monthlyReviews');
+    const constraints: any[] = [orderBy('month', 'desc')];
+    if (limit) constraints.push(firestoreLimit(limit));
+
+    const q = query(col, ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as MonthlyReview);
   }
 
   // ── helpers ───────────────────────────────────────────────
 
-  /** Adds `days` to an ISO date string and returns the new ISO date string. */
   private addDays(date: string, days: number): string {
     const d = new Date(date + 'T00:00:00');
     d.setDate(d.getDate() + days);
     return d.toISOString().split('T')[0];
   }
 
-  /** Returns the last day of the given month "YYYY-MM" as "YYYY-MM-DD". */
   private lastDayOfMonth(month: string): string {
     const [year, mon] = month.split('-').map(Number);
-    // Day 0 of the next month = last day of this month
     const d = new Date(year, mon, 0);
     return d.toISOString().split('T')[0];
   }
 
-  /**
-   * Returns an array of Monday ISO dates for every week that overlaps
-   * with the given month.
-   */
   private getWeekStartsInMonth(month: string): string[] {
     const startDate = new Date(`${month}-01T00:00:00`);
     const lastDay = this.lastDayOfMonth(month);
@@ -210,7 +203,6 @@ export class ReviewService {
     const weeks: string[] = [];
     const current = new Date(startDate);
 
-    // Rewind to Monday of the first week
     const day = current.getDay();
     const diff = day === 0 ? -6 : 1 - day;
     current.setDate(current.getDate() + diff);

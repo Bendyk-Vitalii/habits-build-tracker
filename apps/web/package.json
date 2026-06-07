@@ -17,6 +17,7 @@
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",
+    "@angular/fire": "^20.0.1",
     "@angular/forms": "^21.2.0",
     "@angular/material": "^21.2.13",
     "@angular/platform-browser": "^21.2.0",
@@ -25,8 +26,8 @@
     "@angular/service-worker": "^21.2.0",
     "@angular/ssr": "^21.2.13",
     "chart.js": "^4.5.1",
-    "dexie": "^4.4.3",
     "express": "^5.1.0",
+    "firebase": "^12.14.0",
     "ng2-charts": "^10.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

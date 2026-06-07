@@ -6,6 +6,16 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MAT_ICON_DEFAULT_OPTIONS } from '@angular/material/icon';
+
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import {
+  provideFirestore,
+  getFirestore,
+  enableMultiTabIndexedDbPersistence,
+} from '@angular/fire/firestore';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+
+import { firebaseConfig } from '../environments/firebase.config';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -24,5 +34,17 @@ export const appConfig: ApplicationConfig = {
       provide: MAT_ICON_DEFAULT_OPTIONS,
       useValue: { fontSet: 'material-symbols-rounded' },
     },
+
+    // Firebase
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => {
+      const firestore = getFirestore();
+      // Enable offline persistence for PWA support
+      enableMultiTabIndexedDbPersistence(firestore).catch((err) => {
+        console.warn('Firestore persistence failed:', err.code);
+      });
+      return firestore;
+    }),
   ],
 };

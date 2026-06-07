@@ -1,8 +1,18 @@
-import { Injectable, Signal, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, Signal, PLATFORM_ID, inject, signal, effect } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { from, of } from 'rxjs';
-import { liveQuery } from 'dexie';
+import {
+  Firestore,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  writeBatch,
+  doc,
+} from '@angular/fire/firestore';
 import {
   Activity,
   HabitPhase,
@@ -10,10 +20,11 @@ import {
   SCIENCE_THRESHOLDS,
   getPhaseForDays,
 } from '@habits-tracker/shared';
-import { db } from '../db/app.database';
+import { userCollection, userDoc } from '../db/firestore.helpers';
+import { AuthService } from './auth.service';
 
 /**
- * Manages activities (habits) stored in IndexedDB.
+ * Manages activities (habits) stored in Firestore.
  *
  * Enforces science-backed limits such as max 3 establishing habits
  * and provides phase-transition logic.
@@ -21,107 +32,144 @@ import { db } from '../db/app.database';
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
   private platformId = inject(PLATFORM_ID);
+  private firestore = inject(Firestore);
+  private authService = inject(AuthService);
+
+  private _activities = signal<Activity[]>([]);
+  private unsubscribe: (() => void) | null = null;
 
   /** Reactive signal of all non-archived activities, ordered by `order`. */
-  readonly activities: Signal<Activity[]> = toSignal(
-    isPlatformBrowser(this.platformId)
-      ? from(liveQuery(() => db.activities.where('isArchived').equals(0).sortBy('order')))
-      : of([]),
-    { initialValue: [] },
-  );
+  readonly activities: Signal<Activity[]> = this._activities.asReadonly();
+
+  constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      effect(() => {
+        const uid = this.authService.uid();
+        if (!uid) return;
+
+        // Clean up previous listener
+        this.unsubscribe?.();
+
+        const col = userCollection(this.firestore, uid, 'activities');
+        const q = query(col, where('isArchived', '==', 0), orderBy('order'));
+
+        this.unsubscribe = onSnapshot(q, (snapshot) => {
+          const items = snapshot.docs.map((d) => ({
+            ...d.data(),
+            id: d.id,
+          })) as unknown as Activity[];
+          this._activities.set(items);
+        });
+      });
+    }
+  }
 
   /**
    * Returns a single activity by id.
-   * @param id Activity primary key.
    */
-  async getActivity(id: number): Promise<Activity | undefined> {
-    return db.activities.get(id);
+  async getActivity(id: string | number): Promise<Activity | undefined> {
+    const uid = this.authService.uid();
+    if (!uid) return undefined;
+    const col = userCollection(this.firestore, uid, 'activities');
+    const snapshot = await getDocs(col);
+    const docSnap = snapshot.docs.find((d) => d.id === String(id));
+    if (!docSnap) return undefined;
+    return { ...docSnap.data(), id: docSnap.id } as unknown as Activity;
   }
 
   /**
    * Creates a new activity.
-   *
-   * Enforces the max-establishing-habits limit (3) from `SCIENCE_THRESHOLDS`.
-   * @param data Activity data (without `id`, `createdAt`).
-   * @throws Error when the establishing-phase limit would be exceeded.
    */
-  async addActivity(data: Omit<Activity, 'id' | 'createdAt'>): Promise<number> {
+  async addActivity(data: Omit<Activity, 'id' | 'createdAt'>): Promise<string> {
+    const uid = this.authService.uid();
+    if (!uid) throw new Error('Not authenticated');
+
     if (data.currentPhase === HabitPhase.Establishing) {
-      const establishingCount = await db.activities
-        .where('isArchived')
-        .equals(0)
-        .filter((a) => a.currentPhase === HabitPhase.Establishing)
-        .count();
+      const activities = this._activities();
+      const establishingCount = activities.filter(
+        (a) => a.currentPhase === HabitPhase.Establishing,
+      ).length;
 
       if (establishingCount >= SCIENCE_THRESHOLDS.limits.maxEstablishingHabits) {
         throw new Error(
-          `Cannot add more than ${SCIENCE_THRESHOLDS.limits.maxEstablishingHabits} establishing habits at once. ` +
-            `Wait until an existing habit transitions to the Forming phase.`,
+          `Cannot add more than ${SCIENCE_THRESHOLDS.limits.maxEstablishingHabits} establishing habits at once.`,
         );
       }
     }
 
-    const id = await db.activities.add({
+    const col = userCollection(this.firestore, uid, 'activities');
+    const docRef = await addDoc(col, {
       ...data,
       createdAt: new Date().toISOString(),
-    } as Activity);
+    });
 
-    return id as number;
+    return docRef.id;
   }
 
   /**
    * Partially updates an existing activity.
-   * @param id Activity primary key.
-   * @param data Fields to update.
    */
-  async updateActivity(id: number, data: Partial<Activity>): Promise<void> {
-    await db.activities.update(id, data);
+  async updateActivity(id: string | number, data: Partial<Activity>): Promise<void> {
+    const uid = this.authService.uid();
+    if (!uid) return;
+    const docRef = userDoc(this.firestore, uid, 'activities', String(id));
+    await updateDoc(docRef, data as Record<string, any>);
   }
 
   /**
    * Soft-deletes an activity by setting `isArchived` to true.
-   * @param id Activity primary key.
    */
-  async archiveActivity(id: number): Promise<void> {
-    await db.activities.update(id, { isArchived: 1 });
+  async archiveActivity(id: string | number): Promise<void> {
+    await this.updateActivity(id, { isArchived: 1 } as any);
   }
 
   /**
    * Hard-deletes an activity and all associated sessions.
-   * @param id Activity primary key.
    */
-  async deleteActivity(id: number): Promise<void> {
-    await db.transaction('rw', [db.activities, db.sessions], async () => {
-      await db.sessions.where('activityId').equals(id).delete();
-      await db.activities.delete(id);
-    });
+  async deleteActivity(id: string | number): Promise<void> {
+    const uid = this.authService.uid();
+    if (!uid) return;
+
+    // Delete all sessions for this activity
+    const sessionsCol = userCollection(this.firestore, uid, 'sessions');
+    const q = query(sessionsCol, where('activityId', '==', String(id)));
+    const snapshot = await getDocs(q);
+    const batch = writeBatch(this.firestore);
+    snapshot.docs.forEach((d) => batch.delete(d.ref));
+
+    // Delete the activity itself
+    const activityRef = userDoc(this.firestore, uid, 'activities', String(id));
+    batch.delete(activityRef);
+
+    await batch.commit();
   }
 
   /**
    * Batch-updates the `order` field for a list of activity ids.
-   * @param orderedIds Ordered array of activity ids.
    */
-  async reorderActivities(orderedIds: number[]): Promise<void> {
-    await db.transaction('rw', db.activities, async () => {
-      for (let i = 0; i < orderedIds.length; i++) {
-        await db.activities.update(orderedIds[i], { order: i });
-      }
-    });
+  async reorderActivities(orderedIds: (string | number)[]): Promise<void> {
+    const uid = this.authService.uid();
+    if (!uid) return;
+
+    const batch = writeBatch(this.firestore);
+    for (let i = 0; i < orderedIds.length; i++) {
+      const docRef = userDoc(this.firestore, uid, 'activities', String(orderedIds[i]));
+      batch.update(docRef, { order: i });
+    }
+    await batch.commit();
   }
 
   /**
-   * Recalculates and persists the current phase for an activity
-   * based on its `consecutiveDays` value.
-   * @param id Activity primary key.
+   * Recalculates and persists the current phase for an activity.
    */
-  async updatePhase(id: number): Promise<void> {
-    const activity = await db.activities.get(id);
+  async updatePhase(id: string | number): Promise<void> {
+    const activity = await this.getActivity(id);
     if (!activity) return;
 
     const newPhase = getPhaseForDays(activity.consecutiveDays);
 
     if (newPhase !== activity.currentPhase) {
-      await db.activities.update(id, {
+      await this.updateActivity(id, {
         currentPhase: newPhase,
         phaseStartDate: new Date().toISOString().split('T')[0],
       });
@@ -130,46 +178,29 @@ export class ActivityService {
 
   /**
    * Seeds the database with `DEFAULT_ACTIVITIES` if no activities exist.
-   * Sets `createdAt` and `phaseStartDate` to the current timestamp.
    */
   async seedDefaultActivities(): Promise<void> {
-    const count = await db.activities.count();
+    const uid = this.authService.uid();
+    if (!uid) return;
 
-    // Auto-heal logic for users who already seeded the old 4 establishing activities
-    if (count === 4) {
-      const establishingCount = await db.activities
-        .filter((a) => a.currentPhase === HabitPhase.Establishing)
-        .count();
-      if (establishingCount === 4) {
-        const leetcode = await db.activities.where('name').equals('LeetCode').first();
-        if (leetcode) {
-          await db.activities.update(leetcode.id!, {
-            currentPhase: HabitPhase.Forming,
-            consecutiveDays: 30,
-          });
-        }
-        const mongodb = await db.activities.where('name').equals('MongoDB Tasks').first();
-        if (mongodb) {
-          await db.activities.update(mongodb.id!, {
-            currentPhase: HabitPhase.Established,
-            consecutiveDays: 70,
-          });
-        }
-      }
-    }
+    const col = userCollection(this.firestore, uid, 'activities');
+    const snapshot = await getDocs(col);
 
-    if (count > 0) return;
+    if (snapshot.size > 0) return;
 
     const now = new Date().toISOString();
     const today = now.split('T')[0];
 
-    const activitiesToSeed: Activity[] = DEFAULT_ACTIVITIES.map((a) => ({
-      ...a,
-      consecutiveDays: a.consecutiveDays ?? 0,
-      createdAt: now,
-      phaseStartDate: today,
-    })) as Activity[];
-
-    await db.activities.bulkAdd(activitiesToSeed);
+    const batch = writeBatch(this.firestore);
+    for (const a of DEFAULT_ACTIVITIES) {
+      const docRef = doc(col);
+      batch.set(docRef, {
+        ...a,
+        consecutiveDays: a.consecutiveDays ?? 0,
+        createdAt: now,
+        phaseStartDate: today,
+      });
+    }
+    await batch.commit();
   }
 }
