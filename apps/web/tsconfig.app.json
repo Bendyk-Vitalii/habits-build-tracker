@@ -6,10 +6,10 @@
     "outDir": "./out-tsc/app",
     "types": ["node"],
     "paths": {
-      "@habits-tracker/shared": ["../../packages/shared/src/index.ts"],
-      "@habits-tracker/shared/*": ["../../packages/shared/src/*"]
+      "@habits-tracker/shared": ["../../packages/shared/dist/index"],
+      "@habits-tracker/shared/*": ["../../packages/shared/dist/*"]
     }
   },
-  "include": ["src/**/*.ts", "../../packages/shared/src/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.spec.ts"]
 }
