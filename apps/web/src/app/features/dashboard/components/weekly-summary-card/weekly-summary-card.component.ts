@@ -1,9 +1,11 @@
-import { Component, Input, computed } from '@angular/core';
+import { Component, Input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Activity } from '@habits-tracker/shared';
 import { DurationPipe } from '../../../../shared/pipes/duration.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-weekly-summary-card',
   standalone: true,
   imports: [CommonModule, DurationPipe],

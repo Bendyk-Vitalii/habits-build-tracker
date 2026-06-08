@@ -1,4 +1,4 @@
-import { Component, Input, computed } from '@angular/core';
+import { Component, Input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Activity } from '@habits-tracker/shared';
 import { RelativeDatePipe } from '../../../../shared/pipes/relative-date.pipe';
@@ -8,6 +8,8 @@ interface GoalActivity extends Activity {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-goals-overview',
   standalone: true,
   imports: [CommonModule, RelativeDatePipe],

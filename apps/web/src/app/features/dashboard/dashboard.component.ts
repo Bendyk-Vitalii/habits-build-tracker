@@ -1,4 +1,11 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,9 +20,11 @@ import { ActivityService } from '../../core/services/activity.service';
 import { SessionService } from '../../core/services/session.service';
 import { TrackingService } from '../../core/services/tracking.service';
 import { SettingsService } from '../../core/services/settings.service';
-import { Activity, Session } from '@habits-tracker/shared';
+import { Session } from '@habits-tracker/shared';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-dashboard',
   standalone: true,
   imports: [

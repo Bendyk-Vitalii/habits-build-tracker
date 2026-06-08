@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
@@ -14,6 +14,8 @@ import { NotificationService } from '../../core/services/notification.service';
 import { AppSettings, DEFAULT_SETTINGS } from '@habits-tracker/shared';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-settings',
   standalone: true,
   imports: [

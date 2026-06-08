@@ -1,10 +1,12 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AiSuggestionService } from '../../../../core/services/ai-suggestion.service';
 import { AiSuggestResponse } from '@habits-tracker/shared';
 import { MatRippleModule } from '@angular/material/core';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-ai-insight-card',
   standalone: true,
   imports: [CommonModule, MatRippleModule],

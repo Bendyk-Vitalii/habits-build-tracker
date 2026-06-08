@@ -4,7 +4,6 @@ import {
   Firestore,
   addDoc,
   updateDoc,
-  deleteDoc,
   getDocs,
   query,
   where,

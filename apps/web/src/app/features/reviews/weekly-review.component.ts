@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,8 @@ import { AiInsightCardComponent } from '../dashboard/components/ai-insight-card/
 import { WeeklyReview } from '@habits-tracker/shared';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-weekly-review',
   standalone: true,
   imports: [

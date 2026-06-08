@@ -1,10 +1,9 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { Activity, Session } from '@habits-tracker/shared';
+import { ChartConfiguration, ChartData } from 'chart.js';
 import { ActivityService } from '../../core/services/activity.service';
 import { SessionService } from '../../core/services/session.service';
 import { TrackingService } from '../../core/services/tracking.service';
@@ -12,6 +11,8 @@ import { TrackingService } from '../../core/services/tracking.service';
 type ProgressView = 'weekly' | 'monthly';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-progress',
   standalone: true,
   imports: [CommonModule, FormsModule, MatButtonToggleModule, BaseChartDirective],

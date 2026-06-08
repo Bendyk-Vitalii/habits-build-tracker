@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -11,6 +11,8 @@ import { Activity, ActivityCategory, HabitPhase } from '@habits-tracker/shared';
 import { ActivityService } from '../../../../core/services/activity.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-activity-form',
   standalone: true,
   imports: [

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,12 +10,12 @@ import { SessionService } from '../../core/services/session.service';
 import { TrackingService } from '../../core/services/tracking.service';
 import { ActivityFormComponent } from './components/activity-form/activity-form.component';
 import { PhaseBadgeComponent } from '../../shared/components/phase-badge/phase-badge.component';
-import { StreakCounterComponent } from '../../shared/components/streak-counter/streak-counter.component';
-import { ProgressRingComponent } from '../../shared/components/progress-ring/progress-ring.component';
 import { DurationPipe } from '../../shared/pipes/duration.pipe';
 import { RelativeDatePipe } from '../../shared/pipes/relative-date.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-activity-detail',
   standalone: true,
   imports: [

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Activity } from '@habits-tracker/shared';
@@ -6,6 +6,8 @@ import { PhaseBadgeComponent } from '../../../../shared/components/phase-badge/p
 import { StreakCounterComponent } from '../../../../shared/components/streak-counter/streak-counter.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-activity-card',
   standalone: true,
   imports: [CommonModule, RouterLink, PhaseBadgeComponent, StreakCounterComponent],
