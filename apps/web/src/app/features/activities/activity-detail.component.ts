@@ -49,12 +49,12 @@ export class ActivityDetailComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
-        this.loadData(Number(id));
+        this.loadData(id);
       }
     });
   }
 
-  async loadData(id: number): Promise<void> {
+  async loadData(id: string | number): Promise<void> {
     const act = await this.activityService.getActivity(id);
     if (!act) {
       this.router.navigate(['/activities']);
