@@ -1,7 +1,9 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { HabitPhase, getPhaseDefinition, getPhaseProgress } from '@habits-tracker/shared';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-phase-badge',
   standalone: true,
   templateUrl: './phase-badge.component.html',

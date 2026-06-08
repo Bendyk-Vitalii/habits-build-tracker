@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,16 +10,15 @@ import { SessionService } from '../../core/services/session.service';
 import { TrackingService } from '../../core/services/tracking.service';
 import { ActivityFormComponent } from './components/activity-form/activity-form.component';
 import { PhaseBadgeComponent } from '../../shared/components/phase-badge/phase-badge.component';
-import { StreakCounterComponent } from '../../shared/components/streak-counter/streak-counter.component';
-import { ProgressRingComponent } from '../../shared/components/progress-ring/progress-ring.component';
 import { DurationPipe } from '../../shared/pipes/duration.pipe';
 import { RelativeDatePipe } from '../../shared/pipes/relative-date.pipe';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-activity-detail',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     MatButtonModule,
     MatIconModule,
@@ -49,12 +48,12 @@ export class ActivityDetailComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
-        this.loadData(Number(id));
+        this.loadData(id);
       }
     });
   }
 
-  async loadData(id: number): Promise<void> {
+  async loadData(id: string | number): Promise<void> {
     const act = await this.activityService.getActivity(id);
     if (!act) {
       this.router.navigate(['/activities']);

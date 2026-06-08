@@ -1,12 +1,21 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  signal,
+  computed,
+  effect,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { Activity, SessionType } from '@habits-tracker/shared';
+import { SessionType } from '@habits-tracker/shared';
 import { ActivityService } from '../../core/services/activity.service';
 import { SessionService } from '../../core/services/session.service';
 import { SettingsService } from '../../core/services/settings.service';
@@ -15,10 +24,11 @@ type TimerMode = 'pomodoro' | 'stopwatch' | 'manual';
 type PomodoroPhase = 'work' | 'shortBreak' | 'longBreak';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-timer',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatIconModule,

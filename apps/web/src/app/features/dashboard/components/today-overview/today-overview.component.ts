@@ -1,7 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+
 import { RouterLink } from '@angular/router';
-import { StreakCounterComponent } from '../../../../shared/components/streak-counter/streak-counter.component';
 import { PhaseBadgeComponent } from '../../../../shared/components/phase-badge/phase-badge.component';
 
 interface ActivityWithProgress {
@@ -17,9 +16,11 @@ interface ActivityWithProgress {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-today-overview',
   standalone: true,
-  imports: [CommonModule, RouterLink, PhaseBadgeComponent],
+  imports: [RouterLink, PhaseBadgeComponent],
   templateUrl: './today-overview.component.html',
   styleUrl: './today-overview.component.scss',
 })

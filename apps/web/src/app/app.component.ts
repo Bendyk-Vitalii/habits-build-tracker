@@ -1,4 +1,11 @@
-import { Component, OnInit, inject, PLATFORM_ID, effect } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  PLATFORM_ID,
+  effect,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ShellComponent } from './layout/shell.component';
 import { ActivityService } from './core/services/activity.service';
@@ -7,6 +14,8 @@ import { PwaUpdateService } from './core/services/pwa-update.service';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-root',
   standalone: true,
   imports: [ShellComponent],

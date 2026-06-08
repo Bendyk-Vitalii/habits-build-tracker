@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,10 +11,11 @@ import { Activity, ActivityCategory, HabitPhase } from '@habits-tracker/shared';
 import { ActivityService } from '../../../../core/services/activity.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-activity-form',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
@@ -27,6 +28,9 @@ import { ActivityService } from '../../../../core/services/activity.service';
   styleUrl: './activity-form.component.scss',
 })
 export class ActivityFormComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<ActivityFormComponent>>(MatDialogRef);
+  data = inject<Activity | null>(MAT_DIALOG_DATA);
+
   private fb = inject(FormBuilder);
   private activityService = inject(ActivityService);
 
@@ -46,10 +50,9 @@ export class ActivityFormComponent implements OnInit {
     '#FFEB3B', // Yellow
   ];
 
-  constructor(
-    public dialogRef: MatDialogRef<ActivityFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Activity | null,
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.isEditMode = !!data;
   }
 

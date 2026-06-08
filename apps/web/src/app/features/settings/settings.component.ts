@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -14,10 +14,11 @@ import { NotificationService } from '../../core/services/notification.service';
 import { AppSettings, DEFAULT_SETTINGS } from '@habits-tracker/shared';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
   selector: 'ht-settings',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatDividerModule,
     MatSlideToggleModule,
