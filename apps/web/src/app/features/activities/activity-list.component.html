@@ -21,10 +21,12 @@
           </div>
           <ht-activity-card
             class="card-wrapper"
+            [routerLink]="['/activities', activity.id]"
             [activity]="activity"
             [streak]="activityStats()[activity.id!]?.streak || 0"
             [weeklyMinutes]="activityStats()[activity.id!]?.weeklyMinutes || 0"
             [weeklyGoal]="activity.weeklyGoalMinutes"
+            style="cursor: pointer"
           />
         </div>
       }
