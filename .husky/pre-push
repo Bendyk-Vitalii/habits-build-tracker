@@ -3,6 +3,9 @@
 
 echo "Checking for touched packages to build before push..."
 
+echo "Running linter..."
+npm run lint -w @habits-tracker/web || { echo "Lint failed! Please fix lint errors before pushing."; exit 1; }
+
 # Find files changed between current HEAD and origin/main
 # If origin/main doesn't exist, fallback to all changes
 CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null || git diff --name-only HEAD)

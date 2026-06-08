@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -19,7 +19,6 @@ import { AppSettings, DEFAULT_SETTINGS } from '@habits-tracker/shared';
   selector: 'ht-settings',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatDividerModule,
     MatSlideToggleModule,

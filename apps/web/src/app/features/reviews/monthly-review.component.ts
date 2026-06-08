@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -12,7 +12,7 @@ import { MonthlyReview } from '@habits-tracker/shared';
 
   selector: 'ht-monthly-review',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatInputModule, MatIconModule],
+  imports: [FormsModule, MatButtonModule, MatInputModule, MatIconModule],
   templateUrl: './monthly-review.component.html',
   styleUrl: './monthly-review.component.scss',
 })

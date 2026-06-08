@@ -6,7 +6,7 @@ import {
   computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +28,6 @@ import { Session } from '@habits-tracker/shared';
   selector: 'ht-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     MatButtonModule,
     MatIconModule,

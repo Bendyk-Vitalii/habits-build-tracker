@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { PhaseBadgeComponent } from '../../../../shared/components/phase-badge/phase-badge.component';
 
@@ -20,7 +20,7 @@ interface ActivityWithProgress {
 
   selector: 'ht-today-overview',
   standalone: true,
-  imports: [CommonModule, RouterLink, PhaseBadgeComponent],
+  imports: [RouterLink, PhaseBadgeComponent],
   templateUrl: './today-overview.component.html',
   styleUrl: './today-overview.component.scss',
 })

@@ -1,5 +1,5 @@
 import { Component, Input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Activity } from '@habits-tracker/shared';
 import { DurationPipe } from '../../../../shared/pipes/duration.pipe';
 
@@ -8,7 +8,7 @@ import { DurationPipe } from '../../../../shared/pipes/duration.pipe';
 
   selector: 'ht-weekly-summary-card',
   standalone: true,
-  imports: [CommonModule, DurationPipe],
+  imports: [DurationPipe],
   templateUrl: './weekly-summary-card.component.html',
   styleUrl: './weekly-summary-card.component.scss',
 })

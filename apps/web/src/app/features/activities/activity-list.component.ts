@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,7 +18,6 @@ import { Activity } from '@habits-tracker/shared';
   selector: 'ht-activity-list',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     MatButtonModule,
     MatIconModule,

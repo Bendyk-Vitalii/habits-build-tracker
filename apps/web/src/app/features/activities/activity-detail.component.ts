@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +19,6 @@ import { RelativeDatePipe } from '../../shared/pipes/relative-date.pipe';
   selector: 'ht-activity-detail',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     MatButtonModule,
     MatIconModule,

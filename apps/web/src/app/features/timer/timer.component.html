@@ -11,12 +11,14 @@
       (ngModelChange)="selectedActivityId.set($event)"
       [disabled]="isRunning()"
     >
-      <mat-option *ngFor="let act of activities()" [value]="act.id">
-        <div class="activity-option">
-          <mat-icon [style.color]="act.color">{{ act.icon }}</mat-icon>
-          <span>{{ act.name }}</span>
-        </div>
-      </mat-option>
+      @for (act of activities(); track act) {
+        <mat-option [value]="act.id">
+          <div class="activity-option">
+            <mat-icon [style.color]="act.color">{{ act.icon }}</mat-icon>
+            <span>{{ act.name }}</span>
+          </div>
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 

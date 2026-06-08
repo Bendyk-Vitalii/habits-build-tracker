@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { Activity } from '@habits-tracker/shared';
 import { PhaseBadgeComponent } from '../../../../shared/components/phase-badge/phase-badge.component';
@@ -10,15 +10,15 @@ import { StreakCounterComponent } from '../../../../shared/components/streak-cou
 
   selector: 'ht-activity-card',
   standalone: true,
-  imports: [CommonModule, RouterLink, PhaseBadgeComponent, StreakCounterComponent],
+  imports: [RouterLink, PhaseBadgeComponent, StreakCounterComponent],
   templateUrl: './activity-card.component.html',
   styleUrl: './activity-card.component.scss',
 })
 export class ActivityCardComponent {
   @Input({ required: true }) activity!: Activity;
-  @Input() streak: number = 0;
-  @Input() weeklyMinutes: number = 0;
-  @Input() weeklyGoal: number = 0;
+  @Input() streak = 0;
+  @Input() weeklyMinutes = 0;
+  @Input() weeklyGoal = 0;
 
   get progressPercent(): number {
     if (!this.weeklyGoal) return 0;
