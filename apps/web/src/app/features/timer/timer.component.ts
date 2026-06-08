@@ -140,6 +140,9 @@ export class TimerComponent implements OnInit, OnDestroy {
     }
   }
 
+  private targetEndTimeMs = 0;
+  private stopwatchStartTimeMs = 0;
+
   startTimer(): void {
     if (!this.selectedActivityId()) {
       alert('Please select an activity first');
@@ -149,16 +152,28 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.isRunning.set(true);
     this.requestWakeLock();
 
+    const now = Date.now();
+    if (this.mode() === 'pomodoro') {
+      this.targetEndTimeMs = now + this.timeRemainingSeconds() * 1000;
+    } else if (this.mode() === 'stopwatch') {
+      this.stopwatchStartTimeMs = now - this.stopwatchElapsedSeconds() * 1000;
+    }
+
     this.intervalId = setInterval(() => {
+      const currentTime = Date.now();
+
       if (this.mode() === 'pomodoro') {
-        this.timeRemainingSeconds.update((t) => t - 1);
+        const remaining = Math.round((this.targetEndTimeMs - currentTime) / 1000);
+        this.timeRemainingSeconds.set(Math.max(0, remaining));
+
         if (this.timeRemainingSeconds() <= 0) {
           this.handlePomodoroPhaseComplete();
         }
       } else if (this.mode() === 'stopwatch') {
-        this.stopwatchElapsedSeconds.update((t) => t + 1);
+        const elapsed = Math.round((currentTime - this.stopwatchStartTimeMs) / 1000);
+        this.stopwatchElapsedSeconds.set(elapsed);
       }
-    }, 1000);
+    }, 500); // Check more frequently to prevent visual skipping
   }
 
   pauseTimer(): void {
