@@ -1,0 +1,77 @@
+<div class="session-container animate-fade-in">
+  @if (topic(); as t) {
+    <!-- Back Button -->
+    <button mat-icon-button class="back-btn" (click)="goBack()" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <!-- Topic Header -->
+    <div class="topic-header">
+      <div class="topic-icon" [style.background]="t.color + '22'" [style.color]="t.color">
+        <span class="material-symbols-rounded">{{ t.icon }}</span>
+      </div>
+      <h2>{{ t.name }}</h2>
+      <p class="topic-subtitle">Learning session in progress</p>
+    </div>
+
+    <!-- Timer Display -->
+    <div class="timer-display">
+      <div class="timer-circle">
+        <svg class="progress-ring" width="260" height="260">
+          <circle
+            class="progress-ring__background"
+            stroke-width="6"
+            fill="transparent"
+            r="124"
+            cx="130"
+            cy="130"
+          />
+          <circle
+            class="progress-ring__circle"
+            stroke-width="6"
+            fill="transparent"
+            r="124"
+            cx="130"
+            cy="130"
+            [attr.stroke-dasharray]="124 * 2 * Math.PI"
+            [attr.stroke-dashoffset]="
+              124 * 2 * Math.PI - (progressPercent() / 100) * (124 * 2 * Math.PI)
+            "
+            [style.stroke]="t.color"
+          />
+        </svg>
+        <div class="timer-text">{{ formattedTime() }}</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button
+        mat-icon-button
+        class="control-btn secondary"
+        (click)="finishEarly()"
+        aria-label="Finish early"
+      >
+        <mat-icon>stop</mat-icon>
+      </button>
+
+      <button mat-fab [style.background]="t.color" class="main-btn" (click)="toggleTimer()">
+        <mat-icon>{{ isRunning() ? 'pause' : 'play_arrow' }}</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        class="control-btn secondary"
+        (click)="extendTime()"
+        aria-label="Extend time by 5 minutes"
+      >
+        <mat-icon>more_time</mat-icon>
+      </button>
+    </div>
+
+    <!-- Extend Info -->
+    <p class="extend-hint">
+      Tap <span class="material-symbols-rounded inline-icon">more_time</span> to add 5 minutes
+    </p>
+  }
+</div>

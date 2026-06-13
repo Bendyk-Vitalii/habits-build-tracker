@@ -1,0 +1,116 @@
+.session-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ht-spacing-lg);
+  padding-bottom: var(--ht-spacing-2xl);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.back-btn {
+  align-self: flex-start;
+  color: var(--ht-text-secondary);
+}
+
+.topic-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ht-spacing-sm);
+  text-align: center;
+}
+
+.topic-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--ht-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-symbols-rounded {
+    font-size: 32px;
+  }
+}
+
+.topic-subtitle {
+  font-size: 0.875rem;
+  color: var(--ht-text-secondary);
+}
+
+.timer-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: var(--ht-spacing-md) 0;
+}
+
+.timer-circle {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+
+  &__background {
+    stroke: var(--ht-surface-container-highest);
+  }
+
+  &__circle {
+    transition: stroke-dashoffset 1s linear;
+    stroke-linecap: round;
+  }
+}
+
+.timer-text {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--ht-text-primary);
+  z-index: 1;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--ht-spacing-xl);
+  margin-top: var(--ht-spacing-md);
+
+  .control-btn {
+    transform: scale(1.5);
+    background: var(--ht-surface-container-high);
+    color: var(--ht-text-primary);
+  }
+
+  .main-btn {
+    transform: scale(1.2);
+    color: var(--ht-on-primary);
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
+.extend-hint {
+  font-size: 0.75rem;
+  color: var(--ht-text-disabled);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .inline-icon {
+    font-size: 16px;
+  }
+}

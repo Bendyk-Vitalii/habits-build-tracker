@@ -1,0 +1,55 @@
+<div class="learning-container animate-fade-in">
+  <div class="header">
+    <div class="header__text">
+      <h1>Learn</h1>
+      <p>Pick a topic and learn for 10–15 min</p>
+    </div>
+    <button mat-mini-fab color="primary" (click)="openAddDialog()" aria-label="Add topic">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <!-- Topic Grid -->
+  <div class="topic-grid">
+    @for (topic of topics(); track topic.id) {
+      <ht-topic-card
+        [topic]="topic"
+        [totalMinutes]="topicMinutes()[topic.id!] || 0"
+        (startSession)="startSession(topic.id!)"
+        (edit)="openEditDialog(topic.id!)"
+      />
+    }
+  </div>
+
+  @if (topics().length === 0) {
+    <div class="empty-state glass-card">
+      <span class="material-symbols-rounded empty-state__icon">school</span>
+      <p>No learning topics yet</p>
+      <button mat-flat-button color="primary" (click)="openAddDialog()">
+        Add your first topic
+      </button>
+    </div>
+  }
+
+  <!-- Recent Sessions -->
+  @if (recentSessions().length > 0) {
+    <div class="recent-section">
+      <h3>Recent Sessions</h3>
+      <div class="session-list">
+        @for (session of recentSessions(); track session.id) {
+          <div class="session-item glass-card">
+            <div class="session-item__info">
+              <span class="session-item__topic">{{ session.topicName }}</span>
+              <span class="session-item__meta"
+                >{{ session.durationMinutes }}min · {{ session.date }}</span
+              >
+            </div>
+            @if (session.rating) {
+              <ht-star-rating [rating]="session.rating" [readonly]="true" />
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

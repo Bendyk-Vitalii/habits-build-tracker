@@ -47,6 +47,18 @@ export const routes: Routes = [
       import('./features/reviews/monthly-review.component').then((m) => m.MonthlyReviewComponent),
   },
   {
+    path: 'learn',
+    loadComponent: () =>
+      import('./features/learning/learning.component').then((m) => m.LearningComponent),
+  },
+  {
+    path: 'learn/session/:topicId',
+    loadComponent: () =>
+      import('./features/learning/learning-session.component').then(
+        (m) => m.LearningSessionComponent,
+      ),
+  },
+  {
     path: 'settings',
     loadComponent: () =>
       import('./features/settings/settings.component').then((m) => m.SettingsComponent),
