@@ -1,0 +1,13 @@
+<div class="star-rating" [class.readonly]="readonly()">
+  @for (star of stars; track star) {
+    <mat-icon
+      class="star"
+      [class.filled]="star <= displayRating()"
+      (mouseenter)="onHover(star)"
+      (mouseleave)="onLeave()"
+      (click)="onSelect(star)"
+    >
+      {{ star <= displayRating() ? 'star' : 'star_border' }}
+    </mat-icon>
+  }
+</div>
