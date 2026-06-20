@@ -21,6 +21,32 @@
       font-size: 0.875rem;
     }
   }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-spacing-sm);
+
+    .saved-btn {
+      border-radius: 20px;
+      height: 40px;
+      padding: 0 16px;
+
+      mat-icon {
+        margin-right: 4px;
+      }
+
+      .saved-count {
+        margin-left: 6px;
+        background: var(--ht-primary);
+        color: var(--ht-on-primary);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+    }
+  }
 }
 
 .topic-grid {

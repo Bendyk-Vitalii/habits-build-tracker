@@ -10,6 +10,12 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Icon</mat-label>
       <mat-select formControlName="icon">
+        <mat-select-trigger>
+          <div class="icon-option" style="display: flex; align-items: center; gap: 8px">
+            <mat-icon>{{ form.get('icon')?.value }}</mat-icon>
+            <span>{{ form.get('icon')?.value }}</span>
+          </div>
+        </mat-select-trigger>
         @for (icon of iconOptions; track icon) {
           <mat-option [value]="icon">
             <div class="icon-option">

@@ -4,15 +4,6 @@
   gap: var(--ht-spacing-md);
   padding-bottom: var(--ht-spacing-2xl);
   align-items: center;
-  min-height: 100vh;
-
-  @supports (min-height: 100dvh) {
-    min-height: 100dvh;
-  }
-
-  @supports (min-height: 100svh) {
-    min-height: 100svh;
-  }
 }
 
 .header {

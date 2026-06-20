@@ -1,9 +1,10 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivityService } from '../../core/services/activity.service';
 import { SessionService } from '../../core/services/session.service';
 import { TrackingService } from '../../core/services/tracking.service';
@@ -15,17 +16,24 @@ type ProgressView = 'weekly' | 'monthly';
 
   selector: 'ht-progress',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonToggleModule, BaseChartDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonToggleModule,
+    BaseChartDirective,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './progress.component.html',
   styleUrl: './progress.component.scss',
 })
-export class ProgressComponent implements OnInit {
+export class ProgressComponent {
   private activityService = inject(ActivityService);
   private sessionService = inject(SessionService);
   private trackingService = inject(TrackingService);
 
   activities = this.activityService.activities;
   view = signal<ProgressView>('weekly');
+  isLoading = signal<boolean>(true);
 
   // Chart Data
   weeklyChartData = signal<ChartData<'bar'> | null>(null);
@@ -65,8 +73,19 @@ export class ProgressComponent implements OnInit {
     },
   };
 
-  ngOnInit(): void {
-    this.loadData();
+  constructor() {
+    effect(
+      () => {
+        const acts = this.activities();
+        this.view(); // tracking view changes to re-trigger if necessary
+
+        if (acts) {
+          this.isLoading.set(true);
+          this.loadData().then(() => this.isLoading.set(false));
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   async loadData(): Promise<void> {
