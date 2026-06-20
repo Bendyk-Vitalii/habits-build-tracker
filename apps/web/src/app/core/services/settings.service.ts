@@ -70,7 +70,8 @@ export class SettingsService {
     await this.getSettings();
 
     const docRef = userDoc(this.firestore, uid, 'settings', 'default');
-    const { id, ...data } = partial as any;
+    const data = { ...partial } as Record<string, unknown>;
+    delete data['id'];
     await updateDoc(docRef, data);
   }
 
@@ -89,7 +90,8 @@ export class SettingsService {
       return { ...snapshot.data(), id: 1 } as AppSettings;
     }
 
-    const { id, ...settingsData } = DEFAULT_SETTINGS as any;
+    const settingsData = { ...DEFAULT_SETTINGS } as Record<string, unknown>;
+    delete settingsData['id'];
     await setDoc(docRef, settingsData);
     return { ...DEFAULT_SETTINGS, id: 1 } as AppSettings;
   }

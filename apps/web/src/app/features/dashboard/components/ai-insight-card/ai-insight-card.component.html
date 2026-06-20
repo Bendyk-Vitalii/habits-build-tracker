@@ -1,5 +1,11 @@
 <div class="ai-card glass-card" [class.expanded]="isExpanded()">
-  <div class="ai-card__header" (click)="toggleExpand()" matRipple>
+  <div
+    class="ai-card__header"
+    (click)="toggleExpand()"
+    (keydown.enter)="toggleExpand()"
+    tabindex="0"
+    matRipple
+  >
     <div class="ai-card__title">
       <span class="material-symbols-rounded ai-icon">auto_awesome</span>
       <h3>AI Insight</h3>

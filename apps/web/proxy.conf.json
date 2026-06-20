@@ -28,5 +28,11 @@
     "secure": false,
     "pathRewrite": { "^/api/ai/suggest": "" },
     "changeOrigin": true
+  },
+  "/api/ai/generate-lesson": {
+    "target": "http://127.0.0.1:5001/habits-build-tracker/us-central1/aiGenerateLesson",
+    "secure": false,
+    "pathRewrite": { "^/api/ai/generate-lesson": "" },
+    "changeOrigin": true
   }
 }

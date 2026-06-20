@@ -1,5 +1,7 @@
 import { Injectable, inject, signal, effect, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { environment } from '../../../environments/environment';
 import {
   Firestore,
   addDoc,
@@ -15,16 +17,24 @@ import {
   writeBatch,
   doc,
 } from '@angular/fire/firestore';
-import { LearningTopic, LearningSession, DEFAULT_LEARNING_TOPICS } from '@habits-tracker/shared';
+import {
+  LearningTopic,
+  LearningSession,
+  DEFAULT_LEARNING_TOPICS,
+  AiLessonResponse,
+  LessonDifficulty,
+  SavedLesson,
+} from '@habits-tracker/shared';
 import { userCollection, userDoc } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
 
 /**
- * Manages learning topics and learning sessions in Firestore.
+ * Manages learning topics, learning sessions, and saved lessons in Firestore.
  *
  * Collections:
  * - `users/{uid}/learningTopics`
  * - `users/{uid}/learningSessions`
+ * - `users/{uid}/savedLessons`
  */
 @Injectable({ providedIn: 'root' })
 export class LearningService {
@@ -117,6 +127,67 @@ export class LearningService {
     await batch.commit();
   }
 
+  // ── AI Generation ────────────────────────────────────────
+
+  async generateLesson(
+    topicName: string,
+    durationMinutes = 10,
+    difficulty: LessonDifficulty = 'intermediate',
+  ): Promise<AiLessonResponse> {
+    const genAI = new GoogleGenerativeAI(environment.geminiApiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+    const difficultyInstructions = this.getDifficultyInstructions(difficulty);
+
+    const prompt = `You are an expert tutor. Create a short, engaging lesson about "${topicName}".
+The lesson should take about ${durationMinutes} minutes to read.
+
+DIFFICULTY LEVEL: ${difficulty.toUpperCase()}
+${difficultyInstructions}
+
+Return ONLY a raw JSON object (no markdown, no backticks, no explanation — just the JSON) matching this schema:
+{
+  "title": "A catchy title for the lesson",
+  "contentBlocks": [
+    { "type": "heading", "value": "Section heading" },
+    { "type": "text", "value": "A paragraph of text explaining a concept." },
+    { "type": "code", "value": "code snippet here if relevant" }
+  ],
+  "quiz": [
+    {
+      "question": "A question testing understanding of the material?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctAnswer": "Option B"
+    }
+  ],
+  "difficulty": "${difficulty}"
+}
+
+Include exactly 3 quiz questions if the topic is suitable for testing, otherwise omit the quiz field entirely.`;
+
+    const result = await model.generateContent(prompt);
+    let text = result.response.text();
+
+    // Strip potential markdown code fences
+    text = text
+      .replace(/^```(?:json)?\n?/m, '')
+      .replace(/\n?```$/m, '')
+      .trim();
+
+    return JSON.parse(text) as AiLessonResponse;
+  }
+
+  private getDifficultyInstructions(difficulty: LessonDifficulty): string {
+    switch (difficulty) {
+      case 'intermediate':
+        return `Focus on practical, real-world applications and patterns. Skip basic definitions but provide enough context for someone with foundational knowledge. Include industry best practices and common pitfalls.`;
+      case 'advanced':
+        return `Target experienced practitioners. Cover advanced patterns, optimization techniques, edge cases, and architectural decisions. Include performance considerations, trade-offs, and lesser-known features. Do NOT explain basic concepts — assume strong foundational knowledge.`;
+      case 'expert':
+        return `Target senior/staff-level professionals. Dive into internals, cutting-edge techniques, research-backed approaches, and system design considerations. Cover topics like performance tuning at scale, novel patterns, contributions to the field, and cross-domain insights. Assume mastery of the topic and focus on pushing boundaries.`;
+    }
+  }
+
   // ── Learning Sessions ────────────────────────────────────
 
   async logLearningSession(
@@ -195,5 +266,66 @@ export class LearningService {
     const snap = await getDoc(docRef);
     if (!snap.exists()) return undefined;
     return { ...snap.data(), id: snap.id } as unknown as LearningTopic;
+  }
+
+  // ── Saved Lessons ───────────────────────────────────────
+
+  async saveLesson(
+    topic: LearningTopic,
+    lesson: AiLessonResponse,
+    difficulty: LessonDifficulty,
+  ): Promise<string> {
+    const uid = this.authService.uid();
+    if (!uid) throw new Error('Not authenticated');
+
+    const col = userCollection(this.firestore, uid, 'savedLessons');
+    const data: Omit<SavedLesson, 'id'> = {
+      title: lesson.title,
+      topicId: topic.id!,
+      topicName: topic.name,
+      topicIcon: topic.icon,
+      topicColor: topic.color,
+      difficulty,
+      contentBlocks: lesson.contentBlocks,
+      quiz: lesson.quiz,
+      savedAt: new Date().toISOString(),
+    };
+    const docRef = await addDoc(col, data);
+    return docRef.id;
+  }
+
+  async getSavedLessons(): Promise<SavedLesson[]> {
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'savedLessons');
+    const q = query(col, orderBy('savedAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as SavedLesson);
+  }
+
+  async getSavedLessonById(id: string): Promise<SavedLesson | undefined> {
+    const uid = this.authService.uid();
+    if (!uid) return undefined;
+    const docRef = userDoc(this.firestore, uid, 'savedLessons', id);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return undefined;
+    return { ...snap.data(), id: snap.id } as unknown as SavedLesson;
+  }
+
+  async deleteSavedLesson(id: string): Promise<void> {
+    const uid = this.authService.uid();
+    if (!uid) return;
+    const docRef = userDoc(this.firestore, uid, 'savedLessons', id);
+    await deleteDoc(docRef);
+  }
+
+  async getSavedLessonsCount(): Promise<number> {
+    const uid = this.authService.uid();
+    if (!uid) return 0;
+
+    const col = userCollection(this.firestore, uid, 'savedLessons');
+    const snapshot = await getDocs(col);
+    return snapshot.size;
   }
 }

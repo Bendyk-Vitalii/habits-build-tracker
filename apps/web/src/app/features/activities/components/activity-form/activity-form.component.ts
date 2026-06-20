@@ -105,8 +105,12 @@ export class ActivityFormComponent implements OnInit {
         await this.activityService.addActivity(newActivity);
       }
       this.dialogRef.close(true);
-    } catch (error: any) {
-      alert(error.message || 'An error occurred while saving the activity.');
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error && error.message
+          ? error.message
+          : 'An error occurred while saving the activity.';
+      alert(errorMessage);
     }
   }
 }

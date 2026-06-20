@@ -68,8 +68,8 @@ export class TimerComponent implements OnInit, OnDestroy {
   manualNotes = signal<string>('');
   manualDate = signal<string>(this.getLocalISODateString(new Date()));
 
-  private intervalId: any;
-  private wakeLock: any = null;
+  private intervalId: ReturnType<typeof setInterval> | null = null;
+  private wakeLock: { release: () => Promise<void> } | null = null;
 
   private getLocalISODateString(d: Date): string {
     const year = d.getFullYear();
@@ -312,7 +312,10 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   private playAudioNotification(): void {
     try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioCtx = new (
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      )();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
@@ -335,7 +338,11 @@ export class TimerComponent implements OnInit, OnDestroy {
   private async requestWakeLock(): Promise<void> {
     try {
       if ('wakeLock' in navigator) {
-        this.wakeLock = await (navigator as any).wakeLock.request('screen');
+        this.wakeLock = await (
+          navigator as unknown as {
+            wakeLock: { request: (type: string) => Promise<{ release: () => Promise<void> }> };
+          }
+        ).wakeLock.request('screen');
       }
     } catch (err) {
       console.log('WakeLock error', err);

@@ -33,6 +33,7 @@ export class LearningComponent implements OnInit {
   topics = this.learningService.topics;
   recentSessions = signal<LearningSession[]>([]);
   topicMinutes = signal<Record<string, number>>({});
+  savedCount = signal(0);
 
   ngOnInit(): void {
     this.learningService.seedDefaultTopics();
@@ -51,10 +52,18 @@ export class LearningComponent implements OnInit {
       }
     }
     this.topicMinutes.set(minutes);
+
+    // Load saved lessons count
+    const count = await this.learningService.getSavedLessonsCount();
+    this.savedCount.set(count);
   }
 
   startSession(topicId: string): void {
     this.router.navigate(['/learn/session', topicId]);
+  }
+
+  openSavedLessons(): void {
+    this.router.navigate(['/learn/saved']);
   }
 
   openAddDialog(): void {

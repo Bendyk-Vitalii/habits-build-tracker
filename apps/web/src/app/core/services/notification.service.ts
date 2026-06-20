@@ -58,12 +58,16 @@ export class NotificationService {
     // 2. Subscribe via PushManager
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: this.urlBase64ToUint8Array(publicKey) as any,
+      applicationServerKey: this.urlBase64ToUint8Array(publicKey) as unknown as BufferSource,
     });
 
     // 3. Send subscription to backend
     const payload: PushSubscribeRequest = {
-      subscription: subscription.toJSON() as any,
+      subscription: subscription.toJSON() as {
+        endpoint: string;
+        expirationTime?: number | null;
+        keys: Record<string, string>;
+      },
       notificationTime,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
@@ -98,7 +102,10 @@ export class NotificationService {
    */
   isInstalledAsPWA(): boolean {
     // iOS Safari
-    if ('standalone' in navigator && (navigator as any).standalone) {
+    if (
+      'standalone' in navigator &&
+      (navigator as unknown as Record<string, unknown>)['standalone']
+    ) {
       return true;
     }
 
@@ -124,7 +131,11 @@ export class NotificationService {
 
     if (subscription) {
       const payload: PushSubscribeRequest = {
-        subscription: subscription.toJSON() as any,
+        subscription: subscription.toJSON() as {
+          endpoint: string;
+          expirationTime?: number | null;
+          keys: Record<string, string>;
+        },
         notificationTime: time,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };

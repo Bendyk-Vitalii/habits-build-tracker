@@ -1,4 +1,10 @@
-<div class="topic-card" matRipple (click)="startSession.emit()">
+<div
+  class="topic-card"
+  matRipple
+  (click)="startSession.emit()"
+  (keydown.enter)="startSession.emit()"
+  tabindex="0"
+>
   <button class="edit-btn" mat-icon-button aria-label="Edit topic" (click)="onEdit($event)">
     <mat-icon class="edit-icon">edit</mat-icon>
   </button>

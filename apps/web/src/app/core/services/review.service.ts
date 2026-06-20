@@ -6,6 +6,7 @@ import {
   query,
   orderBy,
   limit as firestoreLimit,
+  QueryConstraint,
 } from '@angular/fire/firestore';
 import { WeeklyReview, MonthlyReview } from '@habits-tracker/shared';
 import { userCollection, userDoc } from '../db/firestore.helpers';
@@ -70,7 +71,8 @@ export class ReviewService {
     const uid = this.authService.uid();
     if (!uid) throw new Error('Not authenticated');
 
-    const { id, ...data } = review as any;
+    const data = { ...review } as Record<string, unknown>;
+    delete data['id'];
     const docRef = userDoc(this.firestore, uid, 'weeklyReviews', review.weekStartDate);
     await setDoc(docRef, data);
     return review.weekStartDate;
@@ -84,7 +86,7 @@ export class ReviewService {
     if (!uid) return [];
 
     const col = userCollection(this.firestore, uid, 'weeklyReviews');
-    const constraints: any[] = [orderBy('weekStartDate', 'desc')];
+    const constraints: QueryConstraint[] = [orderBy('weekStartDate', 'desc')];
     if (limit) constraints.push(firestoreLimit(limit));
 
     const q = query(col, ...constraints);
@@ -159,7 +161,8 @@ export class ReviewService {
     const uid = this.authService.uid();
     if (!uid) throw new Error('Not authenticated');
 
-    const { id, ...data } = review as any;
+    const data = { ...review } as Record<string, unknown>;
+    delete data['id'];
     const docRef = userDoc(this.firestore, uid, 'monthlyReviews', review.month);
     await setDoc(docRef, data);
     return review.month;
@@ -173,7 +176,7 @@ export class ReviewService {
     if (!uid) return [];
 
     const col = userCollection(this.firestore, uid, 'monthlyReviews');
-    const constraints: any[] = [orderBy('month', 'desc')];
+    const constraints: QueryConstraint[] = [orderBy('month', 'desc')];
     if (limit) constraints.push(firestoreLimit(limit));
 
     const q = query(col, ...constraints);

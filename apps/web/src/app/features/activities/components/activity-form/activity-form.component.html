@@ -28,7 +28,7 @@
     </div>
 
     <div class="color-picker-section">
-      <label>Color</label>
+      <label for="color-input">Color</label>
       <div class="color-options">
         @for (c of presetColors; track c) {
           <button
@@ -44,7 +44,7 @@
           </button>
         }
       </div>
-      <input type="hidden" formControlName="color" />
+      <input id="color-input" type="hidden" formControlName="color" />
     </div>
 
     <div class="row">

@@ -4,9 +4,23 @@
       <h1>Learn</h1>
       <p>Pick a topic and learn for 10–15 min</p>
     </div>
-    <button mat-mini-fab color="primary" (click)="openAddDialog()" aria-label="Add topic">
-      <mat-icon>add</mat-icon>
-    </button>
+    <div class="header__actions">
+      <button
+        mat-stroked-button
+        class="saved-btn"
+        (click)="openSavedLessons()"
+        aria-label="Saved lessons"
+      >
+        <mat-icon>bookmark</mat-icon>
+        Saved
+        @if (savedCount() > 0) {
+          <span class="saved-count">{{ savedCount() }}</span>
+        }
+      </button>
+      <button mat-mini-fab color="primary" (click)="openAddDialog()" aria-label="Add topic">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
   </div>
 
   <!-- Topic Grid -->

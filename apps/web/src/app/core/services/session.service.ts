@@ -1,5 +1,13 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, addDoc, deleteDoc, getDocs, query, where } from '@angular/fire/firestore';
+import {
+  Firestore,
+  addDoc,
+  deleteDoc,
+  getDocs,
+  query,
+  where,
+  QueryConstraint,
+} from '@angular/fire/firestore';
 import { Session, SessionType } from '@habits-tracker/shared';
 import { userCollection, userDoc } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
@@ -29,7 +37,7 @@ export class SessionService {
     const now = new Date();
     const sessionDate = date || now.toISOString().split('T')[0];
 
-    const session: Record<string, any> = {
+    const session: Record<string, unknown> = {
       activityId: String(activityId),
       date: sessionDate,
       durationMinutes,
@@ -82,7 +90,7 @@ export class SessionService {
     if (!uid) return [];
 
     const col = userCollection(this.firestore, uid, 'sessions');
-    const constraints: any[] = [where('activityId', '==', String(activityId))];
+    const constraints: QueryConstraint[] = [where('activityId', '==', String(activityId))];
 
     if (startDate && endDate) {
       constraints.push(where('date', '>=', startDate));

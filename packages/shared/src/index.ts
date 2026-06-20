@@ -13,6 +13,14 @@ export { DEFAULT_SETTINGS } from './models/settings.model';
 export type { Task, TaskPriority } from './models/task.model';
 export type { LearningTopic } from './models/learning-topic.model';
 export type { LearningSession } from './models/learning-session.model';
+export type {
+  AiLessonRequest,
+  AiLessonResponse,
+  AiLessonContentBlock,
+  AiLessonQuizQuestion,
+  LessonDifficulty,
+} from './models/ai-lesson.model';
+export type { SavedLesson } from './models/saved-lesson.model';
 
 // Constants
 export { SCIENCE_THRESHOLDS } from './constants/science-thresholds';
