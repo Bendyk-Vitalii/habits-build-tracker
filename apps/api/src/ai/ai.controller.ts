@@ -8,9 +8,7 @@ import {
   AiLessonResponse,
   ActivitySummary,
 } from '@habits-tracker/shared';
-import cors from 'cors';
-
-const corsMiddleware = cors({ origin: true });
+// CORS is handled automatically by onCall
 
 // Rate limiting: track calls per client per day
 const rateLimitMap = new Map<string, { count: number; date: string }>();
@@ -38,63 +36,46 @@ function checkRateLimit(clientId: string): boolean {
  * Proxy for Gemini API — receives user context and returns personalized suggestion.
  * Falls back to rule-based suggestions when API key is missing or quota exceeded.
  */
-export const aiSuggest = functions.https.onRequest((req, res) => {
-  corsMiddleware(req, res, async () => {
-    if (req.method !== 'POST') {
-      res.status(405).json({ error: 'Method not allowed' });
-      return;
+export const aiSuggest = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.');
+  }
+
+  try {
+    const { activities, totalActiveHabits, weeksOfData, overallCompletionRate, requestType } = data as AiSuggestRequest;
+
+    if (!activities || !Array.isArray(activities)) {
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid request: activities array required');
     }
 
-    try {
-      const { activities, totalActiveHabits, weeksOfData, overallCompletionRate, requestType } =
-        req.body as AiSuggestRequest;
-
-      if (!activities || !Array.isArray(activities)) {
-        res.status(400).json({ error: 'Invalid request: activities array required' });
-        return;
-      }
-
-      // Rate limit check (use IP as client ID)
-      const clientId = req.ip || 'unknown';
-      if (!checkRateLimit(clientId)) {
-        // Return rule-based fallback
-        const fallback = generateRuleBasedSuggestion(activities, overallCompletionRate, weeksOfData);
-        res.status(200).json(fallback);
-        return;
-      }
-
-      const apiKey = process.env.GEMINI_API_KEY;
-
-      if (!apiKey) {
-        // No API key configured — return rule-based fallback
-        const fallback = generateRuleBasedSuggestion(activities, overallCompletionRate, weeksOfData);
-        res.status(200).json(fallback);
-        return;
-      }
-
-      // Call Gemini API
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-      const prompt = buildPrompt(activities, totalActiveHabits, weeksOfData, overallCompletionRate, requestType);
-
-      const result = await model.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-
-      // Parse the AI response
-      const suggestion = parseAiResponse(text, activities, overallCompletionRate, weeksOfData);
-
-      res.status(200).json(suggestion);
-    } catch (error) {
-      console.error('AI suggest error:', error);
-
-      // Fallback to rule-based
-      const { activities, overallCompletionRate, weeksOfData } = req.body;
-      const fallback = generateRuleBasedSuggestion(activities || [], overallCompletionRate || 0, weeksOfData || 0);
-      res.status(200).json(fallback);
+    // Rate limit check
+    const clientId = context.auth.uid;
+    if (!checkRateLimit(clientId)) {
+      return generateRuleBasedSuggestion(activities, overallCompletionRate, weeksOfData);
     }
-  });
+
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      return generateRuleBasedSuggestion(activities, overallCompletionRate, weeksOfData);
+    }
+
+    // Call Gemini API
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+    const prompt = buildPrompt(activities, totalActiveHabits, weeksOfData, overallCompletionRate, requestType);
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+
+    return parseAiResponse(text, activities, overallCompletionRate, weeksOfData);
+  } catch (error) {
+    console.error('AI suggest error:', error);
+    const { activities, overallCompletionRate, weeksOfData } = data as AiSuggestRequest;
+    return generateRuleBasedSuggestion(activities || [], overallCompletionRate || 0, weeksOfData || 0);
+  }
 });
 
 function buildPrompt(
@@ -256,42 +237,41 @@ function generateRuleBasedSuggestion(
  * POST /api/ai/generate-lesson
  * Generates a short, intermediate/advanced lesson on a given topic with an optional quiz.
  */
-export const aiGenerateLesson = functions.https.onRequest((req, res) => {
-  corsMiddleware(req, res, async () => {
-    if (req.method !== 'POST') {
-      res.status(405).json({ error: 'Method not allowed' });
-      return;
+export const aiGenerateLesson = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated.');
+  }
+
+  try {
+    const { topicName, durationMinutes, difficulty } = data as AiLessonRequest;
+
+    if (!topicName || typeof durationMinutes !== 'number') {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'Invalid request: topicName and durationMinutes required',
+      );
     }
 
-    try {
-      const { topicName, durationMinutes, difficulty } = req.body as AiLessonRequest;
+    const level = difficulty || 'intermediate';
 
-      if (!topicName || typeof durationMinutes !== 'number') {
-        res.status(400).json({ error: 'Invalid request: topicName and durationMinutes required' });
-        return;
-      }
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new functions.https.HttpsError('unavailable', 'AI service not configured');
+    }
 
-      const level = difficulty || 'intermediate';
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        res.status(503).json({ error: 'AI service not configured' });
-        return;
-      }
+    const difficultyInstructions: Record<string, string> = {
+      intermediate:
+        'Focus on practical, real-world applications and patterns. Skip basic definitions but provide enough context for someone with foundational knowledge. Include industry best practices and common pitfalls.',
+      advanced:
+        'Target experienced practitioners. Cover advanced patterns, optimization techniques, edge cases, and architectural decisions. Include performance considerations, trade-offs, and lesser-known features. Do NOT explain basic concepts — assume strong foundational knowledge.',
+      expert:
+        'Target senior/staff-level professionals. Dive into internals, cutting-edge techniques, research-backed approaches, and system design considerations. Cover topics like performance tuning at scale, novel patterns, contributions to the field, and cross-domain insights. Assume mastery of the topic and focus on pushing boundaries.',
+    };
 
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-      const difficultyInstructions: Record<string, string> = {
-        intermediate:
-          'Focus on practical, real-world applications and patterns. Skip basic definitions but provide enough context for someone with foundational knowledge. Include industry best practices and common pitfalls.',
-        advanced:
-          'Target experienced practitioners. Cover advanced patterns, optimization techniques, edge cases, and architectural decisions. Include performance considerations, trade-offs, and lesser-known features. Do NOT explain basic concepts — assume strong foundational knowledge.',
-        expert:
-          'Target senior/staff-level professionals. Dive into internals, cutting-edge techniques, research-backed approaches, and system design considerations. Cover topics like performance tuning at scale, novel patterns, contributions to the field, and cross-domain insights. Assume mastery of the topic and focus on pushing boundaries.',
-      };
-
-      const prompt = `You are an expert tutor. Create a short, engaging lesson about "${topicName}".
+    const prompt = `You are an expert tutor. Create a short, engaging lesson about "${topicName}".
 The lesson should take about ${durationMinutes} minutes to read.
 
 DIFFICULTY LEVEL: ${level.toUpperCase()}
@@ -317,22 +297,18 @@ You MUST return a raw JSON object (no markdown formatting, no backticks, just th
 
 Include exactly 3 quiz questions if the topic is suitable for testing, otherwise omit the quiz array.`;
 
-      const result = await model.generateContent(prompt);
-      const response = result.response;
-      let text = response.text();
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    let text = response.text();
 
-      // Clean up potential markdown formatting (e.g. ```json ... ```)
-      text = text
-        .replace(/^```json\n?/, '')
-        .replace(/\n?```$/, '')
-        .trim();
+    text = text
+      .replace(/^```json\n?/, '')
+      .replace(/\n?```$/, '')
+      .trim();
 
-      const lesson: AiLessonResponse = JSON.parse(text);
-
-      res.status(200).json(lesson);
-    } catch (error) {
-      console.error('AI generate lesson error:', error);
-      res.status(500).json({ error: 'Failed to generate lesson' });
-    }
-  });
+    return JSON.parse(text) as AiLessonResponse;
+  } catch (error) {
+    console.error('AI generate lesson error:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to generate lesson');
+  }
 });

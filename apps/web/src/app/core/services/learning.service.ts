@@ -1,7 +1,6 @@
 import { Injectable, inject, signal, effect, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { environment } from '../../../environments/environment';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import {
   Firestore,
   addDoc,
@@ -40,6 +39,7 @@ import { AuthService } from './auth.service';
 export class LearningService {
   private platformId = inject(PLATFORM_ID);
   private firestore = inject(Firestore);
+  private functions = inject(Functions);
   private authService = inject(AuthService);
 
   private _topics = signal<LearningTopic[]>([]);
@@ -134,58 +134,12 @@ export class LearningService {
     durationMinutes = 10,
     difficulty: LessonDifficulty = 'intermediate',
   ): Promise<AiLessonResponse> {
-    const genAI = new GoogleGenerativeAI(environment.geminiApiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-    const difficultyInstructions = this.getDifficultyInstructions(difficulty);
-
-    const prompt = `You are an expert tutor. Create a short, engaging lesson about "${topicName}".
-The lesson should take about ${durationMinutes} minutes to read.
-
-DIFFICULTY LEVEL: ${difficulty.toUpperCase()}
-${difficultyInstructions}
-
-Return ONLY a raw JSON object (no markdown, no backticks, no explanation — just the JSON) matching this schema:
-{
-  "title": "A catchy title for the lesson",
-  "contentBlocks": [
-    { "type": "heading", "value": "Section heading" },
-    { "type": "text", "value": "A paragraph of text explaining a concept." },
-    { "type": "code", "value": "code snippet here if relevant" }
-  ],
-  "quiz": [
-    {
-      "question": "A question testing understanding of the material?",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": "Option B"
-    }
-  ],
-  "difficulty": "${difficulty}"
-}
-
-Include exactly 3 quiz questions if the topic is suitable for testing, otherwise omit the quiz field entirely.`;
-
-    const result = await model.generateContent(prompt);
-    let text = result.response.text();
-
-    // Strip potential markdown code fences
-    text = text
-      .replace(/^```(?:json)?\n?/m, '')
-      .replace(/\n?```$/m, '')
-      .trim();
-
-    return JSON.parse(text) as AiLessonResponse;
-  }
-
-  private getDifficultyInstructions(difficulty: LessonDifficulty): string {
-    switch (difficulty) {
-      case 'intermediate':
-        return `Focus on practical, real-world applications and patterns. Skip basic definitions but provide enough context for someone with foundational knowledge. Include industry best practices and common pitfalls.`;
-      case 'advanced':
-        return `Target experienced practitioners. Cover advanced patterns, optimization techniques, edge cases, and architectural decisions. Include performance considerations, trade-offs, and lesser-known features. Do NOT explain basic concepts — assume strong foundational knowledge.`;
-      case 'expert':
-        return `Target senior/staff-level professionals. Dive into internals, cutting-edge techniques, research-backed approaches, and system design considerations. Cover topics like performance tuning at scale, novel patterns, contributions to the field, and cross-domain insights. Assume mastery of the topic and focus on pushing boundaries.`;
-    }
+    const generateFn = httpsCallable<Record<string, unknown>, AiLessonResponse>(
+      this.functions,
+      'aiGenerateLesson',
+    );
+    const result = await generateFn({ topicName, durationMinutes, difficulty });
+    return result.data;
   }
 
   // ── Learning Sessions ────────────────────────────────────
