@@ -123,6 +123,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   // Prevent pull-to-refresh and overscroll in PWA
   overscroll-behavior: none;
+  overflow-x: hidden;
 }
 
 // --- Typography ---

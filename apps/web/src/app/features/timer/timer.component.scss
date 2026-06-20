@@ -4,6 +4,9 @@
   gap: var(--ht-spacing-md);
   padding-bottom: var(--ht-spacing-2xl);
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .header {
@@ -161,6 +164,7 @@
   flex-direction: column;
   gap: var(--ht-spacing-md);
   margin-top: var(--ht-spacing-md);
+  box-sizing: border-box;
 }
 
 .full-width {
