@@ -87,7 +87,7 @@ export class TaskService {
     const uid = this.authService.uid();
     if (!uid) throw new Error('Not authenticated');
 
-    const data: Record<string, any> = {
+    const data: Record<string, unknown> = {
       title,
       priority,
       isCompleted: false,
@@ -107,7 +107,7 @@ export class TaskService {
     const uid = this.authService.uid();
     if (!uid) return;
     const docRef = userDoc(this.firestore, uid, 'tasks', String(id));
-    await updateDoc(docRef, data as Record<string, any>);
+    await updateDoc(docRef, data as Record<string, unknown>);
   }
 
   /**

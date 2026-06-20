@@ -56,7 +56,7 @@ export class ProgressComponent implements OnInit {
     },
   };
 
-  donutOptions: any = {
+  donutOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     cutout: '70%',
@@ -84,7 +84,7 @@ export class ProgressComponent implements OnInit {
     weekStart.setDate(today.getDate() - today.getDay()); // Sunday
 
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const datasets: any[] = [];
+    const datasets: ChartData<'bar'>['datasets'] = [];
 
     for (const act of this.activities()) {
       const data = new Array(7).fill(0);
@@ -110,7 +110,7 @@ export class ProgressComponent implements OnInit {
 
   private async loadMonthlyChart(): Promise<void> {
     const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-    const datasets: any[] = [];
+    const datasets: ChartData<'line'>['datasets'] = [];
 
     // Mocking 4 weeks of data for the line chart for simplicity,
     // ideally this queries weekly reviews or aggregates sessions.

@@ -42,7 +42,7 @@ export class TrackingService {
     const today = this.todayISO();
     const docRef = userDoc(this.firestore, uid, 'dailyLogs', today);
 
-    const data: Record<string, any> = {
+    const data: Record<string, unknown> = {
       date: today,
       isTracked: true,
       trackedAt: new Date().toISOString(),

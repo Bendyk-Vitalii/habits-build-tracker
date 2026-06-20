@@ -1,0 +1,187 @@
+<div class="session-container animate-fade-in">
+  @if (topic(); as t) {
+    <!-- Sticky Header -->
+    <div class="sticky-header glass-header">
+      <button mat-icon-button class="back-btn" (click)="goBack()" aria-label="Go back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-title">
+        <div class="topic-icon-small" [style.background]="t.color + '22'" [style.color]="t.color">
+          <span class="material-symbols-rounded">{{ t.icon }}</span>
+        </div>
+        <span class="topic-name">{{ t.name }}</span>
+      </div>
+      <button
+        mat-icon-button
+        class="save-btn"
+        (click)="saveLesson()"
+        [disabled]="isSaved() || isSaving()"
+        [attr.aria-label]="isSaved() ? 'Lesson saved' : 'Save lesson'"
+      >
+        <mat-icon>{{ isSaved() ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+      </button>
+      <div class="timer-mini" [class.running]="isRunning()">
+        <mat-icon class="timer-icon">timer</mat-icon>
+        <span>{{ formattedTime() }}</span>
+      </div>
+    </div>
+
+    <div class="content-area">
+      @if (isLoadingLesson()) {
+        <div class="loading-state">
+          <mat-spinner diameter="48"></mat-spinner>
+          <p>Generating your personalized lesson...</p>
+        </div>
+      } @else if (lessonError()) {
+        <div class="error-state">
+          <mat-icon color="warn">error_outline</mat-icon>
+          <p>{{ lessonError() }}</p>
+          <button mat-flat-button color="primary" (click)="goBack()">Go Back</button>
+        </div>
+      } @else if (lesson(); as l) {
+        <!-- Regenerating Overlay -->
+        @if (isRegenerating()) {
+          <div class="regenerating-overlay">
+            <mat-spinner diameter="36"></mat-spinner>
+            <p>Generating {{ currentDifficulty() }} content...</p>
+          </div>
+        }
+
+        <article class="lesson-article" [class.regenerating]="isRegenerating()">
+          <!-- Difficulty Badge & Go Deeper -->
+          <div class="lesson-header-row">
+            <span class="difficulty-badge" [attr.data-level]="currentDifficulty()">
+              <mat-icon class="badge-icon">signal_cellular_alt</mat-icon>
+              {{ currentDifficulty() | titlecase }}
+            </span>
+            @if (currentDifficulty() !== 'expert') {
+              <button
+                mat-stroked-button
+                class="go-deeper-btn"
+                (click)="goDeeper()"
+                [disabled]="isRegenerating()"
+              >
+                <mat-icon>trending_up</mat-icon>
+                Go Deeper
+              </button>
+            } @else {
+              <span class="max-level-badge">
+                <mat-icon class="badge-icon">workspace_premium</mat-icon>
+                Max Level
+              </span>
+            }
+          </div>
+
+          <h1 class="lesson-title">{{ l.title }}</h1>
+
+          <div class="lesson-content">
+            @for (block of l.contentBlocks; track $index) {
+              @if (block.type === 'heading') {
+                <h2>{{ block.value }}</h2>
+              } @else if (block.type === 'code') {
+                <pre><code>{{ block.value }}</code></pre>
+              } @else {
+                <p>{{ block.value }}</p>
+              }
+            }
+          </div>
+
+          @if (l.quiz && l.quiz.length > 0) {
+            <div class="quiz-section">
+              <h3>Knowledge Check</h3>
+
+              @for (q of l.quiz; track qIdx; let qIdx = $index) {
+                <div class="quiz-question" [class.submitted]="quizSubmitted()">
+                  <p class="question-text">{{ qIdx + 1 }}. {{ q.question }}</p>
+
+                  <mat-radio-group
+                    class="quiz-options"
+                    [disabled]="quizSubmitted()"
+                    [value]="quizAnswers()[qIdx]"
+                    (change)="selectAnswer(qIdx, $event.value)"
+                  >
+                    @for (option of q.options; track option) {
+                      <mat-radio-button
+                        [value]="option"
+                        [class.correct]="quizSubmitted() && isAnswerCorrect(qIdx, option)"
+                        [class.incorrect]="
+                          quizSubmitted() &&
+                          isAnswerSelected(qIdx, option) &&
+                          !isAnswerCorrect(qIdx, option)
+                        "
+                      >
+                        {{ option }}
+                      </mat-radio-button>
+                    }
+                  </mat-radio-group>
+
+                  @if (quizSubmitted()) {
+                    @if (quizAnswers()[qIdx] === q.correctAnswer) {
+                      <p class="feedback correct-text">
+                        <mat-icon>check_circle</mat-icon> Correct!
+                      </p>
+                    } @else {
+                      <p class="feedback incorrect-text">
+                        <mat-icon>cancel</mat-icon> Incorrect. The right answer is:
+                        {{ q.correctAnswer }}
+                      </p>
+                    }
+                  }
+                </div>
+              }
+
+              @if (!quizSubmitted()) {
+                <button
+                  mat-flat-button
+                  color="primary"
+                  class="submit-quiz-btn"
+                  [disabled]="!l.quiz || (quizAnswers() | keyvalue).length !== l.quiz.length"
+                  (click)="submitQuiz()"
+                >
+                  Submit Answers
+                </button>
+              } @else {
+                <div class="quiz-result">
+                  <p>You scored {{ quizScore() }} out of {{ l.quiz.length }}!</p>
+                </div>
+              }
+            </div>
+          }
+
+          <div class="session-actions">
+            @if (!isSaved()) {
+              <button
+                mat-stroked-button
+                class="save-action-btn"
+                (click)="saveLesson()"
+                [disabled]="isSaving()"
+              >
+                <mat-icon>bookmark_border</mat-icon>
+                {{ isSaving() ? 'Saving...' : 'Save to Library' }}
+              </button>
+            } @else {
+              <span class="saved-badge">
+                <mat-icon>bookmark</mat-icon>
+                Saved
+              </span>
+            }
+            @if (currentDifficulty() !== 'expert') {
+              <button
+                mat-stroked-button
+                class="deeper-action-btn"
+                (click)="goDeeper()"
+                [disabled]="isRegenerating()"
+              >
+                <mat-icon>trending_up</mat-icon>
+                Too Easy? Go Deeper
+              </button>
+            }
+            <button mat-flat-button color="accent" class="finish-btn" (click)="finishEarly()">
+              Complete Session
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

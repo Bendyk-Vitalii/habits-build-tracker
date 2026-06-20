@@ -1,0 +1,119 @@
+<div class="saved-container animate-fade-in">
+  <!-- Sticky Header -->
+  <div class="sticky-header glass-header">
+    <button mat-icon-button (click)="goBack()" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="page-title">Saved Lessons</h2>
+    <span class="lesson-count">{{ filteredLessons().length }}</span>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search by title or topic..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="updateSearch($event)"
+        class="search-input"
+      />
+      @if (searchQuery()) {
+        <button
+          mat-icon-button
+          class="clear-btn"
+          (click)="updateSearch('')"
+          aria-label="Clear search"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <!-- Difficulty Filter Chips -->
+    <div class="filter-chips">
+      @for (level of ['all', 'intermediate', 'advanced', 'expert']; track level) {
+        <button
+          class="chip"
+          [class.active]="selectedDifficulty() === level"
+          [attr.data-level]="level"
+          (click)="setDifficulty(level)"
+        >
+          {{ level === 'all' ? 'All' : (level | titlecase) }}
+        </button>
+      }
+    </div>
+
+    <!-- Lessons Grid -->
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading your library…</p>
+      </div>
+    } @else if (filteredLessons().length === 0) {
+      <div class="empty-state glass-card">
+        @if (searchQuery() || selectedDifficulty() !== 'all') {
+          <mat-icon class="empty-icon">search_off</mat-icon>
+          <p class="empty-title">No matches found</p>
+          <p class="empty-subtitle">Try adjusting your search or filters</p>
+        } @else {
+          <mat-icon class="empty-icon">bookmark_border</mat-icon>
+          <p class="empty-title">No saved lessons yet</p>
+          <p class="empty-subtitle">
+            Save lessons during your study sessions to build your library
+          </p>
+          <button mat-flat-button color="primary" class="empty-action-btn" (click)="goBack()">
+            Start learning
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="lessons-grid">
+        @for (lesson of filteredLessons(); track lesson.id; let i = $index) {
+          <div
+            class="lesson-card glass-card"
+            matRipple
+            (click)="openLesson(lesson.id!)"
+            (keydown.enter)="openLesson(lesson.id!)"
+            tabindex="0"
+            [style.animation-delay]="i * 50 + 'ms'"
+          >
+            <!-- Card Header: Icon + Delete -->
+            <div class="card-header">
+              <div
+                class="topic-icon"
+                [style.background]="
+                  'color-mix(in srgb, ' + lesson.topicColor + ' 20%, transparent)'
+                "
+                [style.color]="lesson.topicColor"
+              >
+                <span class="material-symbols-rounded">{{ lesson.topicIcon }}</span>
+              </div>
+              <button
+                mat-icon-button
+                class="delete-btn"
+                (click)="deleteSavedLesson(lesson.id!, $event)"
+                aria-label="Delete saved lesson"
+              >
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+
+            <!-- Card Body -->
+            <h3 class="card-title">{{ lesson.title }}</h3>
+            <span class="card-topic">{{ lesson.topicName }}</span>
+
+            <!-- Card Footer: Badge + Date -->
+            <div class="card-footer">
+              <span class="difficulty-badge" [attr.data-level]="lesson.difficulty">
+                {{ lesson.difficulty | titlecase }}
+              </span>
+              <span class="card-date">{{ formatDate(lesson.savedAt) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

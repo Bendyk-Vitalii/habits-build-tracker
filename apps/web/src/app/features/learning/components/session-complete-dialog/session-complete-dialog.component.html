@@ -1,0 +1,32 @@
+<div class="session-complete">
+  <div class="celebration-glow"></div>
+
+  <div class="header">
+    <mat-icon class="trophy-icon">emoji_events</mat-icon>
+    <h2>Session Complete! 🎉</h2>
+    <p class="topic-name">{{ data.topicName }}</p>
+    <p class="duration">{{ data.durationMinutes }} minutes of learning</p>
+  </div>
+
+  <div class="rating-section">
+    <span class="section-label">How was this session?</span>
+    <ht-star-rating [rating]="rating()" (ratingChange)="rating.set($event)" />
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Notes (optional)</mat-label>
+    <textarea
+      matInput
+      [value]="notes()"
+      (input)="notes.set(notesInput.value)"
+      #notesInput
+      rows="3"
+      placeholder="What did you learn?"
+    ></textarea>
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-button (click)="onSkip()">Skip</button>
+    <button mat-flat-button color="primary" (click)="onSave()">Save</button>
+  </div>
+</div>

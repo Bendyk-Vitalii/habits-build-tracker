@@ -1,12 +1,5 @@
 export const environment = {
   production: true,
   apiBaseUrl: '/api',
-  firebase: {
-    projectId: 'habits-build-tracker',
-    apiKey: '',
-    authDomain: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: '',
-  },
+  geminiApiKey: 'REPLACE_WITH_YOUR_GEMINI_API_KEY',
 };

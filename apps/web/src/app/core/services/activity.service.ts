@@ -112,14 +112,14 @@ export class ActivityService {
     const uid = this.authService.uid();
     if (!uid) return;
     const docRef = userDoc(this.firestore, uid, 'activities', String(id));
-    await updateDoc(docRef, data as Record<string, any>);
+    await updateDoc(docRef, data as Record<string, unknown>);
   }
 
   /**
    * Soft-deletes an activity by setting `isArchived` to true.
    */
   async archiveActivity(id: string | number): Promise<void> {
-    await this.updateActivity(id, { isArchived: 1 } as any);
+    await this.updateActivity(id, { isArchived: 1 } as Partial<Activity>);
   }
 
   /**

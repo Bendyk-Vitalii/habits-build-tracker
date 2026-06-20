@@ -24,6 +24,10 @@
         "function": "aiSuggest"
       },
       {
+        "source": "/api/ai/generate-lesson",
+        "function": "aiGenerateLesson"
+      },
+      {
         "source": "**",
         "destination": "/index.csr.html"
       }

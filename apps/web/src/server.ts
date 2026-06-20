@@ -36,6 +36,13 @@ app.use(
 );
 
 /**
+ * Skip API routes — let them pass through to the proxy (dev) or Firebase rewrites (prod).
+ */
+app.use('/api', (_req, _res, next) => {
+  next();
+});
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 app.use((req, res, next) => {
