@@ -92,6 +92,9 @@
   text-align: center;
   color: var(--ht-text-secondary);
   margin-top: 20vh;
+  @supports (height: 100dvh) {
+    margin-top: 20dvh;
+  }
 }
 
 .lesson-article {

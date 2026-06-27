@@ -50,7 +50,12 @@
 
     <!-- Card -->
     @if (currentCard(); as card) {
-      <div class="fs-card-container" (click)="toggleFlip()">
+      <div
+        class="fs-card-container"
+        (click)="toggleFlip()"
+        (keydown.enter)="toggleFlip()"
+        tabindex="0"
+      >
         <div class="fs-card" [class.flipped]="isFlipped()">
           <div class="fs-card-face fs-card-front">
             <span class="fs-card-label">Term</span>

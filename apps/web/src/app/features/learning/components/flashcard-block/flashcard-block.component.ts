@@ -1,4 +1,13 @@
-import { Component, ChangeDetectionStrategy, input, signal, computed } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  signal,
+  computed,
+  OnDestroy,
+  inject,
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FlashcardItem } from '@habits-tracker/shared';
@@ -11,7 +20,8 @@ import { FlashcardItem } from '@habits-tracker/shared';
   templateUrl: './flashcard-block.component.html',
   styleUrl: './flashcard-block.component.scss',
 })
-export class FlashcardBlockComponent {
+export class FlashcardBlockComponent implements OnDestroy {
+  private readonly document = inject(DOCUMENT);
   readonly flashcards = input.required<FlashcardItem[]>();
   readonly title = input<string>('');
 
@@ -81,13 +91,19 @@ export class FlashcardBlockComponent {
     this.isFullscreen.set(true);
     this.currentIndex.set(0);
     this.isFlipped.set(false);
+    this.document.body.classList.add('hide-layout-nav');
   }
 
   exitFullscreen(): void {
     this.isFullscreen.set(false);
+    this.document.body.classList.remove('hide-layout-nav');
   }
 
   isCardKnown(index: number): boolean {
     return this.knownCards().has(index);
+  }
+
+  ngOnDestroy(): void {
+    this.document.body.classList.remove('hide-layout-nav');
   }
 }

@@ -131,6 +131,13 @@ body {
   overflow-x: hidden;
 }
 
+body.hide-layout-nav {
+  ht-top-bar,
+  ht-bottom-nav {
+    display: none !important;
+  }
+}
+
 // --- Typography ---
 h1,
 h2,
