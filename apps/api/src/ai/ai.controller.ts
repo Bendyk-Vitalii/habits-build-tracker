@@ -235,7 +235,7 @@ function generateRuleBasedSuggestion(
 
 /**
  * POST /api/ai/generate-lesson
- * Generates a short, intermediate/advanced lesson on a given topic with an optional quiz.
+ * Generates an interactive, practical lesson on a given topic with exercises, flashcards, and quizzes.
  */
 export const aiGenerateLesson = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
@@ -271,23 +271,82 @@ export const aiGenerateLesson = functions.https.onCall(async (data, context) => 
         'Target senior/staff-level professionals. Dive into internals, cutting-edge techniques, research-backed approaches, and system design considerations. Cover topics like performance tuning at scale, novel patterns, contributions to the field, and cross-domain insights. Assume mastery of the topic and focus on pushing boundaries.',
     };
 
-    const prompt = `You are an expert tutor. Create a short, engaging lesson about "${topicName}".
-The lesson should take about ${durationMinutes} minutes to read.
+    const prompt = `You are an expert tutor creating an INTERACTIVE learning lesson about "${topicName}".
+The lesson should take about ${durationMinutes} minutes of ACTIVE LEARNING (not just reading).
 
 DIFFICULTY LEVEL: ${level.toUpperCase()}
 ${difficultyInstructions[level] || difficultyInstructions['intermediate']}
 
-You MUST return a raw JSON object (no markdown formatting, no backticks, just the JSON string) matching this exact schema:
+CRITICAL INSTRUCTION — DETECT THE TOPIC CATEGORY:
+First, determine if "${topicName}" is:
+A) A LANGUAGE topic (English, Spanish, French, German, Japanese, any human language, vocabulary, grammar, etc.)
+B) A TECHNICAL/PROGRAMMING topic (coding, databases, frameworks, DevOps, etc.)
+C) A GENERAL KNOWLEDGE topic (science, history, math, music theory, etc.)
+
+FOR LANGUAGE TOPICS (Category A):
+- Create PRACTICAL, hands-on language exercises — NOT theoretical reading about the language.
+- Include vocabulary flashcards with the word and its translation/definition.
+- Include fill-in-the-blank grammar exercises.
+- Include sentence translation exercises.
+- Include word-matching exercises (word ↔ meaning).
+- Minimal reading paragraphs — focus on PRACTICE.
+- Content ratio: 60% interactive exercises, 20% brief explanations, 20% quiz.
+
+FOR TECHNICAL TOPICS (Category B):
+- Mix explanatory content with hands-on code exercises.
+- Include code-completion exercises (fill in the blank in code snippets).
+- Include concept-matching exercises (term ↔ definition).
+- Content ratio: 40% interactive exercises, 40% explanatory text with code, 20% quiz.
+
+FOR GENERAL TOPICS (Category C):
+- Mix engaging explanations with knowledge-testing exercises.
+- Include concept flashcards and matching exercises.
+- Content ratio: 30% interactive exercises, 50% explanatory text, 20% quiz.
+
+You MUST return a raw JSON object (no markdown, no backticks) matching this schema:
 {
-  "title": "A catchy title for the lesson",
+  "title": "A catchy, specific title for the lesson",
   "contentBlocks": [
     { "type": "heading", "value": "Section heading" },
-    { "type": "text", "value": "A paragraph of text explaining a concept." },
-    { "type": "code", "value": "code snippet here if relevant, otherwise omit this block" }
+    { "type": "text", "value": "A brief paragraph explaining a concept. Keep these SHORT." },
+    { "type": "code", "value": "code snippet (only for technical topics)" },
+    {
+      "type": "exercise",
+      "value": "Exercise section title",
+      "exerciseType": "fill-blank",
+      "blanks": [
+        { "prompt": "The sentence with a ___ to fill in.", "answer": "correct word", "hint": "Optional hint" },
+        { "prompt": "Another ___ exercise.", "answer": "answer", "hint": "hint" }
+      ]
+    },
+    {
+      "type": "exercise",
+      "value": "Translation Practice",
+      "exerciseType": "translate",
+      "blanks": [
+        { "prompt": "Translate: 'Hello, how are you?'", "answer": "Hola, ¿cómo estás?", "hint": "Spanish greeting" }
+      ]
+    },
+    {
+      "type": "flashcard",
+      "value": "Key Vocabulary",
+      "flashcards": [
+        { "front": "Term or word", "back": "Definition or translation" },
+        { "front": "Another term", "back": "Another definition" }
+      ]
+    },
+    {
+      "type": "matching",
+      "value": "Match the Pairs",
+      "matchPairs": [
+        { "left": "Term A", "right": "Definition A" },
+        { "left": "Term B", "right": "Definition B" }
+      ]
+    }
   ],
   "quiz": [
     {
-      "question": "A question testing understanding of the material?",
+      "question": "A question testing understanding?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correctAnswer": "Option B"
     }
@@ -295,7 +354,15 @@ You MUST return a raw JSON object (no markdown formatting, no backticks, just th
   "difficulty": "${level}"
 }
 
-Include exactly 3 quiz questions if the topic is suitable for testing, otherwise omit the quiz array.`;
+RULES:
+1. Include AT LEAST 2 interactive blocks (exercise, flashcard, or matching).
+2. For language topics: include AT LEAST 1 flashcard block (5-8 cards), 1 fill-blank exercise (4-6 blanks), and 1 matching block (4-6 pairs).
+3. For technical topics: include AT LEAST 1 exercise block and 1 matching or flashcard block.
+4. Include exactly 3 quiz questions.
+5. Keep "text" blocks SHORT (2-3 sentences max) — this is active learning, not a textbook.
+6. Each flashcard block should have 5-8 flashcards.
+7. Each matching block should have 4-6 pairs.
+8. Each exercise block should have 3-6 blanks.`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;

@@ -71,4 +71,8 @@
 .topic-time {
   font-size: 0.75rem;
   color: var(--ht-text-secondary, #aaa);
+
+  .session-divider {
+    opacity: 0.5;
+  }
 }

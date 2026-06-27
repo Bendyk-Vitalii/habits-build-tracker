@@ -17,9 +17,6 @@
           <span class="saved-count">{{ savedCount() }}</span>
         }
       </button>
-      <button mat-mini-fab color="primary" (click)="openAddDialog()" aria-label="Add topic">
-        <mat-icon>add</mat-icon>
-      </button>
     </div>
   </div>
 
@@ -29,6 +26,7 @@
       <ht-topic-card
         [topic]="topic"
         [totalMinutes]="topicMinutes()[topic.id!] || 0"
+        [sessionCount]="topicSessionCounts()[topic.id!] || 0"
         (startSession)="startSession(topic.id!)"
         (edit)="openEditDialog(topic.id!)"
       />
@@ -66,4 +64,9 @@
       </div>
     </div>
   }
+  <div class="learning-add-topic-btn">
+    <button mat-mini-fab color="primary" (click)="openAddDialog()" aria-label="Add topic">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
 </div>

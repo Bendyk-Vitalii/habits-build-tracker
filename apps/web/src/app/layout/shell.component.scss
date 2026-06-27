@@ -8,6 +8,7 @@
 .shell-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding: var(--ht-spacing-md);
   padding-top: calc(var(--ht-top-bar-height) + var(--ht-safe-top) + var(--ht-spacing-md));

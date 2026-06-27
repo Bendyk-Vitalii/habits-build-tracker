@@ -20,10 +20,13 @@
       >
         <mat-icon>{{ isSaved() ? 'bookmark' : 'bookmark_border' }}</mat-icon>
       </button>
-      <div class="timer-mini" [class.running]="isRunning()">
+      <div class="timer-mini" [class.running]="isRunning()" [class.overtime]="isOvertime()">
         <mat-icon class="timer-icon">timer</mat-icon>
         <span>{{ formattedTime() }}</span>
       </div>
+      @if (isOvertime()) {
+        <span class="overtime-badge">Time's up!</span>
+      }
     </div>
 
     <div class="content-area">
@@ -80,8 +83,18 @@
                 <h2>{{ block.value }}</h2>
               } @else if (block.type === 'code') {
                 <pre><code>{{ block.value }}</code></pre>
-              } @else {
+              } @else if (block.type === 'text') {
                 <p>{{ block.value }}</p>
+              } @else if (block.type === 'exercise' && block.blanks) {
+                <ht-exercise-block
+                  [title]="block.value"
+                  [blanks]="block.blanks"
+                  [exerciseType]="block.exerciseType || 'fill-blank'"
+                />
+              } @else if (block.type === 'flashcard' && block.flashcards) {
+                <ht-flashcard-block [title]="block.value" [flashcards]="block.flashcards" />
+              } @else if (block.type === 'matching' && block.matchPairs) {
+                <ht-matching-block [title]="block.value" [pairs]="block.matchPairs" />
               }
             }
           </div>
@@ -176,7 +189,13 @@
                 Too Easy? Go Deeper
               </button>
             }
-            <button mat-flat-button color="accent" class="finish-btn" (click)="finishEarly()">
+            @if (isOvertime()) {
+              <button mat-stroked-button class="extend-btn" (click)="extendTime()">
+                <mat-icon>add_alarm</mat-icon>
+                Extend +5 min
+              </button>
+            }
+            <button mat-flat-button color="accent" class="finish-btn" (click)="completeSession()">
               Complete Session
             </button>
           </div>

@@ -213,6 +213,11 @@ export class LearningService {
     return sessions.reduce((sum, s) => sum + s.durationMinutes, 0);
   }
 
+  async getSessionCountForTopic(topicId: string): Promise<number> {
+    const sessions = await this.getSessionsForTopic(topicId);
+    return sessions.length;
+  }
+
   async getTopicById(id: string): Promise<LearningTopic | undefined> {
     const uid = this.authService.uid();
     if (!uid) return undefined;

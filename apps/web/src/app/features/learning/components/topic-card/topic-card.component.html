@@ -14,5 +14,10 @@
   </div>
 
   <span class="topic-name">{{ topic().name }}</span>
-  <span class="topic-time">{{ formattedTime() }}</span>
+  <span class="topic-time">
+    {{ formattedTime() }}
+    @if (formattedCount()) {
+      <span class="session-divider"> · </span>{{ formattedCount() }}
+    }
+  </span>
 </div>

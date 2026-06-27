@@ -19,6 +19,11 @@ export type {
   AiLessonContentBlock,
   AiLessonQuizQuestion,
   LessonDifficulty,
+  ContentBlockType,
+  ExerciseType,
+  ExerciseBlank,
+  FlashcardItem,
+  MatchPair,
 } from './models/ai-lesson.model';
 export type { SavedLesson } from './models/saved-lesson.model';
 

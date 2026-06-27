@@ -33,6 +33,7 @@ export class LearningComponent implements OnInit {
   topics = this.learningService.topics;
   recentSessions = signal<LearningSession[]>([]);
   topicMinutes = signal<Record<string, number>>({});
+  topicSessionCounts = signal<Record<string, number>>({});
   savedCount = signal(0);
 
   ngOnInit(): void {
@@ -52,6 +53,15 @@ export class LearningComponent implements OnInit {
       }
     }
     this.topicMinutes.set(minutes);
+
+    // Load session counts per topic
+    const counts: Record<string, number> = {};
+    for (const topic of this.topics()) {
+      if (topic.id) {
+        counts[topic.id] = await this.learningService.getSessionCountForTopic(topic.id);
+      }
+    }
+    this.topicSessionCounts.set(counts);
 
     // Load saved lessons count
     const count = await this.learningService.getSavedLessonsCount();

@@ -19,6 +19,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { LearningTopic, AiLessonResponse, LessonDifficulty } from '@habits-tracker/shared';
 import { LearningService } from '../../core/services/learning.service';
 import { SessionCompleteDialogComponent } from './components/session-complete-dialog/session-complete-dialog.component';
+import { ExerciseBlockComponent } from './components/exercise-block/exercise-block.component';
+import { FlashcardBlockComponent } from './components/flashcard-block/flashcard-block.component';
+import { MatchingBlockComponent } from './components/matching-block/matching-block.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +37,9 @@ import { SessionCompleteDialogComponent } from './components/session-complete-di
     FormsModule,
     KeyValuePipe,
     TitleCasePipe,
+    ExerciseBlockComponent,
+    FlashcardBlockComponent,
+    MatchingBlockComponent,
   ],
   templateUrl: './learning-session.component.html',
   styleUrl: './learning-session.component.scss',
@@ -49,6 +55,8 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
   isRunning = signal(false);
   isPaused = signal(false);
   isComplete = signal(false);
+  isOvertime = signal(false);
+  elapsedSeconds = signal(0);
 
   lesson = signal<AiLessonResponse | null>(null);
   isLoadingLesson = signal(true);
@@ -71,11 +79,19 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
 
   private targetEndTimeMs = 0;
   private intervalId: ReturnType<typeof setInterval> | null = null;
+  private elapsedIntervalId: ReturnType<typeof setInterval> | null = null;
+  private overtimeNotified = false;
   private wakeLock: WakeLockSentinel | null = null;
 
   Math = Math;
 
   formattedTime = computed(() => {
+    if (this.isOvertime()) {
+      const abs = Math.abs(this.timeRemainingSeconds());
+      const m = Math.floor(abs / 60);
+      const s = abs % 60;
+      return `+${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
     const total = this.timeRemainingSeconds();
     const m = Math.floor(total / 60);
     const s = total % 60;
@@ -83,6 +99,7 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
   });
 
   progressPercent = computed(() => {
+    if (this.isOvertime()) return 100;
     const remaining = this.timeRemainingSeconds();
     const total = this.defaultDurationSeconds;
     return Math.max(0, Math.min(100, ((total - remaining) / total) * 100));
@@ -121,6 +138,7 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
       );
       this.lesson.set(generated);
       this.startTimer();
+      this.startElapsedCounter();
     } catch (err) {
       console.error('Failed to load lesson', err);
       this.lessonError.set('Failed to generate the lesson. Please try again later.');
@@ -137,10 +155,12 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
 
     this.intervalId = setInterval(() => {
       const remaining = Math.round((this.targetEndTimeMs - Date.now()) / 1000);
-      this.timeRemainingSeconds.set(Math.max(0, remaining));
+      this.timeRemainingSeconds.set(remaining);
 
-      if (remaining <= 0) {
-        this.completeSession();
+      if (remaining <= 0 && !this.overtimeNotified) {
+        this.overtimeNotified = true;
+        this.isOvertime.set(true);
+        this.playNotification();
       }
     }, 500);
   }
@@ -169,9 +189,15 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
 
   extendTime(): void {
     const additionalSeconds = 5 * 60; // 5 minutes
-    this.timeRemainingSeconds.update((t) => t + additionalSeconds);
-    if (this.isRunning()) {
-      this.targetEndTimeMs += additionalSeconds * 1000;
+    if (this.isOvertime()) {
+      this.isOvertime.set(false);
+      this.timeRemainingSeconds.set(additionalSeconds);
+      this.targetEndTimeMs = Date.now() + additionalSeconds * 1000;
+    } else {
+      this.timeRemainingSeconds.update((t) => t + additionalSeconds);
+      if (this.isRunning()) {
+        this.targetEndTimeMs += additionalSeconds * 1000;
+      }
     }
   }
 
@@ -180,54 +206,14 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
+    if (this.elapsedIntervalId) {
+      clearInterval(this.elapsedIntervalId);
+      this.elapsedIntervalId = null;
+    }
     this.isRunning.set(false);
   }
 
-  private completeSession(): void {
-    this.stopTimer();
-    this.isComplete.set(true);
-    this.releaseWakeLock();
-    this.playNotification();
-
-    const currentTopic = this.topic();
-    if (!currentTopic) return;
-
-    const elapsed = this.defaultDurationSeconds - this.timeRemainingSeconds();
-    const durationMinutes = Math.max(1, Math.round(elapsed / 60));
-
-    const dialogRef = this.dialog.open(SessionCompleteDialogComponent, {
-      width: '100%',
-      maxWidth: '440px',
-      panelClass: 'bottom-sheet-dialog',
-      disableClose: true,
-      data: {
-        topicName: currentTopic.name,
-        durationMinutes: Math.round(this.defaultDurationSeconds / 60),
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.learningService.logLearningSession(
-          currentTopic.id!,
-          currentTopic.name,
-          result.durationMinutes || durationMinutes,
-          result.rating,
-          result.notes,
-        );
-      } else {
-        // User skipped rating, still log the session
-        this.learningService.logLearningSession(
-          currentTopic.id!,
-          currentTopic.name,
-          durationMinutes,
-        );
-      }
-      this.router.navigate(['/learn']);
-    });
-  }
-
-  finishEarly(): void {
+  completeSession(): void {
     this.stopTimer();
     this.isComplete.set(true);
     this.releaseWakeLock();
@@ -235,8 +221,7 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
     const currentTopic = this.topic();
     if (!currentTopic) return;
 
-    const elapsed = this.defaultDurationSeconds - this.timeRemainingSeconds();
-    const durationMinutes = Math.max(1, Math.round(elapsed / 60));
+    const durationMinutes = Math.max(1, Math.round(this.elapsedSeconds() / 60));
 
     const dialogRef = this.dialog.open(SessionCompleteDialogComponent, {
       width: '100%',
@@ -402,7 +387,7 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
         osc2.stop(audioCtx.currentTime + 0.5);
       }, 350);
     } catch {
-      // Audio blocked
+      // Audio blocked or not supported
     }
   }
 
@@ -422,5 +407,12 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
         this.wakeLock = null;
       });
     }
+  }
+
+  private startElapsedCounter(): void {
+    this.elapsedSeconds.set(0);
+    this.elapsedIntervalId = setInterval(() => {
+      this.elapsedSeconds.update((s) => s + 1);
+    }, 1000);
   }
 }

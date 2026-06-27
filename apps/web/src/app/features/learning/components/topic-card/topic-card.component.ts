@@ -15,6 +15,7 @@ import { LearningTopic } from '@habits-tracker/shared';
 export class TopicCardComponent {
   readonly topic = input.required<LearningTopic>();
   readonly totalMinutes = input<number>(0);
+  readonly sessionCount = input<number>(0);
   readonly startSession = output<void>();
   readonly edit = output<void>();
 
@@ -30,6 +31,12 @@ export class TopicCardComponent {
     const m = minutes % 60;
     if (h === 0) return `${m}m`;
     return `${h}h ${m}m`;
+  });
+
+  readonly formattedCount = computed(() => {
+    const count = this.sessionCount();
+    if (count === 0) return '';
+    return count === 1 ? '1 session' : `${count} sessions`;
   });
 
   onEdit(event: Event): void {
