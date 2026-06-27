@@ -42,7 +42,8 @@ export class ReviewService {
 
     let activitiesCompleted = 0;
     for (const activity of activities) {
-      const mins = await this.sessionService.getTotalMinutesForWeek(activity.id!, weekStartDate);
+      const actSessions = sessions.filter((s) => String(s.activityId) === String(activity.id));
+      const mins = actSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
       if (mins >= activity.weeklyGoalMinutes) {
         activitiesCompleted++;
       }
@@ -116,8 +117,12 @@ export class ReviewService {
 
     for (const ws of weekStarts) {
       let weekCompleted = 0;
+      const weekEnd = this.addDays(ws, 6);
       for (const activity of activities) {
-        const mins = await this.sessionService.getTotalMinutesForWeek(activity.id!, ws);
+        const actSessionsInWeek = sessions.filter(
+          (s) => String(s.activityId) === String(activity.id) && s.date >= ws && s.date <= weekEnd,
+        );
+        const mins = actSessionsInWeek.reduce((sum, s) => sum + s.durationMinutes, 0);
         if (mins >= activity.weeklyGoalMinutes) {
           weekCompleted++;
         }

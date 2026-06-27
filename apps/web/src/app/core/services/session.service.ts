@@ -66,6 +66,18 @@ export class SessionService {
   }
 
   /**
+   * Returns all sessions ever recorded by the user.
+   */
+  async getAllSessions(): Promise<Session[]> {
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'sessions');
+    const snapshot = await getDocs(col);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
+  }
+
+  /**
    * Returns all sessions within a date range (inclusive).
    */
   async getSessionsForDateRange(startDate: string, endDate: string): Promise<Session[]> {

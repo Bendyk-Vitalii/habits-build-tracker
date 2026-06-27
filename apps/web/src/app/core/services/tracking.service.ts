@@ -60,7 +60,10 @@ export class TrackingService {
    */
   async getStreak(activityId: string | number): Promise<number> {
     const sessions = await this.sessionService.getSessionsForActivity(activityId);
+    return this.calculateStreak(sessions);
+  }
 
+  private calculateStreak(sessions: import('@habits-tracker/shared').Session[]): number {
     if (sessions.length === 0) return 0;
 
     const sessionDates = new Set(sessions.map((s) => s.date));
@@ -148,19 +151,67 @@ export class TrackingService {
     return Math.min(100, Math.round((totalMinutes / activity.weeklyGoalMinutes) * 100));
   }
 
-  /**
-   * Computes the average weekly completion rate across all active activities.
-   */
   async getOverallCompletionRate(): Promise<number> {
     const activities = this.activityService.activities();
     if (activities.length === 0) return 0;
 
+    const weekStart = this.getWeekStartDate(new Date());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    const weekEndStr = weekEnd.toISOString().split('T')[0];
+
+    const sessions = await this.sessionService.getSessionsForDateRange(weekStart, weekEndStr);
+
     let totalRate = 0;
+    let validActivities = 0;
+
     for (const activity of activities) {
-      totalRate += await this.getWeeklyCompletionRate(activity.id!);
+      if (!activity || activity.weeklyGoalMinutes === 0) continue;
+
+      const actSessions = sessions.filter((s) => String(s.activityId) === String(activity.id));
+      const totalMinutes = actSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
+      const rate = Math.min(100, Math.round((totalMinutes / activity.weeklyGoalMinutes) * 100));
+
+      totalRate += rate;
+      validActivities++;
     }
 
-    return Math.round(totalRate / activities.length);
+    return validActivities > 0 ? Math.round(totalRate / validActivities) : 0;
+  }
+
+  async getAllActivityStatsMap(): Promise<
+    Record<number, { streak: number; weeklyMinutes: number }>
+  > {
+    const activities = this.activityService.activities();
+    if (activities.length === 0) return {};
+
+    const allSessions = await this.sessionService.getAllSessions();
+    const weekStart = this.getWeekStartDate(new Date());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    const weekEndStr = weekEnd.toISOString().split('T')[0];
+
+    const stats: Record<number, { streak: number; weeklyMinutes: number }> = {};
+
+    for (const activity of activities) {
+      if (!activity.id) continue;
+
+      const actSessions = allSessions.filter((s) => String(s.activityId) === String(activity.id));
+      const streak = this.calculateStreak(actSessions);
+
+      const thisWeekSessions = actSessions.filter(
+        (s) => s.date >= weekStart && s.date <= weekEndStr,
+      );
+      const totalMinutes = thisWeekSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
+      const weeklyRate =
+        activity.weeklyGoalMinutes > 0
+          ? Math.min(100, Math.round((totalMinutes / activity.weeklyGoalMinutes) * 100))
+          : 0;
+      const weeklyMinutes = (weeklyRate / 100) * activity.weeklyGoalMinutes;
+
+      stats[activity.id as number] = { streak, weeklyMinutes: Math.round(weeklyMinutes) };
+    }
+    return stats;
   }
 
   // ── helpers ───────────────────────────────────────────────

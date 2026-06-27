@@ -1,0 +1,77 @@
+<div class="exercise-block">
+  <div class="exercise-header">
+    <mat-icon class="exercise-icon">{{ getExerciseIcon() }}</mat-icon>
+    <span class="exercise-type">{{ getExerciseLabel() }}</span>
+    @if (title()) {
+      <span class="exercise-title">— {{ title() }}</span>
+    }
+  </div>
+
+  <div class="blanks-list">
+    @for (blank of blanks(); track $index; let i = $index) {
+      <div
+        class="blank-item"
+        [class.correct]="states()[i]?.isChecked && states()[i]?.isCorrect"
+        [class.incorrect]="states()[i]?.isChecked && !states()[i]?.isCorrect"
+      >
+        <p class="blank-prompt">{{ blank.prompt }}</p>
+        <div class="blank-input-row">
+          <mat-form-field appearance="outline" class="blank-input">
+            <input
+              matInput
+              [placeholder]="
+                exerciseType() === 'translate' ? 'Your translation...' : 'Your answer...'
+              "
+              [value]="states()[i]?.userAnswer || ''"
+              (input)="updateAnswer(i, $any($event.target).value)"
+              [readonly]="states()[i]?.isChecked"
+            />
+            @if (states()[i]?.isChecked) {
+              <mat-icon
+                matSuffix
+                [class.icon-correct]="states()[i]?.isCorrect"
+                [class.icon-incorrect]="!states()[i]?.isCorrect"
+              >
+                {{ states()[i]?.isCorrect ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            }
+          </mat-form-field>
+          @if (!states()[i]?.isChecked && blank.hint) {
+            <button mat-icon-button class="hint-btn" (click)="showHint(i)" aria-label="Show hint">
+              <mat-icon>lightbulb</mat-icon>
+            </button>
+          }
+        </div>
+        @if (states()[i]?.isChecked && !states()[i]?.isCorrect) {
+          <p class="correct-answer">
+            <mat-icon>arrow_forward</mat-icon>
+            Correct: <strong>{{ blank.answer }}</strong>
+          </p>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="exercise-actions">
+    @if (!isAllChecked()) {
+      <button
+        mat-flat-button
+        color="primary"
+        class="check-btn"
+        (click)="checkAnswers()"
+        [disabled]="states().some((s) => !s.userAnswer.trim())"
+      >
+        <mat-icon>fact_check</mat-icon>
+        Check Answers
+      </button>
+    } @else {
+      <div class="score-display">
+        <span class="score-text"> {{ score().correct }} / {{ score().total }} correct </span>
+        <button mat-stroked-button class="retry-btn" (click)="retry()">
+          <mat-icon>replay</mat-icon>
+          Try Again
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,8 +1,6 @@
 .session-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
   background-color: var(--ht-surface);
 }
 
@@ -422,6 +420,53 @@
     font-size: 20px;
     width: 20px;
     height: 20px;
+  }
+}
+
+.timer-mini.overtime {
+  color: var(--ht-warning, #ffa726);
+  background: color-mix(in srgb, var(--ht-warning, #ffa726) 15%, transparent);
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+.overtime-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ht-warning, #ffa726);
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ht-warning, #ffa726) 12%, transparent);
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+.extend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 24px !important;
+  font-weight: 600;
+  color: var(--ht-warning, #ffa726) !important;
+  border-color: var(--ht-warning, #ffa726) !important;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--ht-warning, #ffa726) 10%, transparent);
+  }
+}
+
+@keyframes pulse-warning {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
 

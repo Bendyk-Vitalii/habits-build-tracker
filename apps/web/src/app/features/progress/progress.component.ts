@@ -1,9 +1,10 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivityService } from '../../core/services/activity.service';
 import { SessionService } from '../../core/services/session.service';
 import { TrackingService } from '../../core/services/tracking.service';
@@ -15,17 +16,24 @@ type ProgressView = 'weekly' | 'monthly';
 
   selector: 'ht-progress',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonToggleModule, BaseChartDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonToggleModule,
+    BaseChartDirective,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './progress.component.html',
   styleUrl: './progress.component.scss',
 })
-export class ProgressComponent implements OnInit {
+export class ProgressComponent {
   private activityService = inject(ActivityService);
   private sessionService = inject(SessionService);
   private trackingService = inject(TrackingService);
 
   activities = this.activityService.activities;
   view = signal<ProgressView>('weekly');
+  isLoading = signal<boolean>(true);
 
   // Chart Data
   weeklyChartData = signal<ChartData<'bar'> | null>(null);
@@ -65,8 +73,19 @@ export class ProgressComponent implements OnInit {
     },
   };
 
-  ngOnInit(): void {
-    this.loadData();
+  constructor() {
+    effect(
+      () => {
+        const acts = this.activities();
+        this.view(); // tracking view changes to re-trigger if necessary
+
+        if (acts) {
+          this.isLoading.set(true);
+          this.loadData().then(() => this.isLoading.set(false));
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   async loadData(): Promise<void> {
@@ -83,6 +102,12 @@ export class ProgressComponent implements OnInit {
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay()); // Sunday
 
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    const startDateStr = weekStart.toISOString().split('T')[0];
+    const endDateStr = weekEnd.toISOString().split('T')[0];
+    const allSessions = await this.sessionService.getSessionsForDateRange(startDateStr, endDateStr);
+
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const datasets: ChartData<'bar'>['datasets'] = [];
 
@@ -93,8 +118,9 @@ export class ProgressComponent implements OnInit {
         d.setDate(weekStart.getDate() + i);
         const dateStr = d.toISOString().split('T')[0];
 
-        const sessions = await this.sessionService.getSessionsForDate(dateStr);
-        const actSessions = sessions.filter((s) => s.activityId === act.id);
+        const actSessions = allSessions.filter(
+          (s) => s.activityId === act.id && s.date === dateStr,
+        );
         data[i] = actSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
       }
 
@@ -142,16 +168,29 @@ export class ProgressComponent implements OnInit {
   }
 
   private async loadHeatmap(): Promise<void> {
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 89);
+    const startDateStr = startDate.toISOString().split('T')[0];
+    const endDateStr = today.toISOString().split('T')[0];
+
+    const allSessions = await this.sessionService.getSessionsForDateRange(startDateStr, endDateStr);
+    const sessionsByDate = allSessions.reduce(
+      (acc, s) => {
+        acc[s.date] = (acc[s.date] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
     // Generate last 90 days
     const grid = [];
-    const today = new Date();
     for (let i = 89; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
 
-      const sessions = await this.sessionService.getSessionsForDate(dateStr);
-      const val = sessions.length;
+      const val = sessionsByDate[dateStr] || 0;
 
       grid.push({
         date: dateStr,

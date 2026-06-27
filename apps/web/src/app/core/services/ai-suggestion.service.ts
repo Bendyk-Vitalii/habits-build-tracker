@@ -7,7 +7,7 @@ import {
   AiSuggestResponse,
   SCIENCE_THRESHOLDS,
 } from '@habits-tracker/shared';
-import { environment } from '../../../environments/environment';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { ActivityService } from './activity.service';
 import { SessionService } from './session.service';
 import { TrackingService } from './tracking.service';
@@ -19,6 +19,7 @@ import { TrackingService } from './tracking.service';
 @Injectable({ providedIn: 'root' })
 export class AiSuggestionService {
   private readonly http = inject(HttpClient);
+  private readonly functions = inject(Functions);
   private readonly activityService = inject(ActivityService);
   private readonly sessionService = inject(SessionService);
   private readonly trackingService = inject(TrackingService);
@@ -36,10 +37,12 @@ export class AiSuggestionService {
     const context = await this.buildContext(requestType);
 
     try {
-      const response = await firstValueFrom(
-        this.http.post<AiSuggestResponse>(`${environment.apiBaseUrl}/ai/suggest`, context),
+      const suggestFn = httpsCallable<AiSuggestRequest, AiSuggestResponse>(
+        this.functions,
+        'aiSuggest',
       );
-      return response;
+      const result = await suggestFn(context);
+      return result.data;
     } catch {
       // API unavailable → fall back to deterministic rules
       return this.getRuleBasedSuggestion(context);

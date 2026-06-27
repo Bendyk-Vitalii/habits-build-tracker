@@ -14,6 +14,7 @@ import {
   enableMultiTabIndexedDbPersistence,
 } from '@angular/fire/firestore';
 import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFunctions, getFunctions } from '@angular/fire/functions';
 
 import { firebaseConfig } from '../environments/firebase.config';
 import { routes } from './app.routes';
@@ -38,6 +39,7 @@ export const appConfig: ApplicationConfig = {
     // Firebase
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()),
+    provideFunctions(() => getFunctions()),
     provideFirestore(() => {
       const firestore = getFirestore();
       // Enable offline persistence for PWA support
