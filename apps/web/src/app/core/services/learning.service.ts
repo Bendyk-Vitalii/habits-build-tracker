@@ -187,6 +187,15 @@ export class LearningService {
     return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as LearningSession);
   }
 
+  async getAllSessions(): Promise<LearningSession[]> {
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection(this.firestore, uid, 'learningSessions');
+    const snapshot = await getDocs(col);
+    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as LearningSession);
+  }
+
   async getSessionsForTopic(
     topicId: string,
     startDate?: string,

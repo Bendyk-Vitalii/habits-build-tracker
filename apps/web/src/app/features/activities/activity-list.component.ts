@@ -42,15 +42,7 @@ export class ActivityListComponent implements OnInit {
   }
 
   async loadStats(): Promise<void> {
-    const stats: Record<number, { streak: number; weeklyMinutes: number }> = {};
-    for (const act of this.activities()) {
-      if (act.id) {
-        const streak = await this.trackingService.getStreak(act.id);
-        const weeklyRate = await this.trackingService.getWeeklyCompletionRate(act.id);
-        const weeklyMinutes = (weeklyRate / 100) * act.weeklyGoalMinutes;
-        stats[act.id] = { streak, weeklyMinutes: Math.round(weeklyMinutes) };
-      }
-    }
+    const stats = await this.trackingService.getAllActivityStatsMap();
     this.activityStats.set(stats);
   }
 

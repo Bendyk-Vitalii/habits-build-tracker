@@ -45,22 +45,20 @@ export class LearningComponent implements OnInit {
     const sessions = await this.learningService.getRecentSessions(10);
     this.recentSessions.set(sessions);
 
-    // Load total minutes per topic
-    const minutes: Record<string, number> = {};
-    for (const topic of this.topics()) {
-      if (topic.id) {
-        minutes[topic.id] = await this.learningService.getTotalMinutesForTopic(topic.id);
-      }
-    }
-    this.topicMinutes.set(minutes);
+    const allSessions = await this.learningService.getAllSessions();
 
-    // Load session counts per topic
+    const minutes: Record<string, number> = {};
     const counts: Record<string, number> = {};
+
     for (const topic of this.topics()) {
       if (topic.id) {
-        counts[topic.id] = await this.learningService.getSessionCountForTopic(topic.id);
+        const topicSessions = allSessions.filter((s) => String(s.topicId) === String(topic.id));
+        minutes[topic.id] = topicSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
+        counts[topic.id] = topicSessions.length;
       }
     }
+
+    this.topicMinutes.set(minutes);
     this.topicSessionCounts.set(counts);
 
     // Load saved lessons count

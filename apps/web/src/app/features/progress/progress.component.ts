@@ -102,6 +102,12 @@ export class ProgressComponent {
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay()); // Sunday
 
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    const startDateStr = weekStart.toISOString().split('T')[0];
+    const endDateStr = weekEnd.toISOString().split('T')[0];
+    const allSessions = await this.sessionService.getSessionsForDateRange(startDateStr, endDateStr);
+
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const datasets: ChartData<'bar'>['datasets'] = [];
 
@@ -112,8 +118,9 @@ export class ProgressComponent {
         d.setDate(weekStart.getDate() + i);
         const dateStr = d.toISOString().split('T')[0];
 
-        const sessions = await this.sessionService.getSessionsForDate(dateStr);
-        const actSessions = sessions.filter((s) => s.activityId === act.id);
+        const actSessions = allSessions.filter(
+          (s) => s.activityId === act.id && s.date === dateStr,
+        );
         data[i] = actSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
       }
 
@@ -161,16 +168,29 @@ export class ProgressComponent {
   }
 
   private async loadHeatmap(): Promise<void> {
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 89);
+    const startDateStr = startDate.toISOString().split('T')[0];
+    const endDateStr = today.toISOString().split('T')[0];
+
+    const allSessions = await this.sessionService.getSessionsForDateRange(startDateStr, endDateStr);
+    const sessionsByDate = allSessions.reduce(
+      (acc, s) => {
+        acc[s.date] = (acc[s.date] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
     // Generate last 90 days
     const grid = [];
-    const today = new Date();
     for (let i = 89; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
 
-      const sessions = await this.sessionService.getSessionsForDate(dateStr);
-      const val = sessions.length;
+      const val = sessionsByDate[dateStr] || 0;
 
       grid.push({
         date: dateStr,
