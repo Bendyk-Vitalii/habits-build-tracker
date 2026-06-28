@@ -63,7 +63,7 @@ export class TrackingService {
     return this.calculateStreak(sessions);
   }
 
-  private calculateStreak(sessions: import('@habits-tracker/shared').Session[]): number {
+  public calculateStreak(sessions: import('@habits-tracker/shared').Session[]): number {
     if (sessions.length === 0) return 0;
 
     const sessionDates = new Set(sessions.map((s) => s.date));
