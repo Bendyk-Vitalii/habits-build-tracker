@@ -5,6 +5,11 @@
   left: 0;
   right: 0;
   z-index: 100;
+  transition: transform var(--ht-transition-normal);
+
+  &.hidden {
+    transform: translateY(-100%);
+  }
 }
 
 .top-bar {
