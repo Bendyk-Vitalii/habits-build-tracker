@@ -7,34 +7,34 @@
     matRipple
   >
     <div class="ai-card__title">
-      <span class="material-symbols-rounded ai-icon">auto_awesome</span>
+      <span class="material-symbols-rounded ai-card__ai-icon">auto_awesome</span>
       <h3>AI Insight</h3>
     </div>
-    <span class="material-symbols-rounded expand-icon">
+    <span class="material-symbols-rounded ai-card__expand-icon">
       {{ isExpanded() ? 'expand_less' : 'expand_more' }}
     </span>
   </div>
 
-  <div class="ai-card__content" [class.show]="isExpanded()">
+  <div class="ai-card__content" [class.ai-card__content--show]="isExpanded()">
     @if (isLoading()) {
-      <div class="skeleton-loader">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line short"></div>
+      <div class="ai-card__skeleton-loader">
+        <div class="ai-card__skeleton-line"></div>
+        <div class="ai-card__skeleton-line"></div>
+        <div class="ai-card__skeleton-line ai-card__skeleton-line--short"></div>
       </div>
     } @else if (suggestion()) {
-      <p class="suggestion-text">{{ suggestion()?.suggestion }}</p>
+      <p class="ai-card__suggestion-text">{{ suggestion()?.suggestion }}</p>
       @if (suggestion()?.reasoning) {
-        <p class="reasoning-text">
+        <p class="ai-card__reasoning-text">
           <span class="material-symbols-rounded">science</span>
           {{ suggestion()?.reasoning }}
         </p>
       }
-      <div class="action-badge" [attr.data-action]="suggestion()?.actionType">
+      <div class="ai-card__action-badge" [attr.data-action]="suggestion()?.actionType">
         {{ suggestion()?.actionType | titlecase }}
       </div>
     } @else {
-      <p class="suggestion-text">
+      <p class="ai-card__suggestion-text">
         Keep up the good work! Track your habits consistently to get personalized insights.
       </p>
     }

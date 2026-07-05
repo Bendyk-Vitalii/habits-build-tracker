@@ -1,94 +1,112 @@
 @if (activity(); as act) {
-  <div class="activity-detail-container animate-slide-up">
+  <div class="activity-detail__container animate-slide-up">
     <!-- Header -->
-    <header class="detail-header">
-      <a mat-icon-button routerLink="/activities" class="back-button" aria-label="Back">
+    <header class="activity-detail__header">
+      <a
+        mat-icon-button
+        routerLink="/activities"
+        class="activity-detail__back-button"
+        aria-label="Back"
+      >
         <mat-icon>arrow_back</mat-icon>
       </a>
-      <div class="actions">
+      <div class="activity-detail__actions">
         <button mat-icon-button (click)="openEditDialog()" aria-label="Edit">
           <mat-icon>edit</mat-icon>
         </button>
       </div>
     </header>
     <!-- Hero Info -->
-    <section class="hero-section">
-      <div class="hero-icon" [style.background]="act.color + '20'" [style.color]="act.color">
+    <section class="activity-detail__hero">
+      <div
+        class="activity-detail__hero-icon"
+        [style.background]="act.color + '20'"
+        [style.color]="act.color"
+      >
         <span class="material-symbols-rounded">{{ act.icon }}</span>
       </div>
-      <div class="hero-text">
+      <div class="activity-detail__hero-text">
         <h1>{{ act.name }}</h1>
-        <span class="category">{{ act.category }}</span>
+        <span class="activity-detail__category">{{ act.category }}</span>
       </div>
     </section>
     <!-- Phase Progress -->
-    <section class="glass-card section-card">
-      <h3 class="section-title">Current Phase</h3>
-      <div class="phase-container">
+    <section class="glass-card activity-detail__section-card">
+      <h3 class="activity-detail__section-title">Current Phase</h3>
+      <div class="activity-detail__phase-container">
         <ht-phase-badge
           [phase]="$any(act.currentPhase)"
           [consecutiveDays]="act.consecutiveDays"
           [showProgress]="true"
         />
-        <p class="phase-info">Started {{ act.phaseStartDate | relativeDate }}</p>
+        <p class="activity-detail__phase-info">Started {{ act.phaseStartDate | relativeDate }}</p>
       </div>
     </section>
     <!-- Stats Grid -->
-    <section class="stats-grid">
-      <div class="stat-card glass-card">
-        <div class="stat-icon">🔥</div>
-        <div class="stat-value">{{ streak() }}</div>
-        <div class="stat-label">Current Streak</div>
+    <section class="activity-detail__stats-grid">
+      <div class="activity-detail__stat-card glass-card">
+        <div class="activity-detail__stat-icon">🔥</div>
+        <div class="activity-detail__stat-value">{{ streak() }}</div>
+        <div class="activity-detail__stat-label">Current Streak</div>
       </div>
-      <div class="stat-card glass-card">
-        <div class="stat-icon">🏆</div>
-        <div class="stat-value">{{ longestStreak() }}</div>
-        <div class="stat-label">Longest Streak</div>
+      <div class="activity-detail__stat-card glass-card">
+        <div class="activity-detail__stat-icon">🏆</div>
+        <div class="activity-detail__stat-value">{{ longestStreak() }}</div>
+        <div class="activity-detail__stat-label">Longest Streak</div>
       </div>
-      <div class="stat-card glass-card">
-        <div class="stat-icon">⏱️</div>
-        <div class="stat-value">{{ weeklyMinutes() | duration }}</div>
-        <div class="stat-label">This Week</div>
+      <div class="activity-detail__stat-card glass-card">
+        <div class="activity-detail__stat-icon">⏱️</div>
+        <div class="activity-detail__stat-value">{{ weeklyMinutes() | duration }}</div>
+        <div class="activity-detail__stat-label">This Week</div>
       </div>
     </section>
     <!-- Goal -->
     @if (act.goal) {
-      <section class="glass-card section-card">
-        <h3 class="section-title">Goal</h3>
-        <p class="goal-text">{{ act.goal }}</p>
+      <section class="glass-card activity-detail__section-card">
+        <h3 class="activity-detail__section-title">Goal</h3>
+        <p class="activity-detail__goal-text">{{ act.goal }}</p>
         @if (act.goalDeadline) {
-          <p class="goal-deadline">Deadline: {{ act.goalDeadline | relativeDate }}</p>
+          <p class="activity-detail__goal-deadline">
+            Deadline: {{ act.goalDeadline | relativeDate }}
+          </p>
         }
       </section>
     }
     <!-- Recent Sessions -->
-    <section class="glass-card section-card">
-      <h3 class="section-title">Recent Sessions</h3>
+    <section class="glass-card activity-detail__section-card">
+      <h3 class="activity-detail__section-title">Recent Sessions</h3>
       @if (recentSessions().length > 0) {
-        <div class="session-list">
+        <div class="activity-detail__session-list">
           @for (session of recentSessions(); track session.id) {
-            <div class="session-item">
-              <div class="session-date">{{ session.date | relativeDate }}</div>
-              <div class="session-duration">{{ session.durationMinutes | duration }}</div>
-              <div class="session-type">{{ session.type }}</div>
+            <div class="activity-detail__session-item">
+              <div class="activity-detail__session-date">{{ session.date | relativeDate }}</div>
+              <div class="activity-detail__session-duration">
+                {{ session.durationMinutes | duration }}
+              </div>
+              <div class="activity-detail__session-type">{{ session.type }}</div>
             </div>
           }
         </div>
       } @else {
-        <p class="empty-text">No sessions logged recently.</p>
+        <p class="activity-detail__empty-text">No sessions logged recently.</p>
       }
     </section>
     <!-- Danger Zone -->
-    <section class="danger-zone">
+    <section class="activity-detail__danger-zone">
       <button
         mat-stroked-button
         color="warn"
-        class="danger-btn archive-btn"
+        class="activity-detail__danger-btn activity-detail__archive-btn"
         (click)="archiveActivity()"
       >
         <mat-icon>inventory_2</mat-icon> Archive Activity
       </button>
-      <button mat-flat-button color="warn" class="danger-btn" (click)="deleteActivity()">
+      <button
+        mat-flat-button
+        color="warn"
+        class="activity-detail__danger-btn"
+        (click)="deleteActivity()"
+      >
         <mat-icon>delete_forever</mat-icon> Delete Forever
       </button>
     </section>

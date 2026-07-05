@@ -1,28 +1,28 @@
-<div class="saved-container animate-fade-in">
+<div class="saved-lessons__container animate-fade-in">
   <!-- Sticky Header -->
-  <div class="sticky-header glass-header">
+  <div class="saved-lessons__sticky-header glass-header">
     <button mat-icon-button (click)="goBack()" aria-label="Go back">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h2 class="page-title">Saved Lessons</h2>
-    <span class="lesson-count">{{ filteredLessons().length }}</span>
+    <h2 class="saved-lessons__page-title">Saved Lessons</h2>
+    <span class="saved-lessons__lesson-count">{{ filteredLessons().length }}</span>
   </div>
 
-  <div class="content-wrapper">
+  <div class="saved-lessons__content-wrapper">
     <!-- Search Bar -->
-    <div class="search-bar">
-      <mat-icon class="search-icon">search</mat-icon>
+    <div class="saved-lessons__search-bar">
+      <mat-icon class="saved-lessons__search-icon">search</mat-icon>
       <input
         type="text"
         placeholder="Search by title or topic..."
         [ngModel]="searchQuery()"
         (ngModelChange)="updateSearch($event)"
-        class="search-input"
+        class="saved-lessons__search-input"
       />
       @if (searchQuery()) {
         <button
           mat-icon-button
-          class="clear-btn"
+          class="saved-lessons__clear-btn"
           (click)="updateSearch('')"
           aria-label="Clear search"
         >
@@ -32,11 +32,11 @@
     </div>
 
     <!-- Difficulty Filter Chips -->
-    <div class="filter-chips">
+    <div class="saved-lessons__filter-chips">
       @for (level of ['all', 'intermediate', 'advanced', 'expert']; track level) {
         <button
-          class="chip"
-          [class.active]="selectedDifficulty() === level"
+          class="saved-lessons__chip"
+          [class.saved-lessons__chip--active]="selectedDifficulty() === level"
           [attr.data-level]="level"
           (click)="setDifficulty(level)"
         >
@@ -47,32 +47,37 @@
 
     <!-- Lessons Grid -->
     @if (isLoading()) {
-      <div class="loading-state">
-        <div class="spinner"></div>
+      <div class="saved-lessons__loading-state">
+        <div class="saved-lessons__spinner"></div>
         <p>Loading your library…</p>
       </div>
     } @else if (filteredLessons().length === 0) {
-      <div class="empty-state glass-card">
+      <div class="saved-lessons__empty-state glass-card">
         @if (searchQuery() || selectedDifficulty() !== 'all') {
-          <mat-icon class="empty-icon">search_off</mat-icon>
-          <p class="empty-title">No matches found</p>
-          <p class="empty-subtitle">Try adjusting your search or filters</p>
+          <mat-icon class="saved-lessons__empty-icon">search_off</mat-icon>
+          <p class="saved-lessons__empty-title">No matches found</p>
+          <p class="saved-lessons__empty-subtitle">Try adjusting your search or filters</p>
         } @else {
-          <mat-icon class="empty-icon">bookmark_border</mat-icon>
-          <p class="empty-title">No saved lessons yet</p>
-          <p class="empty-subtitle">
+          <mat-icon class="saved-lessons__empty-icon">bookmark_border</mat-icon>
+          <p class="saved-lessons__empty-title">No saved lessons yet</p>
+          <p class="saved-lessons__empty-subtitle">
             Save lessons during your study sessions to build your library
           </p>
-          <button mat-flat-button color="primary" class="empty-action-btn" (click)="goBack()">
+          <button
+            mat-flat-button
+            color="primary"
+            class="saved-lessons__empty-action-btn"
+            (click)="goBack()"
+          >
             Start learning
           </button>
         }
       </div>
     } @else {
-      <div class="lessons-grid">
+      <div class="saved-lessons__lessons-grid">
         @for (lesson of filteredLessons(); track lesson.id; let i = $index) {
           <div
-            class="lesson-card glass-card"
+            class="saved-lessons__lesson-card glass-card"
             matRipple
             (click)="openLesson(lesson.id!)"
             (keydown.enter)="openLesson(lesson.id!)"
@@ -80,9 +85,9 @@
             [style.animation-delay]="i * 50 + 'ms'"
           >
             <!-- Card Header: Icon + Delete -->
-            <div class="card-header">
+            <div class="saved-lessons__card-header">
               <div
-                class="topic-icon"
+                class="saved-lessons__topic-icon"
                 [style.background]="
                   'color-mix(in srgb, ' + lesson.topicColor + ' 20%, transparent)'
                 "
@@ -92,7 +97,7 @@
               </div>
               <button
                 mat-icon-button
-                class="delete-btn"
+                class="saved-lessons__delete-btn"
                 (click)="deleteSavedLesson(lesson.id!, $event)"
                 aria-label="Delete saved lesson"
               >
@@ -101,15 +106,15 @@
             </div>
 
             <!-- Card Body -->
-            <h3 class="card-title">{{ lesson.title }}</h3>
-            <span class="card-topic">{{ lesson.topicName }}</span>
+            <h3 class="saved-lessons__card-title">{{ lesson.title }}</h3>
+            <span class="saved-lessons__card-topic">{{ lesson.topicName }}</span>
 
             <!-- Card Footer: Badge + Date -->
-            <div class="card-footer">
-              <span class="difficulty-badge" [attr.data-level]="lesson.difficulty">
+            <div class="saved-lessons__card-footer">
+              <span class="saved-lessons__difficulty-badge" [attr.data-level]="lesson.difficulty">
                 {{ lesson.difficulty | titlecase }}
               </span>
-              <span class="card-date">{{ formatDate(lesson.savedAt) }}</span>
+              <span class="saved-lessons__card-date">{{ formatDate(lesson.savedAt) }}</span>
             </div>
           </div>
         }

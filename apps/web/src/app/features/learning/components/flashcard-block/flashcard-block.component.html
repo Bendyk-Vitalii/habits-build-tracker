@@ -1,20 +1,23 @@
 <!-- Inline Preview -->
 @if (!isFullscreen()) {
   <div class="flashcard-block">
-    <div class="flashcard-header">
-      <mat-icon class="fc-icon">style</mat-icon>
-      <span class="fc-type">Flashcards</span>
+    <div class="flashcard-block__header">
+      <mat-icon class="flashcard-block__icon">style</mat-icon>
+      <span class="flashcard-block__type">Flashcards</span>
       @if (title()) {
-        <span class="fc-title">— {{ title() }}</span>
+        <span class="flashcard-block__title">— {{ title() }}</span>
       }
-      <span class="fc-count">{{ flashcards().length }} cards</span>
+      <span class="flashcard-block__count">{{ flashcards().length }} cards</span>
     </div>
 
     <!-- Mini card preview strip -->
-    <div class="card-preview-strip">
+    <div class="flashcard-block__preview-strip">
       @for (card of flashcards(); track $index; let i = $index) {
-        <div class="mini-card" [class.known]="isCardKnown(i)">
-          <span class="mini-front">{{ card.front }}</span>
+        <div
+          class="flashcard-block__mini-card"
+          [class.flashcard-block__mini-card--known]="isCardKnown(i)"
+        >
+          <span class="flashcard-block__mini-front">{{ card.front }}</span>
         </div>
       }
     </div>
@@ -22,7 +25,7 @@
     <button
       mat-flat-button
       color="primary"
-      class="start-flashcards-btn"
+      class="flashcard-block__start-btn"
       (click)="enterFullscreen()"
     >
       <mat-icon>fullscreen</mat-icon>
@@ -33,46 +36,51 @@
 
 <!-- Fullscreen Mode -->
 @if (isFullscreen()) {
-  <div class="flashcard-fullscreen">
+  <div class="flashcard-block__fullscreen">
     <!-- Fullscreen Header -->
-    <div class="fs-header">
+    <div class="flashcard-block__fs-header">
       <button mat-icon-button (click)="exitFullscreen()" aria-label="Exit flashcards">
         <mat-icon>close</mat-icon>
       </button>
-      <span class="fs-progress">{{ progress().current }} / {{ progress().total }}</span>
-      <span class="fs-known">{{ progress().known }} known</span>
+      <span class="flashcard-block__fs-progress"
+        >{{ progress().current }} / {{ progress().total }}</span
+      >
+      <span class="flashcard-block__fs-known">{{ progress().known }} known</span>
     </div>
 
     <!-- Progress Bar -->
-    <div class="fs-progress-bar">
-      <div class="fs-progress-fill" [style.width.%]="progressPercent()"></div>
+    <div class="flashcard-block__fs-progress-bar">
+      <div class="flashcard-block__fs-progress-fill" [style.width.%]="progressPercent()"></div>
     </div>
 
     <!-- Card -->
     @if (currentCard(); as card) {
       <div
-        class="fs-card-container"
+        class="flashcard-block__fs-card-container"
         (click)="toggleFlip()"
         (keydown.enter)="toggleFlip()"
         tabindex="0"
       >
-        <div class="fs-card" [class.flipped]="isFlipped()">
-          <div class="fs-card-face fs-card-front">
-            <span class="fs-card-label">Term</span>
-            <p class="fs-card-text">{{ card.front }}</p>
-            <span class="fs-tap-hint">Tap to flip</span>
+        <div
+          class="flashcard-block__fs-card"
+          [class.flashcard-block__fs-card--flipped]="isFlipped()"
+        >
+          <div class="flashcard-block__fs-card-face flashcard-block__fs-card-front">
+            <span class="flashcard-block__fs-card-label">Term</span>
+            <p class="flashcard-block__fs-card-text">{{ card.front }}</p>
+            <span class="flashcard-block__fs-tap-hint">Tap to flip</span>
           </div>
-          <div class="fs-card-face fs-card-back">
-            <span class="fs-card-label">Definition</span>
-            <p class="fs-card-text">{{ card.back }}</p>
-            <span class="fs-tap-hint">Tap to flip</span>
+          <div class="flashcard-block__fs-card-face flashcard-block__fs-card-back">
+            <span class="flashcard-block__fs-card-label">Definition</span>
+            <p class="flashcard-block__fs-card-text">{{ card.back }}</p>
+            <span class="flashcard-block__fs-tap-hint">Tap to flip</span>
           </div>
         </div>
       </div>
     }
 
     <!-- Actions -->
-    <div class="fs-actions">
+    <div class="flashcard-block__fs-actions">
       <button
         mat-icon-button
         (click)="prevCard()"
@@ -82,12 +90,21 @@
         <mat-icon>chevron_left</mat-icon>
       </button>
 
-      <button mat-stroked-button class="study-again-btn" (click)="markStudyAgain()">
+      <button
+        mat-stroked-button
+        class="flashcard-block__study-again-btn"
+        (click)="markStudyAgain()"
+      >
         <mat-icon>replay</mat-icon>
         Study Again
       </button>
 
-      <button mat-flat-button color="primary" class="know-it-btn" (click)="markKnown()">
+      <button
+        mat-flat-button
+        color="primary"
+        class="flashcard-block__know-it-btn"
+        (click)="markKnown()"
+      >
         <mat-icon>check</mat-icon>
         Know It
       </button>
@@ -107,9 +124,11 @@
       currentIndex() === flashcards().length - 1 &&
       (isCardKnown(currentIndex()) || knownCards().size === flashcards().length)
     ) {
-      <div class="fs-done">
+      <div class="flashcard-block__fs-done">
         <p>🎉 You've reviewed all {{ flashcards().length }} cards!</p>
-        <p class="fs-done-score">{{ progress().known }} / {{ progress().total }} marked as known</p>
+        <p class="flashcard-block__fs-done-score">
+          {{ progress().known }} / {{ progress().total }} marked as known
+        </p>
         <button mat-flat-button color="accent" (click)="exitFullscreen()">Done</button>
       </div>
     }

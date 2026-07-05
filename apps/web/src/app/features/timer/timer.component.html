@@ -1,10 +1,10 @@
-<div class="timer-container animate-fade-in">
-  <div class="header">
+<div class="timer__container animate-fade-in">
+  <div class="timer__header">
     <h1>Focus</h1>
   </div>
 
   <!-- Activity Selector -->
-  <mat-form-field appearance="outline" class="activity-selector">
+  <mat-form-field appearance="outline" class="timer__activity-selector">
     <mat-label>Select Activity</mat-label>
     <mat-select
       [ngModel]="selectedActivityId()"
@@ -13,7 +13,7 @@
     >
       @for (act of activities(); track act) {
         <mat-option [value]="act.id">
-          <div class="activity-option">
+          <div class="timer__activity-option">
             <mat-icon [style.color]="act.color">{{ act.icon }}</mat-icon>
             <span>{{ act.name }}</span>
           </div>
@@ -23,7 +23,7 @@
   </mat-form-field>
 
   <!-- Mode Selector -->
-  <div class="mode-selector">
+  <div class="timer__mode-selector">
     <mat-button-toggle-group
       [ngModel]="mode()"
       (ngModelChange)="mode.set($event)"
@@ -37,8 +37,8 @@
 
   <!-- Pomodoro Info -->
   @if (mode() === 'pomodoro') {
-    <div class="pomodoro-info">
-      <span class="phase-badge" [attr.data-phase]="pomodoroPhase()">
+    <div class="timer__pomodoro-info">
+      <span class="timer__phase-badge" [attr.data-phase]="pomodoroPhase()">
         {{
           pomodoroPhase() === 'work'
             ? 'Work'
@@ -47,7 +47,7 @@
               : 'Long Break'
         }}
       </span>
-      <span class="session-count"
+      <span class="timer__session-count"
         >Session {{ pomodoroSessionsCompleted() + 1 }} /
         {{ settings()?.pomodoroSessionsBeforeLongBreak || 4 }}</span
       >
@@ -56,12 +56,12 @@
 
   <!-- Timer Display (Pomodoro & Stopwatch) -->
   @if (mode() !== 'manual') {
-    <div class="timer-display">
-      <div class="timer-circle">
+    <div class="timer__display">
+      <div class="timer__circle">
         <!-- SVG Ring -->
-        <svg class="progress-ring" width="240" height="240">
+        <svg class="timer__progress-ring" width="240" height="240">
           <circle
-            class="progress-ring__background"
+            class="timer__progress-ring-background"
             stroke-width="8"
             fill="transparent"
             r="116"
@@ -69,7 +69,7 @@
             cy="120"
           />
           <circle
-            class="progress-ring__circle"
+            class="timer__progress-ring-circle"
             stroke-width="8"
             fill="transparent"
             r="116"
@@ -80,39 +80,39 @@
               116 * 2 * Math.PI -
               ((mode() === 'pomodoro' ? progressPercent() : 100) / 100) * (116 * 2 * Math.PI)
             "
-            [class.pomodoro]="mode() === 'pomodoro'"
-            [class.stopwatch]="mode() === 'stopwatch'"
+            [class.timer__progress-ring-circle--pomodoro]="mode() === 'pomodoro'"
+            [class.timer__progress-ring-circle--stopwatch]="mode() === 'stopwatch'"
           />
         </svg>
 
-        <div class="timer-text">{{ formattedTime() }}</div>
+        <div class="timer__text">{{ formattedTime() }}</div>
       </div>
     </div>
 
     <!-- Controls -->
-    <div class="controls">
+    <div class="timer__controls">
       @if (mode() === 'pomodoro') {
-        <button mat-icon-button class="control-btn secondary" (click)="resetTimer()">
+        <button mat-icon-button class="timer__control-btn secondary" (click)="resetTimer()">
           <mat-icon>replay</mat-icon>
         </button>
       } @else {
-        <button mat-icon-button class="control-btn secondary" (click)="resetTimer()">
+        <button mat-icon-button class="timer__control-btn secondary" (click)="resetTimer()">
           <mat-icon>stop</mat-icon>
         </button>
       }
 
-      <button mat-fab color="primary" class="main-btn" (click)="toggleTimer()">
+      <button mat-fab color="primary" class="timer__main-btn" (click)="toggleTimer()">
         <mat-icon>{{ isRunning() ? 'pause' : 'play_arrow' }}</mat-icon>
       </button>
 
       @if (mode() === 'pomodoro') {
-        <button mat-icon-button class="control-btn secondary" (click)="skipPhase()">
+        <button mat-icon-button class="timer__control-btn secondary" (click)="skipPhase()">
           <mat-icon>skip_next</mat-icon>
         </button>
       } @else {
         <button
           mat-icon-button
-          class="control-btn secondary"
+          class="timer__control-btn secondary"
           (click)="saveStopwatchSession()"
           [disabled]="stopwatchElapsedSeconds() < 60 || isRunning()"
         >
@@ -124,22 +124,22 @@
 
   <!-- Manual Entry -->
   @if (mode() === 'manual') {
-    <div class="manual-entry glass-card">
-      <div class="date-stepper-container">
+    <div class="timer__manual-entry glass-card">
+      <div class="timer__date-stepper-container">
         <button
           type="button"
           mat-icon-button
-          class="stepper-btn"
+          class="timer__stepper-btn"
           (click)="changeDate(-1)"
           aria-label="Previous Day"
         >
           <mat-icon>chevron_left</mat-icon>
         </button>
-        <span class="current-date">{{ manualDateFormatted() }}</span>
+        <span class="timer__current-date">{{ manualDateFormatted() }}</span>
         <button
           type="button"
           mat-icon-button
-          class="stepper-btn"
+          class="timer__stepper-btn"
           (click)="changeDate(1)"
           [disabled]="isToday()"
           [class.hidden]="isToday()"
@@ -149,7 +149,7 @@
         </button>
       </div>
 
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="outline" class="timer__full-width">
         <mat-label>Duration (Minutes)</mat-label>
         <input
           matInput
@@ -160,7 +160,7 @@
         />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="outline" class="timer__full-width">
         <mat-label>Notes (Optional)</mat-label>
         <textarea
           matInput
@@ -173,7 +173,7 @@
       <button
         mat-flat-button
         color="primary"
-        class="full-width"
+        class="timer__full-width"
         (click)="saveManualSession()"
         [disabled]="!selectedActivityId() || manualMinutes() < 1"
       >

@@ -2,23 +2,23 @@
 
 <mat-dialog-content>
   <form [formGroup]="form" class="topic-form">
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="topic-form__full-width">
       <mat-label>Topic Name</mat-label>
       <input matInput formControlName="name" placeholder="e.g. Rust Programming" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="topic-form__full-width">
       <mat-label>Icon</mat-label>
       <mat-select formControlName="icon">
         <mat-select-trigger>
-          <div class="icon-option" style="display: flex; align-items: center; gap: 8px">
+          <div class="topic-form__icon-option" style="display: flex; align-items: center; gap: 8px">
             <mat-icon>{{ form.get('icon')?.value }}</mat-icon>
             <span>{{ form.get('icon')?.value }}</span>
           </div>
         </mat-select-trigger>
         @for (icon of iconOptions; track icon) {
           <mat-option [value]="icon">
-            <div class="icon-option">
+            <div class="topic-form__icon-option">
               <mat-icon>{{ icon }}</mat-icon>
               <span>{{ icon }}</span>
             </div>
@@ -27,20 +27,20 @@
       </mat-select>
     </mat-form-field>
 
-    <div class="color-section">
-      <span class="color-label">Color</span>
-      <div class="color-swatches">
+    <div class="topic-form__color-section">
+      <span class="topic-form__color-label">Color</span>
+      <div class="topic-form__color-swatches">
         @for (color of colorOptions; track color) {
           <button
             type="button"
-            class="color-swatch"
+            class="topic-form__color-swatch"
             [class.selected]="selectedColor() === color"
             [style.background-color]="color"
             (click)="selectColor(color)"
             [attr.aria-label]="'Select color ' + color"
           >
             @if (selectedColor() === color) {
-              <mat-icon class="check-icon">check</mat-icon>
+              <mat-icon class="topic-form__check-icon">check</mat-icon>
             }
           </button>
         }
@@ -51,7 +51,9 @@
 
 <mat-dialog-actions align="end">
   @if (isEditMode) {
-    <button mat-button color="warn" (click)="onDelete()" class="delete-btn">Delete</button>
+    <button mat-button color="warn" (click)="onDelete()" class="topic-form__delete-btn">
+      Delete
+    </button>
   }
   <button mat-button mat-dialog-close>Cancel</button>
   <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="onSave()">Save</button>

@@ -1,5 +1,5 @@
-<div class="settings-container animate-fade-in">
-  <div class="header">
+<div class="settings__container animate-fade-in">
+  <div class="settings__header">
     <h1>Settings</h1>
     <button mat-flat-button color="primary" [disabled]="isSaving()" (click)="saveSettings()">
       {{ isSaving() ? 'Saving...' : 'Save Changes' }}
@@ -7,14 +7,14 @@
   </div>
 
   <!-- Notifications -->
-  <section class="settings-section glass-card">
-    <div class="section-header">
+  <section class="settings__section glass-card">
+    <div class="settings__section-header">
       <mat-icon color="primary">notifications</mat-icon>
       <h2>Notifications</h2>
     </div>
 
-    <div class="setting-row">
-      <div class="setting-info">
+    <div class="settings__setting-row">
+      <div class="settings__setting-info">
         <h3>Daily Reminder</h3>
         <p>Get a push notification if you haven't tracked anything yet.</p>
       </div>
@@ -26,7 +26,7 @@
     </div>
 
     @if (localSettings().notificationEnabled) {
-      <div class="setting-row sub-setting">
+      <div class="settings__setting-row settings__setting-row--sub">
         <mat-form-field appearance="outline">
           <mat-label>Reminder Time</mat-label>
           <input
@@ -40,19 +40,19 @@
     }
 
     @if (!hasPushPermission() && localSettings().notificationEnabled) {
-      <p class="warning-text">Push notifications require browser permission.</p>
+      <p class="settings__warning-text">Push notifications require browser permission.</p>
     }
   </section>
 
   <!-- Pomodoro -->
-  <section class="settings-section glass-card">
-    <div class="section-header">
+  <section class="settings__section glass-card">
+    <div class="settings__section-header">
       <mat-icon color="primary">timer</mat-icon>
       <h2>Pomodoro Timer</h2>
     </div>
 
-    <div class="setting-row block">
-      <div class="setting-info">
+    <div class="settings__setting-row settings__setting-row--block">
+      <div class="settings__setting-info">
         <h3>Work Duration ({{ localSettings().pomodoroWorkMinutes }} min)</h3>
       </div>
       <mat-slider min="5" max="60" step="5" discrete>
@@ -64,8 +64,8 @@
       </mat-slider>
     </div>
 
-    <div class="setting-row block">
-      <div class="setting-info">
+    <div class="settings__setting-row settings__setting-row--block">
+      <div class="settings__setting-info">
         <h3>Short Break ({{ localSettings().pomodoroBreakMinutes }} min)</h3>
       </div>
       <mat-slider min="1" max="15" step="1" discrete>
@@ -77,8 +77,8 @@
       </mat-slider>
     </div>
 
-    <div class="setting-row block">
-      <div class="setting-info">
+    <div class="settings__setting-row settings__setting-row--block">
+      <div class="settings__setting-info">
         <h3>Long Break ({{ localSettings().pomodoroLongBreakMinutes }} min)</h3>
       </div>
       <mat-slider min="5" max="30" step="5" discrete>
@@ -92,14 +92,14 @@
   </section>
 
   <!-- Display -->
-  <section class="settings-section glass-card">
-    <div class="section-header">
+  <section class="settings__section glass-card">
+    <div class="settings__section-header">
       <mat-icon color="primary">dark_mode</mat-icon>
       <h2>Display</h2>
     </div>
 
-    <div class="setting-row">
-      <div class="setting-info">
+    <div class="settings__setting-row">
+      <div class="settings__setting-info">
         <h3>Theme</h3>
       </div>
       <mat-button-toggle-group
@@ -116,13 +116,13 @@
   </section>
 
   <!-- Data Management -->
-  <section class="settings-section glass-card">
-    <div class="section-header">
+  <section class="settings__section glass-card">
+    <div class="settings__section-header">
       <mat-icon color="primary">storage</mat-icon>
       <h2>Data Management</h2>
     </div>
 
-    <div class="data-actions">
+    <div class="settings__data-actions">
       <button mat-stroked-button (click)="exportData()">
         <mat-icon>download</mat-icon> Export Data
       </button>
@@ -132,7 +132,7 @@
     </div>
   </section>
 
-  <div class="about-section">
+  <div class="settings__about-section">
     <p>Habits Build Tracker v1.0.0</p>
     <p>Based on 66-day habit formation science.</p>
   </div>

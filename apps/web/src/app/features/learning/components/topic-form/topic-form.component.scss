@@ -4,79 +4,79 @@
   gap: var(--ht-spacing-sm, 8px);
   min-width: 280px;
   padding-top: var(--ht-spacing-sm, 8px);
-}
 
-.full-width {
-  width: 100%;
-}
+  &__full-width {
+    width: 100%;
+  }
 
-.icon-option {
-  display: flex;
-  align-items: center;
-  gap: var(--ht-spacing-sm, 8px);
+  &__icon-option {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-spacing-sm, 8px);
 
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--ht-text-secondary, #aaa);
+    }
+
+    span {
+      font-size: 0.875rem;
+    }
+  }
+
+  &__color-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ht-spacing-sm, 8px);
+    margin-bottom: var(--ht-spacing-sm, 8px);
+  }
+
+  &__color-label {
+    font-size: 0.875rem;
     color: var(--ht-text-secondary, #aaa);
   }
 
-  span {
-    font-size: 0.875rem;
-  }
-}
-
-.color-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ht-spacing-sm, 8px);
-  margin-bottom: var(--ht-spacing-sm, 8px);
-}
-
-.color-label {
-  font-size: 0.875rem;
-  color: var(--ht-text-secondary, #aaa);
-}
-
-.color-swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ht-spacing-sm, 8px);
-}
-
-.color-swatch {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    transform var(--ht-transition-fast, 150ms) ease,
-    border-color var(--ht-transition-fast, 150ms) ease;
-  padding: 0;
-  outline: none;
-
-  &:hover {
-    transform: scale(1.15);
+  &__color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ht-spacing-sm, 8px);
   }
 
-  &.selected {
-    border-color: var(--ht-text-primary, #fff);
-    transform: scale(1.1);
+  &__color-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform var(--ht-transition-fast, 150ms) ease,
+      border-color var(--ht-transition-fast, 150ms) ease;
+    padding: 0;
+    outline: none;
+
+    &:hover {
+      transform: scale(1.15);
+    }
+
+    &.selected {
+      border-color: var(--ht-text-primary, #fff);
+      transform: scale(1.1);
+    }
+
+    .topic-form__check-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #fff;
+    }
   }
 
-  .check-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: #fff;
+  &__delete-btn {
+    margin-right: auto;
   }
-}
-
-.delete-btn {
-  margin-right: auto;
 }

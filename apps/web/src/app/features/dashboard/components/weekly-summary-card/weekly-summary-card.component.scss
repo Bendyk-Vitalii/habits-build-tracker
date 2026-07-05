@@ -25,25 +25,25 @@
     justify-content: space-between;
     gap: var(--ht-spacing-sm);
   }
-}
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  background: var(--ht-surface-container-high);
-  padding: var(--ht-spacing-sm);
-  border-radius: var(--ht-radius-sm);
+  &__stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    background: var(--ht-surface-container-high);
+    padding: var(--ht-spacing-sm);
+    border-radius: var(--ht-radius-sm);
+  }
 
-  .stat-value {
+  &__stat-value {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--ht-text-primary);
     margin-bottom: 4px;
   }
 
-  .stat-label {
+  &__stat-label {
     font-size: 0.75rem;
     color: var(--ht-text-secondary);
     text-align: center;

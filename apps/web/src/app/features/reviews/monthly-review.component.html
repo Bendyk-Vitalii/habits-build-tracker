@@ -1,26 +1,26 @@
 @if (review(); as rev) {
-  <div class="review-container animate-fade-in">
-    <div class="header">
+  <div class="monthly-review__container animate-fade-in">
+    <div class="monthly-review__header">
       <h1>Monthly Review</h1>
-      <p class="subtitle">Month: {{ rev.month }}</p>
+      <p class="monthly-review__subtitle">Month: {{ rev.month }}</p>
     </div>
-    <section class="stats-overview">
-      <div class="stat-card glass-card">
-        <div class="stat-value">{{ rev.totalSessions }}</div>
-        <div class="stat-label">Sessions</div>
+    <section class="monthly-review__stats-overview">
+      <div class="monthly-review__stat-card glass-card">
+        <div class="monthly-review__stat-value">{{ rev.totalSessions }}</div>
+        <div class="monthly-review__stat-label">Sessions</div>
       </div>
-      <div class="stat-card glass-card">
-        <div class="stat-value">{{ rev.totalMinutes }}</div>
-        <div class="stat-label">Minutes</div>
+      <div class="monthly-review__stat-card glass-card">
+        <div class="monthly-review__stat-value">{{ rev.totalMinutes }}</div>
+        <div class="monthly-review__stat-label">Minutes</div>
       </div>
-      <div class="stat-card glass-card">
-        <div class="stat-value">{{ rev.phaseTransitions }}</div>
-        <div class="stat-label">Phase Ups</div>
+      <div class="monthly-review__stat-card glass-card">
+        <div class="monthly-review__stat-value">{{ rev.phaseTransitions }}</div>
+        <div class="monthly-review__stat-label">Phase Ups</div>
       </div>
     </section>
-    <section class="reflection-section glass-card">
+    <section class="monthly-review__reflection-section glass-card">
       <h3>Monthly Reflection</h3>
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="outline" class="monthly-review__full-width">
         <mat-label>Overall thoughts on this month</mat-label>
         <textarea
           matInput
@@ -33,7 +33,7 @@
       <button
         mat-flat-button
         color="primary"
-        class="save-btn"
+        class="monthly-review__save-btn"
         [disabled]="isSaving()"
         (click)="saveReview()"
       >

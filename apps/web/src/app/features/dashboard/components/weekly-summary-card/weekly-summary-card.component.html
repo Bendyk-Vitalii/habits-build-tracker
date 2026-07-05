@@ -4,17 +4,17 @@
     <h3>Weekly Summary</h3>
   </div>
   <div class="summary-card__stats">
-    <div class="stat-item">
-      <span class="stat-value">{{ activities.length }}</span>
-      <span class="stat-label">Active Habits</span>
+    <div class="summary-card__stat-item">
+      <span class="summary-card__stat-value">{{ activities.length }}</span>
+      <span class="summary-card__stat-label">Active Habits</span>
     </div>
-    <div class="stat-item">
-      <span class="stat-value">{{ totalGoalMinutes() | duration }}</span>
-      <span class="stat-label">Goal Time</span>
+    <div class="summary-card__stat-item">
+      <span class="summary-card__stat-value">{{ totalGoalMinutes() | duration }}</span>
+      <span class="summary-card__stat-label">Goal Time</span>
     </div>
-    <div class="stat-item">
-      <span class="stat-value">{{ completionRate }}%</span>
-      <span class="stat-label">Completion</span>
+    <div class="summary-card__stat-item">
+      <span class="summary-card__stat-value">{{ completionRate }}%</span>
+      <span class="summary-card__stat-label">Completion</span>
     </div>
   </div>
 </div>

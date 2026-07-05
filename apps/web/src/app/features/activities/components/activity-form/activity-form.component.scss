@@ -1,40 +1,42 @@
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ht-spacing-md);
-  margin-top: var(--ht-spacing-md);
-}
-
-.row {
-  display: flex;
-  gap: var(--ht-spacing-md);
-}
-
-.full-width {
-  width: 100%;
-}
-
-.half-width {
-  flex: 1;
-}
-
-.color-picker-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  label {
-    font-size: 0.75rem;
-    color: var(--ht-text-secondary);
+.activity-form {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ht-spacing-md);
+    margin-top: var(--ht-spacing-md);
   }
-}
 
-.color-options {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  &__row {
+    display: flex;
+    gap: var(--ht-spacing-md);
+  }
 
-  .color-btn {
+  &__full-width {
+    width: 100%;
+  }
+
+  &__half-width {
+    flex: 1;
+  }
+
+  &__color-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-size: 0.75rem;
+      color: var(--ht-text-secondary);
+    }
+  }
+
+  &__color-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__color-btn {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -51,7 +53,7 @@
       transform: scale(1.1);
     }
 
-    &.selected {
+    &--selected {
       border-color: var(--ht-text-primary);
     }
 

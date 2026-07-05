@@ -1,36 +1,40 @@
-<div class="goals-list">
+<div class="goals-overview__list">
   @for (goal of goals(); track goal.id) {
-    <div class="goal-item surface-card-elevated">
-      <div class="goal-item__header">
+    <div class="goals-overview__item surface-card-elevated">
+      <div class="goals-overview__item-header">
         <div
-          class="goal-item__icon"
+          class="goals-overview__item-icon"
           [style.background]="goal.color + '20'"
           [style.color]="goal.color"
         >
           <span class="material-symbols-rounded">{{ goal.icon }}</span>
         </div>
-        <div class="goal-item__title">
+        <div class="goals-overview__item-title">
           <h4>{{ goal.goal }}</h4>
-          <span class="goal-item__activity">{{ goal.name }}</span>
+          <span class="goals-overview__item-activity">{{ goal.name }}</span>
         </div>
       </div>
 
-      <div class="goal-item__progress">
-        <div class="progress-bar">
+      <div class="goals-overview__item-progress">
+        <div class="goals-overview__progress-bar">
           <div
-            class="progress-fill"
+            class="goals-overview__progress-fill"
             [style.width.%]="goal.progressPercent"
             [style.background]="goal.color"
           ></div>
         </div>
-        <div class="progress-labels">
-          <span class="progress-percent">{{ goal.progressPercent | number: '1.0-0' }}%</span>
-          <span class="deadline">Deadline: {{ goal.goalDeadline! | relativeDate }}</span>
+        <div class="goals-overview__progress-labels">
+          <span class="goals-overview__progress-percent"
+            >{{ goal.progressPercent | number: '1.0-0' }}%</span
+          >
+          <span class="goals-overview__deadline"
+            >Deadline: {{ goal.goalDeadline! | relativeDate }}</span
+          >
         </div>
       </div>
     </div>
   } @empty {
-    <p class="no-goals">
+    <p class="goals-overview__no-goals">
       No active goals with deadlines set. Edit an activity to set a specific goal.
     </p>
   }
