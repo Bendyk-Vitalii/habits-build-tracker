@@ -1,11 +1,11 @@
-<div class="tasks-container animate-fade-in">
-  <div class="header">
+<div class="tasks__container animate-fade-in">
+  <div class="tasks__header">
     <h1>Tasks</h1>
   </div>
 
   <!-- Add Task Form -->
-  <div class="add-task-form surface-card">
-    <mat-form-field appearance="outline" class="title-field">
+  <div class="tasks__add-form surface-card">
+    <mat-form-field appearance="outline" class="tasks__title-field">
       <mat-label>What needs to be done?</mat-label>
       <input
         matInput
@@ -15,8 +15,8 @@
       />
     </mat-form-field>
 
-    <div class="form-actions">
-      <mat-form-field appearance="outline" class="priority-field">
+    <div class="tasks__form-actions">
+      <mat-form-field appearance="outline" class="tasks__priority-field">
         <mat-label>Priority</mat-label>
         <mat-select [(ngModel)]="newTaskPriority">
           <mat-option value="high">High</mat-option>
@@ -27,7 +27,7 @@
 
       <button
         mat-flat-button
-        class="add-btn"
+        class="tasks__add-btn"
         (click)="addTask()"
         [disabled]="!newTaskTitle().trim()"
       >
@@ -37,28 +37,34 @@
   </div>
 
   <!-- Pending Tasks List -->
-  <div class="task-list">
+  <div class="tasks__list">
     @for (task of tasks(); track task.id) {
       <div
-        class="task-item surface-card animate-slide-up"
-        [class.priority-high]="task.priority === 'high'"
-        [class.priority-medium]="task.priority === 'medium'"
-        [class.priority-low]="task.priority === 'low'"
+        class="tasks__item surface-card animate-slide-up"
+        [class.tasks__item--priority-high]="task.priority === 'high'"
+        [class.tasks__item--priority-medium]="task.priority === 'medium'"
+        [class.tasks__item--priority-low]="task.priority === 'low'"
       >
         <mat-checkbox [checked]="task.isCompleted" (change)="toggleTaskCompletion(task.id!)">
         </mat-checkbox>
-        <div class="task-content">
-          <span class="task-title">{{ task.title }}</span>
-          <span class="task-priority badge-{{ task.priority }}">{{ task.priority }}</span>
+        <div class="tasks__item-content">
+          <span class="tasks__item-title">{{ task.title }}</span>
+          <span
+            class="tasks__item-priority"
+            [class.tasks__item-priority--high]="task.priority === 'high'"
+            [class.tasks__item-priority--medium]="task.priority === 'medium'"
+            [class.tasks__item-priority--low]="task.priority === 'low'"
+            >{{ task.priority }}</span
+          >
         </div>
-        <button mat-icon-button class="delete-btn" (click)="deleteTask(task.id!)">
+        <button mat-icon-button class="tasks__delete-btn" (click)="deleteTask(task.id!)">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
     }
 
     @if (tasks().length === 0) {
-      <div class="empty-state">
+      <div class="tasks__empty-state">
         <mat-icon>check_circle</mat-icon>
         <p>You're all caught up!</p>
       </div>
@@ -67,22 +73,22 @@
 
   <!-- Completed Tasks Section -->
   @if (completedTasks().length > 0) {
-    <div class="completed-section">
-      <button class="toggle-completed-btn" (click)="toggleCompletedSection()">
+    <div class="tasks__completed-section">
+      <button class="tasks__toggle-completed-btn" (click)="toggleCompletedSection()">
         <mat-icon>{{ showCompleted() ? 'expand_more' : 'chevron_right' }}</mat-icon>
         <span>Completed ({{ completedTasks().length }})</span>
       </button>
 
       @if (showCompleted()) {
-        <div class="task-list completed-list">
+        <div class="tasks__list tasks__completed-list">
           @for (task of completedTasks(); track task.id) {
-            <div class="task-item surface-card animate-slide-up completed">
+            <div class="tasks__item surface-card animate-slide-up tasks__item--completed">
               <mat-checkbox [checked]="task.isCompleted" (change)="toggleTaskCompletion(task.id!)">
               </mat-checkbox>
-              <div class="task-content">
-                <span class="task-title">{{ task.title }}</span>
+              <div class="tasks__item-content">
+                <span class="tasks__item-title">{{ task.title }}</span>
               </div>
-              <button mat-icon-button class="delete-btn" (click)="deleteTask(task.id!)">
+              <button mat-icon-button class="tasks__delete-btn" (click)="deleteTask(task.id!)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>

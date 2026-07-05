@@ -5,19 +5,24 @@
   (keydown.enter)="startSession.emit()"
   tabindex="0"
 >
-  <button class="edit-btn" mat-icon-button aria-label="Edit topic" (click)="onEdit($event)">
-    <mat-icon class="edit-icon">edit</mat-icon>
+  <button
+    class="topic-card__edit-btn"
+    mat-icon-button
+    aria-label="Edit topic"
+    (click)="onEdit($event)"
+  >
+    <mat-icon class="topic-card__edit-icon">edit</mat-icon>
   </button>
 
-  <div class="icon-circle" [style.background-color]="iconBgColor()">
+  <div class="topic-card__icon-circle" [style.background-color]="iconBgColor()">
     <mat-icon [style.color]="topic().color">{{ topic().icon }}</mat-icon>
   </div>
 
-  <span class="topic-name">{{ topic().name }}</span>
-  <span class="topic-time">
+  <span class="topic-card__name">{{ topic().name }}</span>
+  <span class="topic-card__time">
     {{ formattedTime() }}
     @if (formattedCount()) {
-      <span class="session-divider"> · </span>{{ formattedCount() }}
+      <span class="topic-card__session-divider"> · </span>{{ formattedCount() }}
     }
   </span>
 </div>

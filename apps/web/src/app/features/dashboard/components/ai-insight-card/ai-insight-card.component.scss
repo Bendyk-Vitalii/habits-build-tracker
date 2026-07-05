@@ -11,15 +11,15 @@
     margin: calc(var(--ht-spacing-md) * -1);
     padding: var(--ht-spacing-md);
     border-radius: var(--ht-radius-lg);
+  }
 
-    .ai-icon {
-      color: var(--ht-tertiary);
-    }
+  &__ai-icon {
+    color: var(--ht-tertiary);
+  }
 
-    .expand-icon {
-      color: var(--ht-text-secondary);
-      transition: transform var(--ht-transition-normal);
-    }
+  &__expand-icon {
+    color: var(--ht-text-secondary);
+    transition: transform var(--ht-transition-normal);
   }
 
   &__title {
@@ -41,87 +41,87 @@
     transition: all var(--ht-transition-normal);
     margin-top: 0;
 
-    &.show {
+    &--show {
       max-height: 300px;
       opacity: 1;
       margin-top: var(--ht-spacing-md);
     }
   }
-}
 
-.suggestion-text {
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  color: var(--ht-text-primary);
-  margin-bottom: var(--ht-spacing-sm);
-}
-
-.reasoning-text {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  font-size: 0.8125rem;
-  color: var(--ht-text-secondary);
-  background: var(--ht-surface-container-highest);
-  padding: var(--ht-spacing-sm);
-  border-radius: var(--ht-radius-sm);
-  margin-bottom: var(--ht-spacing-md);
-
-  .material-symbols-rounded {
-    font-size: 16px;
-    color: var(--ht-secondary);
-    margin-top: 2px;
+  &__suggestion-text {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ht-text-primary);
+    margin-bottom: var(--ht-spacing-sm);
   }
-}
 
-.action-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: var(--ht-radius-full);
-  background: var(--ht-surface-bright);
-  color: var(--ht-text-primary);
+  &__reasoning-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--ht-text-secondary);
+    background: var(--ht-surface-container-highest);
+    padding: var(--ht-spacing-sm);
+    border-radius: var(--ht-radius-sm);
+    margin-bottom: var(--ht-spacing-md);
 
-  &[data-action='add_activity'] {
-    background: rgba(66, 165, 245, 0.2);
-    color: #64b5f6;
+    .material-symbols-rounded {
+      font-size: 16px;
+      color: var(--ht-secondary);
+      margin-top: 2px;
+    }
   }
-  &[data-action='increase_duration'] {
-    background: rgba(102, 187, 106, 0.2);
-    color: #81c784;
-  }
-  &[data-action='scale_back'] {
-    background: rgba(255, 167, 38, 0.2);
-    color: #ffb74d;
-  }
-  &[data-action='celebrate'] {
-    background: rgba(171, 71, 188, 0.2);
-    color: #ba68c8;
-  }
-}
 
-// Skeleton Loader
-.skeleton-loader {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+  &__action-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: var(--ht-radius-full);
+    background: var(--ht-surface-bright);
+    color: var(--ht-text-primary);
 
-.skeleton-line {
-  height: 14px;
-  background: linear-gradient(
-    90deg,
-    var(--ht-surface-container-high) 25%,
-    var(--ht-surface-bright) 50%,
-    var(--ht-surface-container-high) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: var(--ht-radius-full);
+    &[data-action='add_activity'] {
+      background: rgba(66, 165, 245, 0.2);
+      color: #64b5f6;
+    }
+    &[data-action='increase_duration'] {
+      background: rgba(102, 187, 106, 0.2);
+      color: #81c784;
+    }
+    &[data-action='scale_back'] {
+      background: rgba(255, 167, 38, 0.2);
+      color: #ffb74d;
+    }
+    &[data-action='celebrate'] {
+      background: rgba(171, 71, 188, 0.2);
+      color: #ba68c8;
+    }
+  }
 
-  &.short {
-    width: 60%;
+  // Skeleton Loader
+  &__skeleton-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__skeleton-line {
+    height: 14px;
+    background: linear-gradient(
+      90deg,
+      var(--ht-surface-container-high) 25%,
+      var(--ht-surface-bright) 50%,
+      var(--ht-surface-container-high) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--ht-radius-full);
+
+    &--short {
+      width: 60%;
+    }
   }
 }
 

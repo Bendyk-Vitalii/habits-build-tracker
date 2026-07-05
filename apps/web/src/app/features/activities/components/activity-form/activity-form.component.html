@@ -1,8 +1,8 @@
 <h2 mat-dialog-title>{{ isEditMode ? 'Edit Activity' : 'New Activity' }}</h2>
 
 <mat-dialog-content>
-  <form [formGroup]="activityForm" class="form-container">
-    <mat-form-field appearance="outline" class="full-width">
+  <form [formGroup]="activityForm" class="activity-form__container">
+    <mat-form-field appearance="outline" class="activity-form__full-width">
       <mat-label>Activity Name</mat-label>
       <input matInput formControlName="name" placeholder="e.g., AWS Certification" />
       @if (activityForm.get('name')?.hasError('required')) {
@@ -10,8 +10,8 @@
       }
     </mat-form-field>
 
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
+    <div class="activity-form__row">
+      <mat-form-field appearance="outline" class="activity-form__half-width">
         <mat-label>Category</mat-label>
         <mat-select formControlName="category">
           @for (cat of categories; track cat) {
@@ -20,22 +20,22 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="half-width">
+      <mat-form-field appearance="outline" class="activity-form__half-width">
         <mat-label>Icon (Material Symbol)</mat-label>
         <input matInput formControlName="icon" placeholder="e.g., cloud" />
         <mat-icon matSuffix>{{ activityForm.get('icon')?.value }}</mat-icon>
       </mat-form-field>
     </div>
 
-    <div class="color-picker-section">
+    <div class="activity-form__color-picker">
       <label for="color-input">Color</label>
-      <div class="color-options">
+      <div class="activity-form__color-options">
         @for (c of presetColors; track c) {
           <button
             type="button"
-            class="color-btn"
+            class="activity-form__color-btn"
             [style.background]="c"
-            [class.selected]="activityForm.get('color')?.value === c"
+            [class.activity-form__color-btn--selected]="activityForm.get('color')?.value === c"
             (click)="selectColor(c)"
           >
             @if (activityForm.get('color')?.value === c) {
@@ -47,24 +47,24 @@
       <input id="color-input" type="hidden" formControlName="color" />
     </div>
 
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
+    <div class="activity-form__row">
+      <mat-form-field appearance="outline" class="activity-form__half-width">
         <mat-label>Weekly Goal (Minutes)</mat-label>
         <input matInput type="number" formControlName="weeklyGoalMinutes" />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="half-width">
+      <mat-form-field appearance="outline" class="activity-form__half-width">
         <mat-label>Sessions per Week</mat-label>
         <input matInput type="number" formControlName="sessionsPerWeek" />
       </mat-form-field>
     </div>
 
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="activity-form__full-width">
       <mat-label>Specific Goal (Optional)</mat-label>
       <input matInput formControlName="goal" placeholder="e.g., Pass SAA-C03 exam" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="activity-form__full-width">
       <mat-label>Goal Deadline (Optional)</mat-label>
       <input matInput type="date" formControlName="goalDeadline" />
     </mat-form-field>

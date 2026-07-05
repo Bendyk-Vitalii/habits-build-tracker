@@ -1,29 +1,29 @@
 @if (review(); as rev) {
-  <div class="review-container animate-fade-in">
-    <div class="header">
+  <div class="weekly-review__container animate-fade-in">
+    <div class="weekly-review__header">
       <h1>Weekly Review</h1>
-      <p class="subtitle">Week of {{ rev.weekStartDate }}</p>
+      <p class="weekly-review__subtitle">Week of {{ rev.weekStartDate }}</p>
     </div>
-    <section class="stats-overview">
-      <div class="stat-card glass-card">
-        <div class="stat-value">{{ rev.totalSessions }}</div>
-        <div class="stat-label">Sessions</div>
+    <section class="weekly-review__stats-overview">
+      <div class="weekly-review__stat-card glass-card">
+        <div class="weekly-review__stat-value">{{ rev.totalSessions }}</div>
+        <div class="weekly-review__stat-label">Sessions</div>
       </div>
-      <div class="stat-card glass-card">
-        <div class="stat-value">{{ rev.totalMinutes }}</div>
-        <div class="stat-label">Minutes</div>
+      <div class="weekly-review__stat-card glass-card">
+        <div class="weekly-review__stat-value">{{ rev.totalMinutes }}</div>
+        <div class="weekly-review__stat-label">Minutes</div>
       </div>
-      <div class="stat-card glass-card">
-        <div class="stat-value">{{ completionRate() | number: '1.0-0' }}%</div>
-        <div class="stat-label">Completion</div>
+      <div class="weekly-review__stat-card glass-card">
+        <div class="weekly-review__stat-value">{{ completionRate() | number: '1.0-0' }}%</div>
+        <div class="weekly-review__stat-label">Completion</div>
       </div>
     </section>
-    <section class="ai-section">
+    <section class="weekly-review__ai-section">
       <ht-ai-insight-card />
     </section>
-    <section class="reflection-section glass-card">
+    <section class="weekly-review__reflection-section glass-card">
       <h3>Reflection</h3>
-      <mat-form-field appearance="outline" class="full-width">
+      <mat-form-field appearance="outline" class="weekly-review__full-width">
         <mat-label>What went well this week?</mat-label>
         <textarea
           matInput
@@ -33,7 +33,10 @@
           placeholder="E.g., I was very consistent with morning coding."
         ></textarea>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="full-width mt-3">
+      <mat-form-field
+        appearance="outline"
+        class="weekly-review__full-width weekly-review__full-width--spaced"
+      >
         <mat-label>What could be improved?</mat-label>
         <textarea
           matInput
@@ -46,7 +49,7 @@
       <button
         mat-flat-button
         color="primary"
-        class="save-btn"
+        class="weekly-review__save-btn"
         [disabled]="isSaving()"
         (click)="saveReview()"
       >

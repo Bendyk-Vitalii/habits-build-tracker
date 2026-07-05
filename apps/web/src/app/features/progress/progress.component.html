@@ -1,5 +1,5 @@
-<div class="progress-container animate-fade-in">
-  <div class="header">
+<div class="progress__container animate-fade-in">
+  <div class="progress__header">
     <h1>Progress</h1>
     <mat-button-toggle-group [ngModel]="view()" (ngModelChange)="view.set($event)">
       <mat-button-toggle value="weekly">Weekly</mat-button-toggle>
@@ -7,11 +7,11 @@
     </mat-button-toggle-group>
   </div>
 
-  <div class="charts-grid">
+  <div class="progress__charts-grid">
     <!-- Main Time Chart -->
-    <div class="chart-card glass-card span-full">
+    <div class="progress__chart-card glass-card progress__chart-card--span-full">
       <h3>Time Spent</h3>
-      <div class="chart-wrapper">
+      <div class="progress__chart-wrapper">
         @if (isLoading()) {
           <div style="display: flex; justify-content: center; align-items: center; height: 100%">
             <mat-spinner diameter="48"></mat-spinner>
@@ -32,9 +32,9 @@
     </div>
 
     <!-- Completion Donut -->
-    <div class="chart-card glass-card donut-card">
+    <div class="progress__chart-card glass-card progress__chart-card--donut">
       <h3>Weekly Goal Completion</h3>
-      <div class="donut-wrapper">
+      <div class="progress__donut-wrapper">
         @if (completionDonutData()) {
           <canvas
             baseChart
@@ -43,7 +43,7 @@
             [type]="'doughnut'"
           >
           </canvas>
-          <div class="donut-center-text">
+          <div class="progress__donut-center-text">
             <span>{{ completionDonutData()!.datasets[0].data[0] | number: '1.0-0' }}%</span>
           </div>
         }
@@ -51,24 +51,24 @@
     </div>
 
     <!-- Heatmap -->
-    <div class="chart-card glass-card heatmap-card">
+    <div class="progress__chart-card glass-card progress__chart-card--heatmap">
       <h3>Consistency Heatmap (90 Days)</h3>
-      <div class="heatmap-grid">
+      <div class="progress__heatmap-grid">
         @for (cell of heatmapGrid(); track cell.date) {
           <div
-            class="heatmap-cell"
+            class="progress__heatmap-cell"
             [style.opacity]="cell.opacity"
             [title]="cell.date + ': ' + cell.value + ' sessions'"
           ></div>
         }
       </div>
-      <div class="heatmap-legend">
+      <div class="progress__heatmap-legend">
         <span>Less</span>
-        <div class="legend-scale">
-          <div class="heatmap-cell" style="opacity: 0.05"></div>
-          <div class="heatmap-cell" style="opacity: 0.4"></div>
-          <div class="heatmap-cell" style="opacity: 0.7"></div>
-          <div class="heatmap-cell" style="opacity: 1"></div>
+        <div class="progress__legend-scale">
+          <div class="progress__heatmap-cell" style="opacity: 0.05"></div>
+          <div class="progress__heatmap-cell" style="opacity: 0.4"></div>
+          <div class="progress__heatmap-cell" style="opacity: 0.7"></div>
+          <div class="progress__heatmap-cell" style="opacity: 1"></div>
         </div>
         <span>More</span>
       </div>

@@ -1,25 +1,25 @@
-<div class="viewer-container animate-fade-in">
+<div class="lesson-viewer__container animate-fade-in">
   <!-- Sticky Header -->
-  <div class="sticky-header glass-header">
-    <button mat-icon-button class="back-btn" (click)="goBack()" aria-label="Go back">
+  <div class="lesson-viewer__sticky-header glass-header">
+    <button mat-icon-button class="lesson-viewer__back-btn" (click)="goBack()" aria-label="Go back">
       <mat-icon>arrow_back</mat-icon>
     </button>
 
     @if (lesson(); as l) {
-      <div class="header-title">
+      <div class="lesson-viewer__header-title">
         <div
-          class="topic-icon-small"
+          class="lesson-viewer__topic-icon-small"
           [style.background]="l.topicColor + '22'"
           [style.color]="l.topicColor"
         >
           <span class="material-symbols-rounded">{{ l.topicIcon }}</span>
         </div>
-        <span class="topic-name">{{ l.topicName }}</span>
+        <span class="lesson-viewer__topic-name">{{ l.topicName }}</span>
       </div>
 
       <button
         mat-icon-button
-        class="delete-btn"
+        class="lesson-viewer__delete-btn"
         (click)="deleteLesson()"
         aria-label="Delete lesson"
       >
@@ -28,29 +28,29 @@
     }
   </div>
 
-  <div class="content-area">
+  <div class="lesson-viewer__content-area">
     @if (isLoading()) {
-      <div class="loading-state">
+      <div class="lesson-viewer__loading-state">
         <mat-spinner diameter="48"></mat-spinner>
         <p>Loading saved lesson...</p>
       </div>
     } @else if (lesson(); as l) {
-      <article class="lesson-article">
+      <article class="lesson-viewer__lesson-article">
         <!-- Meta Row: Difficulty + Saved Date -->
-        <div class="viewer-meta">
-          <span class="difficulty-badge" [attr.data-level]="l.difficulty">
-            <mat-icon class="badge-icon">signal_cellular_alt</mat-icon>
+        <div class="lesson-viewer__meta">
+          <span class="lesson-viewer__difficulty-badge" [attr.data-level]="l.difficulty">
+            <mat-icon class="lesson-viewer__badge-icon">signal_cellular_alt</mat-icon>
             {{ l.difficulty | titlecase }}
           </span>
-          <span class="saved-date">
-            <mat-icon class="date-icon">calendar_today</mat-icon>
+          <span class="lesson-viewer__saved-date">
+            <mat-icon class="lesson-viewer__date-icon">calendar_today</mat-icon>
             Saved {{ l.savedAt | date: 'mediumDate' }}
           </span>
         </div>
 
-        <h1 class="lesson-title">{{ l.title }}</h1>
+        <h1 class="lesson-viewer__lesson-title">{{ l.title }}</h1>
 
-        <div class="lesson-content">
+        <div class="lesson-viewer__lesson-content">
           @for (block of l.contentBlocks; track $index) {
             @if (block.type === 'heading') {
               <h2>{{ block.value }}</h2>
@@ -63,15 +63,15 @@
         </div>
 
         @if (l.quiz && l.quiz.length > 0) {
-          <div class="quiz-section">
+          <div class="lesson-viewer__quiz-section">
             <h3>Knowledge Check</h3>
 
             @for (q of l.quiz; track qIdx; let qIdx = $index) {
-              <div class="quiz-question" [class.submitted]="quizSubmitted()">
-                <p class="question-text">{{ qIdx + 1 }}. {{ q.question }}</p>
+              <div class="lesson-viewer__quiz-question" [class.submitted]="quizSubmitted()">
+                <p class="lesson-viewer__question-text">{{ qIdx + 1 }}. {{ q.question }}</p>
 
                 <mat-radio-group
-                  class="quiz-options"
+                  class="lesson-viewer__quiz-options"
                   [disabled]="quizSubmitted()"
                   [value]="quizAnswers()[qIdx]"
                   (change)="selectAnswer(qIdx, $event.value)"
@@ -93,9 +93,11 @@
 
                 @if (quizSubmitted()) {
                   @if (quizAnswers()[qIdx] === q.correctAnswer) {
-                    <p class="feedback correct-text"><mat-icon>check_circle</mat-icon> Correct!</p>
+                    <p class="lesson-viewer__feedback lesson-viewer__feedback--correct">
+                      <mat-icon>check_circle</mat-icon> Correct!
+                    </p>
                   } @else {
-                    <p class="feedback incorrect-text">
+                    <p class="lesson-viewer__feedback lesson-viewer__feedback--incorrect">
                       <mat-icon>cancel</mat-icon> Incorrect. The right answer is:
                       {{ q.correctAnswer }}
                     </p>
@@ -108,22 +110,22 @@
               <button
                 mat-flat-button
                 color="primary"
-                class="submit-quiz-btn"
+                class="lesson-viewer__submit-quiz-btn"
                 [disabled]="!l.quiz || (quizAnswers() | keyvalue).length !== l.quiz.length"
                 (click)="submitQuiz()"
               >
                 Submit Answers
               </button>
             } @else {
-              <div class="quiz-result">
+              <div class="lesson-viewer__quiz-result">
                 <p>You scored {{ quizScore() }} out of {{ l.quiz.length }}!</p>
               </div>
             }
           </div>
         }
 
-        <div class="viewer-actions">
-          <button mat-stroked-button class="back-to-library-btn" (click)="goBack()">
+        <div class="lesson-viewer__actions">
+          <button mat-stroked-button class="lesson-viewer__back-to-library-btn" (click)="goBack()">
             <mat-icon>arrow_back</mat-icon>
             Back to Library
           </button>

@@ -1,8 +1,8 @@
-<div class="star-rating" [class.readonly]="readonly()">
+<div class="star-rating" [class.star-rating--readonly]="readonly()">
   @for (star of stars; track star) {
     <mat-icon
-      class="star"
-      [class.filled]="star <= displayRating()"
+      class="star-rating__star"
+      [class.star-rating__star--filled]="star <= displayRating()"
       (mouseenter)="onHover(star)"
       (mouseleave)="onLeave()"
       (click)="onSelect(star)"

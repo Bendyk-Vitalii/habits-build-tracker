@@ -1,62 +1,62 @@
 <div class="matching-block">
-  <div class="matching-header">
-    <mat-icon class="match-icon">compare_arrows</mat-icon>
-    <span class="match-type">Match the Pairs</span>
+  <div class="matching-block__header">
+    <mat-icon class="matching-block__icon">compare_arrows</mat-icon>
+    <span class="matching-block__type">Match the Pairs</span>
     @if (title()) {
-      <span class="match-title">— {{ title() }}</span>
+      <span class="matching-block__title">— {{ title() }}</span>
     }
-    <span class="match-count">{{ score().matched }} / {{ score().total }}</span>
+    <span class="matching-block__count">{{ score().matched }} / {{ score().total }}</span>
   </div>
 
   @if (!isComplete()) {
-    <p class="match-instruction">Tap one item from each column to match them</p>
+    <p class="matching-block__instruction">Tap one item from each column to match them</p>
 
-    <div class="match-columns">
-      <div class="match-column">
+    <div class="matching-block__columns">
+      <div class="matching-block__column">
         @for (item of leftItems(); track $index; let i = $index) {
           <button
-            class="match-item"
-            [class.selected]="isLeftSelected(i)"
-            [class.matched]="item.isMatched"
-            [class.incorrect]="isLeftIncorrect(i)"
+            class="matching-block__item"
+            [class.matching-block__item--selected]="isLeftSelected(i)"
+            [class.matching-block__item--matched]="item.isMatched"
+            [class.matching-block__item--incorrect]="isLeftIncorrect(i)"
             [disabled]="item.isMatched"
             (click)="selectLeft(i)"
           >
             {{ item.text }}
             @if (item.isMatched) {
-              <mat-icon class="match-check">check_circle</mat-icon>
+              <mat-icon class="matching-block__check-icon">check_circle</mat-icon>
             }
           </button>
         }
       </div>
 
-      <div class="match-divider">
+      <div class="matching-block__divider">
         <mat-icon>sync_alt</mat-icon>
       </div>
 
-      <div class="match-column">
+      <div class="matching-block__column">
         @for (item of rightItems(); track $index; let i = $index) {
           <button
-            class="match-item"
-            [class.selected]="isRightSelected(i)"
-            [class.matched]="item.isMatched"
-            [class.incorrect]="isRightIncorrect(i)"
+            class="matching-block__item"
+            [class.matching-block__item--selected]="isRightSelected(i)"
+            [class.matching-block__item--matched]="item.isMatched"
+            [class.matching-block__item--incorrect]="isRightIncorrect(i)"
             [disabled]="item.isMatched"
             (click)="selectRight(i)"
           >
             {{ item.text }}
             @if (item.isMatched) {
-              <mat-icon class="match-check">check_circle</mat-icon>
+              <mat-icon class="matching-block__check-icon">check_circle</mat-icon>
             }
           </button>
         }
       </div>
     </div>
   } @else {
-    <div class="match-complete">
-      <mat-icon class="complete-icon">emoji_events</mat-icon>
+    <div class="matching-block__complete">
+      <mat-icon class="matching-block__complete-icon">emoji_events</mat-icon>
       <p>All pairs matched! 🎉</p>
-      <button mat-stroked-button class="retry-btn" (click)="retry()">
+      <button mat-stroked-button class="matching-block__retry-btn" (click)="retry()">
         <mat-icon>replay</mat-icon>
         Shuffle & Retry
       </button>

@@ -1,42 +1,55 @@
-<div class="session-container animate-fade-in">
+<div class="learning-session__container animate-fade-in">
   @if (topic(); as t) {
     <!-- Sticky Header -->
-    <div class="sticky-header glass-header">
-      <button mat-icon-button class="back-btn" (click)="goBack()" aria-label="Go back">
+    <div class="learning-session__sticky-header glass-header">
+      <button
+        mat-icon-button
+        class="learning-session__back-btn"
+        (click)="goBack()"
+        aria-label="Go back"
+      >
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <div class="header-title">
-        <div class="topic-icon-small" [style.background]="t.color + '22'" [style.color]="t.color">
+      <div class="learning-session__header-title">
+        <div
+          class="learning-session__topic-icon-small"
+          [style.background]="t.color + '22'"
+          [style.color]="t.color"
+        >
           <span class="material-symbols-rounded">{{ t.icon }}</span>
         </div>
-        <span class="topic-name">{{ t.name }}</span>
+        <span class="learning-session__topic-name">{{ t.name }}</span>
       </div>
       <button
         mat-icon-button
-        class="save-btn"
+        class="learning-session__save-btn"
         (click)="saveLesson()"
         [disabled]="isSaved() || isSaving()"
         [attr.aria-label]="isSaved() ? 'Lesson saved' : 'Save lesson'"
       >
         <mat-icon>{{ isSaved() ? 'bookmark' : 'bookmark_border' }}</mat-icon>
       </button>
-      <div class="timer-mini" [class.running]="isRunning()" [class.overtime]="isOvertime()">
-        <mat-icon class="timer-icon">timer</mat-icon>
+      <div
+        class="learning-session__timer-mini"
+        [class.learning-session__timer-mini--running]="isRunning()"
+        [class.learning-session__timer-mini--overtime]="isOvertime()"
+      >
+        <mat-icon class="learning-session__timer-icon">timer</mat-icon>
         <span>{{ formattedTime() }}</span>
       </div>
       @if (isOvertime()) {
-        <span class="overtime-badge">Time's up!</span>
+        <span class="learning-session__overtime-badge">Time's up!</span>
       }
     </div>
 
-    <div class="content-area">
+    <div class="learning-session__content-area">
       @if (isLoadingLesson()) {
-        <div class="loading-state">
+        <div class="learning-session__loading-state">
           <mat-spinner diameter="48"></mat-spinner>
           <p>Generating your personalized lesson...</p>
         </div>
       } @else if (lessonError()) {
-        <div class="error-state">
+        <div class="learning-session__error-state">
           <mat-icon color="warn">error_outline</mat-icon>
           <p>{{ lessonError() }}</p>
           <button mat-flat-button color="primary" (click)="goBack()">Go Back</button>
@@ -44,23 +57,29 @@
       } @else if (lesson(); as l) {
         <!-- Regenerating Overlay -->
         @if (isRegenerating()) {
-          <div class="regenerating-overlay">
+          <div class="learning-session__regenerating-overlay">
             <mat-spinner diameter="36"></mat-spinner>
             <p>Generating {{ currentDifficulty() }} content...</p>
           </div>
         }
 
-        <article class="lesson-article" [class.regenerating]="isRegenerating()">
+        <article
+          class="learning-session__lesson-article"
+          [class.learning-session__lesson-article--regenerating]="isRegenerating()"
+        >
           <!-- Difficulty Badge & Go Deeper -->
-          <div class="lesson-header-row">
-            <span class="difficulty-badge" [attr.data-level]="currentDifficulty()">
-              <mat-icon class="badge-icon">signal_cellular_alt</mat-icon>
+          <div class="learning-session__lesson-header-row">
+            <span
+              class="learning-session__difficulty-badge"
+              [attr.data-level]="currentDifficulty()"
+            >
+              <mat-icon class="learning-session__badge-icon">signal_cellular_alt</mat-icon>
               {{ currentDifficulty() | titlecase }}
             </span>
             @if (currentDifficulty() !== 'expert') {
               <button
                 mat-stroked-button
-                class="go-deeper-btn"
+                class="learning-session__go-deeper-btn"
                 (click)="goDeeper()"
                 [disabled]="isRegenerating()"
               >
@@ -68,16 +87,16 @@
                 Go Deeper
               </button>
             } @else {
-              <span class="max-level-badge">
-                <mat-icon class="badge-icon">workspace_premium</mat-icon>
+              <span class="learning-session__max-level-badge">
+                <mat-icon class="learning-session__badge-icon">workspace_premium</mat-icon>
                 Max Level
               </span>
             }
           </div>
 
-          <h1 class="lesson-title">{{ l.title }}</h1>
+          <h1 class="learning-session__lesson-title">{{ l.title }}</h1>
 
-          <div class="lesson-content">
+          <div class="learning-session__lesson-content">
             @for (block of l.contentBlocks; track $index) {
               @if (block.type === 'heading') {
                 <h2>{{ block.value }}</h2>
@@ -100,15 +119,15 @@
           </div>
 
           @if (l.quiz && l.quiz.length > 0) {
-            <div class="quiz-section">
+            <div class="learning-session__quiz-section">
               <h3>Knowledge Check</h3>
 
               @for (q of l.quiz; track qIdx; let qIdx = $index) {
-                <div class="quiz-question" [class.submitted]="quizSubmitted()">
-                  <p class="question-text">{{ qIdx + 1 }}. {{ q.question }}</p>
+                <div class="learning-session__quiz-question" [class.submitted]="quizSubmitted()">
+                  <p class="learning-session__question-text">{{ qIdx + 1 }}. {{ q.question }}</p>
 
                   <mat-radio-group
-                    class="quiz-options"
+                    class="learning-session__quiz-options"
                     [disabled]="quizSubmitted()"
                     [value]="quizAnswers()[qIdx]"
                     (change)="selectAnswer(qIdx, $event.value)"
@@ -130,11 +149,11 @@
 
                   @if (quizSubmitted()) {
                     @if (quizAnswers()[qIdx] === q.correctAnswer) {
-                      <p class="feedback correct-text">
+                      <p class="learning-session__feedback learning-session__feedback--correct">
                         <mat-icon>check_circle</mat-icon> Correct!
                       </p>
                     } @else {
-                      <p class="feedback incorrect-text">
+                      <p class="learning-session__feedback learning-session__feedback--incorrect">
                         <mat-icon>cancel</mat-icon> Incorrect. The right answer is:
                         {{ q.correctAnswer }}
                       </p>
@@ -147,25 +166,25 @@
                 <button
                   mat-flat-button
                   color="primary"
-                  class="submit-quiz-btn"
+                  class="learning-session__submit-quiz-btn"
                   [disabled]="!l.quiz || (quizAnswers() | keyvalue).length !== l.quiz.length"
                   (click)="submitQuiz()"
                 >
                   Submit Answers
                 </button>
               } @else {
-                <div class="quiz-result">
+                <div class="learning-session__quiz-result">
                   <p>You scored {{ quizScore() }} out of {{ l.quiz.length }}!</p>
                 </div>
               }
             </div>
           }
 
-          <div class="session-actions">
+          <div class="learning-session__session-actions">
             @if (!isSaved()) {
               <button
                 mat-stroked-button
-                class="save-action-btn"
+                class="learning-session__save-action-btn"
                 (click)="saveLesson()"
                 [disabled]="isSaving()"
               >
@@ -173,7 +192,7 @@
                 {{ isSaving() ? 'Saving...' : 'Save to Library' }}
               </button>
             } @else {
-              <span class="saved-badge">
+              <span class="learning-session__saved-badge">
                 <mat-icon>bookmark</mat-icon>
                 Saved
               </span>
@@ -181,7 +200,7 @@
             @if (currentDifficulty() !== 'expert') {
               <button
                 mat-stroked-button
-                class="deeper-action-btn"
+                class="learning-session__deeper-action-btn"
                 (click)="goDeeper()"
                 [disabled]="isRegenerating()"
               >
@@ -190,12 +209,21 @@
               </button>
             }
             @if (isOvertime()) {
-              <button mat-stroked-button class="extend-btn" (click)="extendTime()">
+              <button
+                mat-stroked-button
+                class="learning-session__extend-btn"
+                (click)="extendTime()"
+              >
                 <mat-icon>add_alarm</mat-icon>
                 Extend +5 min
               </button>
             }
-            <button mat-flat-button color="accent" class="finish-btn" (click)="completeSession()">
+            <button
+              mat-flat-button
+              color="accent"
+              class="learning-session__finish-btn"
+              (click)="completeSession()"
+            >
               Complete Session
             </button>
           </div>

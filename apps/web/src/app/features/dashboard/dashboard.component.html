@@ -1,28 +1,33 @@
 <div class="dashboard animate-fade-in">
   @if (showReminder()) {
-    <div class="reminder-banner glass-card animate-slide-up">
-      <div class="reminder-banner__content">
-        <mat-icon class="pulse-icon">notifications_active</mat-icon>
-        <div class="text">
+    <div class="dashboard__reminder-banner glass-card animate-slide-up">
+      <div class="dashboard__reminder-content">
+        <mat-icon class="dashboard__reminder-pulse-icon">notifications_active</mat-icon>
+        <div class="dashboard__reminder-text">
           <strong>Time to build habits!</strong>
           <span>You haven't logged any sessions today.</span>
         </div>
       </div>
-      <button mat-icon-button (click)="reminderDismissed.set(true)" aria-label="Dismiss">
+      <button
+        mat-icon-button
+        class="dashboard__reminder-dismiss"
+        (click)="reminderDismissed.set(true)"
+        aria-label="Dismiss"
+      >
         <mat-icon>close</mat-icon>
       </button>
     </div>
   }
 
   <!-- Greeting -->
-  <header class="dashboard-header">
+  <header class="dashboard__header">
     <h1>{{ greeting() }} 👋</h1>
     <p>Let's build some skills today</p>
   </header>
 
   <!-- Weekly Progress Ring -->
-  <section class="weekly-progress glass-card">
-    <div class="weekly-progress__ring">
+  <section class="dashboard__weekly-progress glass-card">
+    <div class="dashboard__weekly-ring">
       <ht-progress-ring
         [progress]="weeklyCompletionRate()"
         [size]="100"
@@ -30,38 +35,38 @@
         [label]="weeklyCompletionRate() + '%'"
       />
     </div>
-    <div class="weekly-progress__info">
+    <div class="dashboard__weekly-info">
       <h3>Weekly Progress</h3>
       <p>{{ activities().length }} active activities</p>
     </div>
   </section>
 
   <!-- Today's Activities -->
-  <section class="today-section">
-    <h2 class="section-title">Today's Activities</h2>
+  <section class="dashboard__today">
+    <h2 class="dashboard__section-title">Today's Activities</h2>
     <ht-today-overview [activities]="activitiesWithProgress()" />
   </section>
 
   <!-- Weekly Summary -->
-  <section class="summary-section">
+  <section class="dashboard__summary">
     <ht-weekly-summary-card [activities]="activities()" [completionRate]="weeklyCompletionRate()" />
   </section>
 
   <!-- AI Insight -->
-  <section class="ai-section">
+  <section class="dashboard__ai">
     <ht-ai-insight-card />
   </section>
 
   <!-- Goals -->
   @if (activities().length > 0) {
-    <section class="goals-section">
-      <h2 class="section-title">Goals</h2>
+    <section class="dashboard__goals">
+      <h2 class="dashboard__section-title">Goals</h2>
       <ht-goals-overview [activities]="activities()" />
     </section>
   }
 
   <!-- FAB: Quick Log / Start Timer -->
-  <a mat-fab class="fab-timer" routerLink="/timer" aria-label="Start Timer">
+  <a mat-fab class="dashboard__fab-timer" routerLink="/timer" aria-label="Start Timer">
     <mat-icon>timer</mat-icon>
   </a>
 </div>

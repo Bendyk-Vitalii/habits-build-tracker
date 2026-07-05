@@ -1,27 +1,27 @@
-<div class="learning-container animate-fade-in">
-  <div class="header">
-    <div class="header__text">
+<div class="learning__container animate-fade-in">
+  <div class="learning__header">
+    <div class="learning__header-text">
       <h1>Learn</h1>
       <p>Pick a topic and learn for 10–15 min</p>
     </div>
-    <div class="header__actions">
+    <div class="learning__header-actions">
       <button
         mat-stroked-button
-        class="saved-btn"
+        class="learning__saved-btn"
         (click)="openSavedLessons()"
         aria-label="Saved lessons"
       >
         <mat-icon>bookmark</mat-icon>
         Saved
         @if (savedCount() > 0) {
-          <span class="saved-count">{{ savedCount() }}</span>
+          <span class="learning__saved-count">{{ savedCount() }}</span>
         }
       </button>
     </div>
   </div>
 
   <!-- Topic Grid -->
-  <div class="topic-grid">
+  <div class="learning__topic-grid">
     @for (topic of topics(); track topic.id) {
       <ht-topic-card
         [topic]="topic"
@@ -34,8 +34,8 @@
   </div>
 
   @if (topics().length === 0) {
-    <div class="empty-state glass-card">
-      <span class="material-symbols-rounded empty-state__icon">school</span>
+    <div class="learning__empty-state glass-card">
+      <span class="material-symbols-rounded learning__empty-icon">school</span>
       <p>No learning topics yet</p>
       <button mat-flat-button color="primary" (click)="openAddDialog()">
         Add your first topic
@@ -45,14 +45,14 @@
 
   <!-- Recent Sessions -->
   @if (recentSessions().length > 0) {
-    <div class="recent-section">
+    <div class="learning__recent-section">
       <h3>Recent Sessions</h3>
-      <div class="session-list">
+      <div class="learning__session-list">
         @for (session of recentSessions(); track session.id) {
-          <div class="session-item glass-card">
-            <div class="session-item__info">
-              <span class="session-item__topic">{{ session.topicName }}</span>
-              <span class="session-item__meta"
+          <div class="learning__session-item glass-card">
+            <div class="learning__session-info">
+              <span class="learning__session-topic">{{ session.topicName }}</span>
+              <span class="learning__session-meta"
                 >{{ session.durationMinutes }}min · {{ session.date }}</span
               >
             </div>
@@ -64,7 +64,7 @@
       </div>
     </div>
   }
-  <div class="learning-add-topic-btn">
+  <div class="learning__add-topic-btn">
     <button mat-mini-fab color="primary" (click)="openAddDialog()" aria-label="Add topic">
       <mat-icon>add</mat-icon>
     </button>
