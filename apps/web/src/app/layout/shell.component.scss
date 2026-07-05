@@ -11,8 +11,21 @@
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding: var(--ht-spacing-md);
-  padding-top: calc(var(--ht-top-bar-height) + var(--ht-safe-top) + var(--ht-spacing-md));
+
+  --shell-top-offset: var(--ht-top-bar-height);
+  padding-top: calc(var(--shell-top-offset) + var(--ht-safe-top) + var(--ht-spacing-md));
   padding-bottom: calc(var(--ht-bottom-nav-height) + var(--ht-spacing-md) + var(--ht-safe-bottom));
+
+  transition: padding-top var(--ht-transition-normal);
+
+  &.header-hidden {
+    --shell-top-offset: 0px;
+  }
+
+  &.no-padding-top {
+    padding-top: calc(var(--ht-safe-top) + var(--ht-spacing-md)) !important;
+  }
+
   max-width: var(--ht-max-content-width);
   margin: 0 auto;
   width: 100%;

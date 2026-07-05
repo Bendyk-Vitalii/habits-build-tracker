@@ -1,5 +1,10 @@
-<ht-top-bar />
-<main class="shell-content">
+<ht-top-bar [isHidden]="isHeaderHidden()" />
+<main
+  class="shell-content"
+  [class.header-hidden]="isHeaderHidden()"
+  [class.no-padding-top]="isLearningPage()"
+  (scroll)="onScroll($event)"
+>
   <router-outlet />
 </main>
 <ht-bottom-nav />

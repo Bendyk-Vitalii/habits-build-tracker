@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 import {
   ActivitySummary,
   AiSuggestRequest,
@@ -60,20 +59,30 @@ export class AiSuggestionService {
   ): Promise<AiSuggestRequest> {
     const activities = this.activityService.activities();
     const summaries: ActivitySummary[] = [];
+    const allSessions = await this.sessionService.getAllSessions();
+    const weekStart = this.trackingService.getWeekStartDate(new Date());
+
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    const weekEndStr = weekEnd.toISOString().split('T')[0];
 
     for (const activity of activities) {
-      const weekStart = this.trackingService.getWeekStartDate(new Date());
-      const actualMinutes = await this.sessionService.getTotalMinutesForWeek(
-        activity.id!,
-        weekStart,
+      if (!activity.id) continue;
+
+      const actSessions = allSessions.filter((s) => String(s.activityId) === String(activity.id));
+      const thisWeekSessions = actSessions.filter(
+        (s) => s.date >= weekStart && s.date <= weekEndStr,
       );
+      const actualMinutes = thisWeekSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
+
       const completionRate = Math.min(
         100,
         activity.weeklyGoalMinutes > 0
           ? Math.round((actualMinutes / activity.weeklyGoalMinutes) * 100)
           : 0,
       );
-      const currentStreak = await this.trackingService.getStreak(activity.id!);
+
+      const currentStreak = this.trackingService.calculateStreak(actSessions);
 
       summaries.push({
         name: activity.name,
@@ -87,13 +96,7 @@ export class AiSuggestionService {
     }
 
     // Estimate weeks of data from earliest session
-    const allSessions = await Promise.all(
-      activities.map((a) => this.sessionService.getSessionsForActivity(a.id!)),
-    );
-    const allDates = allSessions
-      .flat()
-      .map((s) => s.date)
-      .sort();
+    const allDates = allSessions.map((s) => s.date).sort();
     let weeksOfData = 0;
     if (allDates.length > 0) {
       const earliest = new Date(allDates[0] + 'T00:00:00');
@@ -104,7 +107,24 @@ export class AiSuggestionService {
       );
     }
 
-    const overallCompletionRate = await this.trackingService.getOverallCompletionRate();
+    // Calculate overall completion rate in-memory
+    let totalRate = 0;
+    let validActivities = 0;
+
+    for (const activity of activities) {
+      if (!activity || activity.weeklyGoalMinutes === 0) continue;
+      const actSessions = allSessions.filter((s) => String(s.activityId) === String(activity.id));
+      const thisWeekSessions = actSessions.filter(
+        (s) => s.date >= weekStart && s.date <= weekEndStr,
+      );
+      const totalMinutes = thisWeekSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
+      const rate = Math.min(100, Math.round((totalMinutes / activity.weeklyGoalMinutes) * 100));
+
+      totalRate += rate;
+      validActivities++;
+    }
+
+    const overallCompletionRate = validActivities > 0 ? Math.round(totalRate / validActivities) : 0;
 
     return {
       activities: summaries,

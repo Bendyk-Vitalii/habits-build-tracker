@@ -3,7 +3,9 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  min-height: 100dvh;
+  @supports (height: 100dvh) {
+    min-height: 100dvh;
+  }
   background-color: var(--ht-surface);
 }
 
@@ -329,6 +331,9 @@
   justify-content: center;
   gap: var(--ht-spacing-md);
   margin-top: 20vh;
+  @supports (height: 100dvh) {
+    margin-top: 20dvh;
+  }
   color: var(--ht-text-secondary);
 
   p {
