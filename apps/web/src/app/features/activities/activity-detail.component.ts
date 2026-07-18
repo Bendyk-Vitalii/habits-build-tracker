@@ -15,7 +15,6 @@ import { RelativeDatePipe } from '../../shared/pipes/relative-date.pipe';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-
   selector: 'ht-activity-detail',
   standalone: true,
   imports: [

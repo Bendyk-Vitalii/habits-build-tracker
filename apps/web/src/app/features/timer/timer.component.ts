@@ -20,6 +20,11 @@ import { ActivityService } from '../../core/services/activity.service';
 import { SessionService } from '../../core/services/session.service';
 import { SettingsService } from '../../core/services/settings.service';
 
+/** Vendor-prefixed AudioContext used in older WebKit browsers. */
+interface WebkitWindow extends Window {
+  webkitAudioContext?: typeof AudioContext;
+}
+
 type TimerMode = 'pomodoro' | 'stopwatch' | 'manual';
 type PomodoroPhase = 'work' | 'shortBreak' | 'longBreak';
 
@@ -69,7 +74,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   manualDate = signal<string>(this.getLocalISODateString(new Date()));
 
   private intervalId: ReturnType<typeof setInterval> | null = null;
-  private wakeLock: { release: () => Promise<void> } | null = null;
+  private wakeLock: WakeLockSentinel | null = null;
 
   private getLocalISODateString(d: Date): string {
     const year = d.getFullYear();
@@ -312,10 +317,9 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   private playAudioNotification(): void {
     try {
-      const audioCtx = new (
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      )();
+      const AudioCtor = window.AudioContext ?? (window as WebkitWindow).webkitAudioContext;
+      if (!AudioCtor) return;
+      const audioCtx = new AudioCtor();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
@@ -338,11 +342,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   private async requestWakeLock(): Promise<void> {
     try {
       if ('wakeLock' in navigator) {
-        this.wakeLock = await (
-          navigator as unknown as {
-            wakeLock: { request: (type: string) => Promise<{ release: () => Promise<void> }> };
-          }
-        ).wakeLock.request('screen');
+        this.wakeLock = await navigator.wakeLock.request('screen');
       }
     } catch (err) {
       console.log('WakeLock error', err);

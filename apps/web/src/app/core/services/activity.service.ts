@@ -19,7 +19,7 @@ import {
   SCIENCE_THRESHOLDS,
   getPhaseForDays,
 } from '@habits-tracker/shared';
-import { userCollection, userDoc } from '../db/firestore.helpers';
+import { userCollection, userDoc, docWithId } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
 
 /**
@@ -49,14 +49,11 @@ export class ActivityService {
         // Clean up previous listener
         this.unsubscribe?.();
 
-        const col = userCollection(this.firestore, uid, 'activities');
+        const col = userCollection<Activity>(this.firestore, uid, 'activities');
         const q = query(col, where('isArchived', '==', 0), orderBy('order'));
 
         this.unsubscribe = onSnapshot(q, (snapshot) => {
-          const items = snapshot.docs.map((d) => ({
-            ...d.data(),
-            id: d.id,
-          })) as unknown as Activity[];
+          const items = snapshot.docs.map((d) => docWithId(d));
           this._activities.set(items);
         });
       });
@@ -69,11 +66,11 @@ export class ActivityService {
   async getActivity(id: string | number): Promise<Activity | undefined> {
     const uid = this.authService.uid();
     if (!uid) return undefined;
-    const col = userCollection(this.firestore, uid, 'activities');
+    const col = userCollection<Activity>(this.firestore, uid, 'activities');
     const snapshot = await getDocs(col);
     const docSnap = snapshot.docs.find((d) => d.id === String(id));
     if (!docSnap) return undefined;
-    return { ...docSnap.data(), id: docSnap.id } as unknown as Activity;
+    return docWithId(docSnap);
   }
 
   /**
@@ -96,7 +93,7 @@ export class ActivityService {
       }
     }
 
-    const col = userCollection(this.firestore, uid, 'activities');
+    const col = userCollection<Activity>(this.firestore, uid, 'activities');
     const docRef = await addDoc(col, {
       ...data,
       createdAt: new Date().toISOString(),
@@ -111,7 +108,7 @@ export class ActivityService {
   async updateActivity(id: string | number, data: Partial<Activity>): Promise<void> {
     const uid = this.authService.uid();
     if (!uid) return;
-    const docRef = userDoc(this.firestore, uid, 'activities', String(id));
+    const docRef = userDoc<Activity>(this.firestore, uid, 'activities', String(id));
     await updateDoc(docRef, data as Record<string, unknown>);
   }
 
@@ -137,7 +134,7 @@ export class ActivityService {
     snapshot.docs.forEach((d) => batch.delete(d.ref));
 
     // Delete the activity itself
-    const activityRef = userDoc(this.firestore, uid, 'activities', String(id));
+    const activityRef = userDoc<Activity>(this.firestore, uid, 'activities', String(id));
     batch.delete(activityRef);
 
     await batch.commit();
@@ -152,7 +149,7 @@ export class ActivityService {
 
     const batch = writeBatch(this.firestore);
     for (let i = 0; i < orderedIds.length; i++) {
-      const docRef = userDoc(this.firestore, uid, 'activities', String(orderedIds[i]));
+      const docRef = userDoc<Activity>(this.firestore, uid, 'activities', String(orderedIds[i]));
       batch.update(docRef, { order: i });
     }
     await batch.commit();
@@ -182,7 +179,7 @@ export class ActivityService {
     const uid = this.authService.uid();
     if (!uid) return;
 
-    const col = userCollection(this.firestore, uid, 'activities');
+    const col = userCollection<Activity>(this.firestore, uid, 'activities');
     const snapshot = await getDocs(col);
 
     if (snapshot.size > 0) return;

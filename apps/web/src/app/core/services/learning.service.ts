@@ -24,7 +24,7 @@ import {
   LessonDifficulty,
   SavedLesson,
 } from '@habits-tracker/shared';
-import { userCollection, userDoc } from '../db/firestore.helpers';
+import { userCollection, userDoc, docWithId } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
 
 /**
@@ -56,13 +56,11 @@ export class LearningService {
 
         this.unsubscribe?.();
 
-        const col = userCollection(this.firestore, uid, 'learningTopics');
+        const col = userCollection<LearningTopic>(this.firestore, uid, 'learningTopics');
         const q = query(col, orderBy('order'));
 
         this.unsubscribe = onSnapshot(q, (snapshot) => {
-          const items = snapshot.docs
-            .map((d) => ({ ...d.data(), id: d.id }) as unknown as LearningTopic)
-            .filter((t) => !t.isArchived);
+          const items = snapshot.docs.map((d) => docWithId(d)).filter((t) => !t.isArchived);
           this._topics.set(items);
         });
       });
@@ -75,7 +73,7 @@ export class LearningService {
     const uid = this.authService.uid();
     if (!uid) throw new Error('Not authenticated');
 
-    const col = userCollection(this.firestore, uid, 'learningTopics');
+    const col = userCollection<LearningTopic>(this.firestore, uid, 'learningTopics');
     const docRef = await addDoc(col, {
       ...data,
       isArchived: false,
@@ -87,14 +85,14 @@ export class LearningService {
   async updateTopic(id: string, data: Partial<LearningTopic>): Promise<void> {
     const uid = this.authService.uid();
     if (!uid) return;
-    const docRef = userDoc(this.firestore, uid, 'learningTopics', id);
+    const docRef = userDoc<LearningTopic>(this.firestore, uid, 'learningTopics', id);
     await updateDoc(docRef, data as Record<string, unknown>);
   }
 
   async deleteTopic(id: string): Promise<void> {
     const uid = this.authService.uid();
     if (!uid) return;
-    const docRef = userDoc(this.firestore, uid, 'learningTopics', id);
+    const docRef = userDoc<LearningTopic>(this.firestore, uid, 'learningTopics', id);
     await deleteDoc(docRef);
   }
 
@@ -104,7 +102,7 @@ export class LearningService {
 
     const batch = writeBatch(this.firestore);
     for (let i = 0; i < orderedIds.length; i++) {
-      const docRef = userDoc(this.firestore, uid, 'learningTopics', orderedIds[i]);
+      const docRef = userDoc<LearningTopic>(this.firestore, uid, 'learningTopics', orderedIds[i]);
       batch.update(docRef, { order: i });
     }
     await batch.commit();
@@ -114,7 +112,7 @@ export class LearningService {
     const uid = this.authService.uid();
     if (!uid) return;
 
-    const col = userCollection(this.firestore, uid, 'learningTopics');
+    const col = userCollection<LearningTopic>(this.firestore, uid, 'learningTopics');
     const snapshot = await getDocs(col);
     if (snapshot.size > 0) return;
 
@@ -173,7 +171,7 @@ export class LearningService {
   async rateSession(sessionId: string, rating: number): Promise<void> {
     const uid = this.authService.uid();
     if (!uid) return;
-    const docRef = userDoc(this.firestore, uid, 'learningSessions', sessionId);
+    const docRef = userDoc<LearningSession>(this.firestore, uid, 'learningSessions', sessionId);
     await updateDoc(docRef, { rating });
   }
 
@@ -181,19 +179,19 @@ export class LearningService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'learningSessions');
+    const col = userCollection<LearningSession>(this.firestore, uid, 'learningSessions');
     const q = query(col, orderBy('createdAt', 'desc'), firestoreLimit(count));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as LearningSession);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   async getAllSessions(): Promise<LearningSession[]> {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'learningSessions');
+    const col = userCollection<LearningSession>(this.firestore, uid, 'learningSessions');
     const snapshot = await getDocs(col);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as LearningSession);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   async getSessionsForTopic(
@@ -204,7 +202,7 @@ export class LearningService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'learningSessions');
+    const col = userCollection<LearningSession>(this.firestore, uid, 'learningSessions');
     const constraints: ReturnType<typeof where>[] = [where('topicId', '==', topicId)];
 
     if (startDate && endDate) {
@@ -214,7 +212,7 @@ export class LearningService {
 
     const q = query(col, ...constraints);
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as LearningSession);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   async getTotalMinutesForTopic(topicId: string): Promise<number> {
@@ -230,10 +228,10 @@ export class LearningService {
   async getTopicById(id: string): Promise<LearningTopic | undefined> {
     const uid = this.authService.uid();
     if (!uid) return undefined;
-    const docRef = userDoc(this.firestore, uid, 'learningTopics', id);
+    const docRef = userDoc<LearningTopic>(this.firestore, uid, 'learningTopics', id);
     const snap = await getDoc(docRef);
     if (!snap.exists()) return undefined;
-    return { ...snap.data(), id: snap.id } as unknown as LearningTopic;
+    return docWithId(snap);
   }
 
   // ── Saved Lessons ───────────────────────────────────────
@@ -266,25 +264,25 @@ export class LearningService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'savedLessons');
+    const col = userCollection<SavedLesson>(this.firestore, uid, 'savedLessons');
     const q = query(col, orderBy('savedAt', 'desc'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as SavedLesson);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   async getSavedLessonById(id: string): Promise<SavedLesson | undefined> {
     const uid = this.authService.uid();
     if (!uid) return undefined;
-    const docRef = userDoc(this.firestore, uid, 'savedLessons', id);
+    const docRef = userDoc<SavedLesson>(this.firestore, uid, 'savedLessons', id);
     const snap = await getDoc(docRef);
     if (!snap.exists()) return undefined;
-    return { ...snap.data(), id: snap.id } as unknown as SavedLesson;
+    return docWithId(snap);
   }
 
   async deleteSavedLesson(id: string): Promise<void> {
     const uid = this.authService.uid();
     if (!uid) return;
-    const docRef = userDoc(this.firestore, uid, 'savedLessons', id);
+    const docRef = userDoc<SavedLesson>(this.firestore, uid, 'savedLessons', id);
     await deleteDoc(docRef);
   }
 
@@ -292,7 +290,7 @@ export class LearningService {
     const uid = this.authService.uid();
     if (!uid) return 0;
 
-    const col = userCollection(this.firestore, uid, 'savedLessons');
+    const col = userCollection<SavedLesson>(this.firestore, uid, 'savedLessons');
     const snapshot = await getDocs(col);
     return snapshot.size;
   }

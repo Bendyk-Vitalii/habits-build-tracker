@@ -13,7 +13,7 @@ import {
   writeBatch,
 } from '@angular/fire/firestore';
 import { Task, TaskPriority } from '@habits-tracker/shared';
-import { userCollection, userDoc } from '../db/firestore.helpers';
+import { userCollection, userDoc, docWithId } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
 
 /**
@@ -52,13 +52,13 @@ export class TaskService {
         this.unsubPending?.();
         this.unsubCompleted?.();
 
-        const col = userCollection(this.firestore, uid, 'tasks');
+        const col = userCollection<Task>(this.firestore, uid, 'tasks');
 
         // Pending tasks
         const pendingQ = query(col, where('isCompleted', '==', false));
         this.unsubPending = onSnapshot(pendingQ, (snapshot) => {
           const items = snapshot.docs
-            .map((d) => ({ ...d.data(), id: d.id }) as unknown as Task)
+            .map((d) => docWithId(d))
             .sort((a, b) => {
               const pDiff =
                 TaskService.PRIORITY_ORDER[a.priority] - TaskService.PRIORITY_ORDER[b.priority];
@@ -72,7 +72,7 @@ export class TaskService {
         const completedQ = query(col, where('isCompleted', '==', true));
         this.unsubCompleted = onSnapshot(completedQ, (snapshot) => {
           const items = snapshot.docs
-            .map((d) => ({ ...d.data(), id: d.id }) as unknown as Task)
+            .map((d) => docWithId(d))
             .sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
           this._completedTasks.set(items);
         });
@@ -106,7 +106,7 @@ export class TaskService {
   async updateTask(id: string | number, data: Partial<Task>): Promise<void> {
     const uid = this.authService.uid();
     if (!uid) return;
-    const docRef = userDoc(this.firestore, uid, 'tasks', String(id));
+    const docRef = userDoc<Task>(this.firestore, uid, 'tasks', String(id));
     await updateDoc(docRef, data as Record<string, unknown>);
   }
 
@@ -117,11 +117,11 @@ export class TaskService {
     const uid = this.authService.uid();
     if (!uid) return;
 
-    const docRef = userDoc(this.firestore, uid, 'tasks', String(id));
+    const docRef = userDoc<Task>(this.firestore, uid, 'tasks', String(id));
     const snapshot = await getDoc(docRef);
     if (!snapshot.exists()) return;
 
-    const task = snapshot.data() as Task;
+    const task = snapshot.data();
     const isCompleted = !task.isCompleted;
     await updateDoc(docRef, {
       isCompleted,
@@ -135,7 +135,7 @@ export class TaskService {
   async deleteTask(id: string | number): Promise<void> {
     const uid = this.authService.uid();
     if (!uid) return;
-    const docRef = userDoc(this.firestore, uid, 'tasks', String(id));
+    const docRef = userDoc<Task>(this.firestore, uid, 'tasks', String(id));
     await deleteDoc(docRef);
   }
 
@@ -146,7 +146,7 @@ export class TaskService {
     const uid = this.authService.uid();
     if (!uid) return;
 
-    const col = userCollection(this.firestore, uid, 'tasks');
+    const col = userCollection<Task>(this.firestore, uid, 'tasks');
     const q = query(col, where('isCompleted', '==', true));
     const snapshot = await getDocs(q);
 

@@ -9,7 +9,7 @@ import {
   QueryConstraint,
 } from '@angular/fire/firestore';
 import { Session, SessionType } from '@habits-tracker/shared';
-import { userCollection, userDoc } from '../db/firestore.helpers';
+import { userCollection, userDoc, docWithId } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
 
 /**
@@ -59,10 +59,10 @@ export class SessionService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'sessions');
+    const col = userCollection<Session>(this.firestore, uid, 'sessions');
     const q = query(col, where('date', '==', date));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   /**
@@ -72,9 +72,9 @@ export class SessionService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'sessions');
+    const col = userCollection<Session>(this.firestore, uid, 'sessions');
     const snapshot = await getDocs(col);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   /**
@@ -84,10 +84,10 @@ export class SessionService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'sessions');
+    const col = userCollection<Session>(this.firestore, uid, 'sessions');
     const q = query(col, where('date', '>=', startDate), where('date', '<=', endDate));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   /**
@@ -101,7 +101,7 @@ export class SessionService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'sessions');
+    const col = userCollection<Session>(this.firestore, uid, 'sessions');
     const constraints: QueryConstraint[] = [where('activityId', '==', String(activityId))];
 
     if (startDate && endDate) {
@@ -111,7 +111,7 @@ export class SessionService {
 
     const q = query(col, ...constraints);
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as Session);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   /**

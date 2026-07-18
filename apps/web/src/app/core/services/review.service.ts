@@ -9,7 +9,7 @@ import {
   QueryConstraint,
 } from '@angular/fire/firestore';
 import { WeeklyReview, MonthlyReview } from '@habits-tracker/shared';
-import { userCollection, userDoc } from '../db/firestore.helpers';
+import { userCollection, userDoc, docWithId } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
 import { SessionService } from './session.service';
 import { TrackingService } from './tracking.service';
@@ -72,9 +72,13 @@ export class ReviewService {
     const uid = this.authService.uid();
     if (!uid) throw new Error('Not authenticated');
 
-    const data = { ...review } as Record<string, unknown>;
-    delete data['id'];
-    const docRef = userDoc(this.firestore, uid, 'weeklyReviews', review.weekStartDate);
+    const { id: _, ...data } = review; // eslint-disable-line @typescript-eslint/no-unused-vars
+    const docRef = userDoc<WeeklyReview>(
+      this.firestore,
+      uid,
+      'weeklyReviews',
+      review.weekStartDate,
+    );
     await setDoc(docRef, data);
     return review.weekStartDate;
   }
@@ -86,13 +90,13 @@ export class ReviewService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'weeklyReviews');
+    const col = userCollection<WeeklyReview>(this.firestore, uid, 'weeklyReviews');
     const constraints: QueryConstraint[] = [orderBy('weekStartDate', 'desc')];
     if (limit) constraints.push(firestoreLimit(limit));
 
     const q = query(col, ...constraints);
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as WeeklyReview);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   // ── monthly reviews ───────────────────────────────────────
@@ -166,9 +170,8 @@ export class ReviewService {
     const uid = this.authService.uid();
     if (!uid) throw new Error('Not authenticated');
 
-    const data = { ...review } as Record<string, unknown>;
-    delete data['id'];
-    const docRef = userDoc(this.firestore, uid, 'monthlyReviews', review.month);
+    const { id: _, ...data } = review; // eslint-disable-line @typescript-eslint/no-unused-vars
+    const docRef = userDoc<MonthlyReview>(this.firestore, uid, 'monthlyReviews', review.month);
     await setDoc(docRef, data);
     return review.month;
   }
@@ -180,13 +183,13 @@ export class ReviewService {
     const uid = this.authService.uid();
     if (!uid) return [];
 
-    const col = userCollection(this.firestore, uid, 'monthlyReviews');
+    const col = userCollection<MonthlyReview>(this.firestore, uid, 'monthlyReviews');
     const constraints: QueryConstraint[] = [orderBy('month', 'desc')];
     if (limit) constraints.push(firestoreLimit(limit));
 
     const q = query(col, ...constraints);
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ ...d.data(), id: d.id }) as unknown as MonthlyReview);
+    return snapshot.docs.map((d) => docWithId(d));
   }
 
   // ── helpers ───────────────────────────────────────────────

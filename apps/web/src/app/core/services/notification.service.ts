@@ -8,6 +8,11 @@ import {
 } from '@habits-tracker/shared';
 import { environment } from '../../../environments/environment';
 
+/** iOS Safari adds a non-standard `standalone` property to `navigator`. */
+interface NavigatorStandalone extends Navigator {
+  standalone?: boolean;
+}
+
 /**
  * Manages browser notifications, Web Push subscriptions, and
  * PWA-install detection.
@@ -58,7 +63,7 @@ export class NotificationService {
     // 2. Subscribe via PushManager
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: this.urlBase64ToUint8Array(publicKey) as unknown as BufferSource,
+      applicationServerKey: this.urlBase64ToUint8Array(publicKey).buffer as ArrayBuffer,
     });
 
     // 3. Send subscription to backend
@@ -102,10 +107,7 @@ export class NotificationService {
    */
   isInstalledAsPWA(): boolean {
     // iOS Safari
-    if (
-      'standalone' in navigator &&
-      (navigator as unknown as Record<string, unknown>)['standalone']
-    ) {
+    if ('standalone' in navigator && (navigator as NavigatorStandalone).standalone) {
       return true;
     }
 
