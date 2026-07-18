@@ -16,8 +16,6 @@
   padding-top: calc(var(--shell-top-offset) + var(--ht-safe-top) + var(--ht-spacing-md));
   padding-bottom: calc(var(--ht-bottom-nav-height) + var(--ht-spacing-md) + var(--ht-safe-bottom));
 
-  transition: padding-top var(--ht-transition-normal);
-
   &.header-hidden {
     --shell-top-offset: 0px;
   }

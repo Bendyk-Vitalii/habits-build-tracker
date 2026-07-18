@@ -31,18 +31,25 @@ export class ShellComponent {
       });
   }
 
+  private static readonly SCROLL_THRESHOLD = 10;
+
   onScroll(event: Event) {
     const target = event.target as HTMLElement;
     const currentScrollTop = target.scrollTop;
+    const delta = currentScrollTop - this.lastScrollTop;
+
+    // Ignore micro-scrolls (< threshold) to avoid jitter from layout reflows
+    if (Math.abs(delta) < ShellComponent.SCROLL_THRESHOLD) {
+      return;
+    }
 
     // Show header when scrolling up, hide when scrolling down past top-bar height
-    if (currentScrollTop > this.lastScrollTop && currentScrollTop > 56) {
+    if (delta > 0 && currentScrollTop > 56) {
       this.isHeaderHidden.set(true);
-    } else if (currentScrollTop < this.lastScrollTop) {
+    } else if (delta < 0) {
       this.isHeaderHidden.set(false);
     }
 
-    // For Mobile or negative scrolling
     this.lastScrollTop = Math.max(0, currentScrollTop);
   }
 }

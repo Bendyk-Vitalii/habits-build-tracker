@@ -6,6 +6,7 @@
     padding-bottom: var(--ht-spacing-2xl);
     align-items: center;
     width: 100%;
+    min-height: calc(100dvh + var(--ht-top-bar-height) + var(--ht-bottom-nav-height));
     box-sizing: border-box;
     overflow-x: hidden;
   }
