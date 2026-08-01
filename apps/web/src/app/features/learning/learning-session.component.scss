@@ -6,17 +6,17 @@
     flex-direction: column;
     background-color: var(--ht-surface);
     margin-top: var(--ht-top-bar-height);
-    margin-bottom: var(--ht-bottom-nav-height);
   }
 
   &__sticky-header {
     position: sticky;
-    top: 0;
+    top: calc(-1 * var(--ht-spacing-md));
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: var(--ht-spacing-sm) var(--ht-spacing-md);
+    margin-inline: calc(-1 * var(--ht-spacing-md));
     background: var(--ht-glass-bg);
     backdrop-filter: blur(var(--ht-glass-blur, 12px));
     border-bottom: 1px solid var(--ht-glass-border);

@@ -14,7 +14,16 @@
 
   --shell-top-offset: var(--ht-top-bar-height);
   padding-top: calc(var(--shell-top-offset) + var(--ht-safe-top) + var(--ht-spacing-md));
-  padding-bottom: calc(var(--ht-bottom-nav-height) + var(--ht-spacing-md) + var(--ht-safe-bottom));
+
+  // Use ::after instead of padding-bottom because iOS Safari ignores
+  // padding-bottom on scrollable containers when calculating scroll extent.
+  padding-bottom: 0;
+
+  &::after {
+    content: '';
+    display: block;
+    height: calc(var(--ht-bottom-nav-height) + var(--ht-spacing-md) + var(--ht-safe-bottom));
+  }
 
   &.header-hidden {
     --shell-top-offset: 0px;
