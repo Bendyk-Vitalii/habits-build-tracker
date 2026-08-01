@@ -8,6 +8,18 @@
       <button
         mat-stroked-button
         class="learning__saved-btn"
+        (click)="openSavedFlashcards()"
+        aria-label="Saved flashcards"
+      >
+        <mat-icon>style</mat-icon>
+        Flashcards
+        @if (savedFlashcardsCount() > 0) {
+          <span class="learning__saved-count">{{ savedFlashcardsCount() }}</span>
+        }
+      </button>
+      <button
+        mat-stroked-button
+        class="learning__saved-btn"
         (click)="openSavedLessons()"
         aria-label="Saved lessons"
       >

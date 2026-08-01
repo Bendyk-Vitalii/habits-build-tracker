@@ -111,7 +111,12 @@
                   [exerciseType]="block.exerciseType || 'fill-blank'"
                 />
               } @else if (block.type === 'flashcard' && block.flashcards) {
-                <ht-flashcard-block [title]="block.value" [flashcards]="block.flashcards" />
+                <ht-flashcard-block
+                  [title]="block.value"
+                  [flashcards]="block.flashcards"
+                  [topicName]="t.name"
+                  (unknownCards)="onUnknownCards($event, t.name)"
+                />
               } @else if (block.type === 'matching' && block.matchPairs) {
                 <ht-matching-block [title]="block.value" [pairs]="block.matchPairs" />
               }

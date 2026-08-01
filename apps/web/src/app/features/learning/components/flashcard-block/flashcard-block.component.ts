@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
+  output,
   signal,
   computed,
   OnDestroy,
@@ -24,6 +25,9 @@ export class FlashcardBlockComponent implements OnDestroy {
   private readonly document = inject(DOCUMENT);
   readonly flashcards = input.required<FlashcardItem[]>();
   readonly title = input<string>('');
+  readonly topicName = input<string>('');
+
+  readonly unknownCards = output<FlashcardItem[]>();
 
   readonly currentIndex = signal(0);
   readonly isFlipped = signal(false);
@@ -95,6 +99,14 @@ export class FlashcardBlockComponent implements OnDestroy {
   }
 
   exitFullscreen(): void {
+    const allCards = this.flashcards();
+    const known = this.knownCards();
+    const unknown = allCards.filter((_, i) => !known.has(i));
+
+    if (unknown.length > 0) {
+      this.unknownCards.emit(unknown);
+    }
+
     this.isFullscreen.set(false);
     this.document.body.classList.remove('hide-layout-nav');
   }

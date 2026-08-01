@@ -35,6 +35,7 @@ export class LearningComponent implements OnInit {
   topicMinutes = signal<Record<string, number>>({});
   topicSessionCounts = signal<Record<string, number>>({});
   savedCount = signal(0);
+  savedFlashcardsCount = signal(0);
 
   ngOnInit(): void {
     this.learningService.seedDefaultTopics();
@@ -64,6 +65,10 @@ export class LearningComponent implements OnInit {
     // Load saved lessons count
     const count = await this.learningService.getSavedLessonsCount();
     this.savedCount.set(count);
+
+    // Load saved flashcards count
+    const flashcardsCount = await this.learningService.getSavedFlashcardsCount();
+    this.savedFlashcardsCount.set(flashcardsCount);
   }
 
   startSession(topicId: string): void {
@@ -72,6 +77,10 @@ export class LearningComponent implements OnInit {
 
   openSavedLessons(): void {
     this.router.navigate(['/learn/saved']);
+  }
+
+  openSavedFlashcards(): void {
+    this.router.navigate(['/learn/flashcards']);
   }
 
   openAddDialog(): void {

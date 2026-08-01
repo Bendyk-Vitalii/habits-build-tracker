@@ -23,6 +23,8 @@ import {
   AiLessonResponse,
   LessonDifficulty,
   SavedLesson,
+  SavedFlashcard,
+  FlashcardItem,
 } from '@habits-tracker/shared';
 import { userCollection, userDoc, docWithId } from '../db/firestore.helpers';
 import { AuthService } from './auth.service';
@@ -291,6 +293,101 @@ export class LearningService {
     if (!uid) return 0;
 
     const col = userCollection<SavedLesson>(this.firestore, uid, 'savedLessons');
+    const snapshot = await getDocs(col);
+    return snapshot.size;
+  }
+
+  // ── Saved Flashcards ─────────────────────────────────────
+
+  async saveFlashcard(card: FlashcardItem, topicName: string): Promise<string | undefined> {
+    const uid = this.authService.uid();
+    if (!uid) throw new Error('Not authenticated');
+
+    const col = userCollection<SavedFlashcard>(this.firestore, uid, 'savedFlashcards');
+
+    // Check for duplicates
+    const q = query(
+      col,
+      where('front', '==', card.front),
+      where('topicName', '==', topicName),
+      firestoreLimit(1),
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs[0].id;
+    }
+
+    const data: Omit<SavedFlashcard, 'id'> = {
+      front: card.front,
+      back: card.back,
+      topicName,
+      savedAt: new Date().toISOString(),
+    };
+
+    const docRef = await addDoc(col, data);
+    return docRef.id;
+  }
+
+  async saveFlashcards(cards: FlashcardItem[], topicName: string): Promise<void> {
+    if (!cards || cards.length === 0) return;
+
+    const uid = this.authService.uid();
+    if (!uid) throw new Error('Not authenticated');
+
+    const col = userCollection<SavedFlashcard>(this.firestore, uid, 'savedFlashcards');
+    const batch = writeBatch(this.firestore);
+
+    // Check for duplicates in a simple way or fetch all existing for this topic to avoid multiple queries
+    const existingQ = query(col, where('topicName', '==', topicName));
+    const existingSnap = await getDocs(existingQ);
+    const existingFronts = new Set(existingSnap.docs.map((d) => d.data().front));
+
+    let addedCount = 0;
+    const now = new Date().toISOString();
+
+    for (const card of cards) {
+      if (!existingFronts.has(card.front)) {
+        const docRef = doc(col);
+        const data: Omit<SavedFlashcard, 'id'> = {
+          front: card.front,
+          back: card.back,
+          topicName,
+          savedAt: now,
+        };
+        batch.set(docRef, data);
+        addedCount++;
+        // Also add to set to avoid duplicates within the same batch
+        existingFronts.add(card.front);
+      }
+    }
+
+    if (addedCount > 0) {
+      await batch.commit();
+    }
+  }
+
+  async getSavedFlashcards(): Promise<SavedFlashcard[]> {
+    const uid = this.authService.uid();
+    if (!uid) return [];
+
+    const col = userCollection<SavedFlashcard>(this.firestore, uid, 'savedFlashcards');
+    const q = query(col, orderBy('savedAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => docWithId(d));
+  }
+
+  async deleteSavedFlashcard(id: string): Promise<void> {
+    const uid = this.authService.uid();
+    if (!uid) return;
+    const docRef = userDoc<SavedFlashcard>(this.firestore, uid, 'savedFlashcards', id);
+    await deleteDoc(docRef);
+  }
+
+  async getSavedFlashcardsCount(): Promise<number> {
+    const uid = this.authService.uid();
+    if (!uid) return 0;
+
+    const col = userCollection<SavedFlashcard>(this.firestore, uid, 'savedFlashcards');
     const snapshot = await getDocs(col);
     return snapshot.size;
   }

@@ -16,7 +16,12 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
-import { LearningTopic, AiLessonResponse, LessonDifficulty } from '@habits-tracker/shared';
+import {
+  LearningTopic,
+  AiLessonResponse,
+  LessonDifficulty,
+  FlashcardItem,
+} from '@habits-tracker/shared';
 import { LearningService } from '../../core/services/learning.service';
 import { SessionCompleteDialogComponent } from './components/session-complete-dialog/session-complete-dialog.component';
 import { ExerciseBlockComponent } from './components/exercise-block/exercise-block.component';
@@ -327,6 +332,18 @@ export class LearningSessionComponent implements OnInit, OnDestroy {
       this.snackBar.open('Failed to save lesson', 'Dismiss', { duration: 3000 });
     } finally {
       this.isSaving.set(false);
+    }
+  }
+
+  // ── Flashcards ──────────────────────────────────────────
+
+  async onUnknownCards(cards: FlashcardItem[], topicName: string): Promise<void> {
+    if (cards.length > 0) {
+      try {
+        await this.learningService.saveFlashcards(cards, topicName);
+      } catch (err) {
+        console.error('Failed to auto-save flashcards', err);
+      }
     }
   }
 

@@ -26,6 +26,7 @@ export type {
   MatchPair,
 } from './models/ai-lesson.model';
 export type { SavedLesson } from './models/saved-lesson.model';
+export type { SavedFlashcard } from './models/saved-flashcard.model';
 
 // Constants
 export { SCIENCE_THRESHOLDS } from './constants/science-thresholds';

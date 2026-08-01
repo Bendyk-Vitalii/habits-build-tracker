@@ -59,6 +59,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'learn/flashcards',
+    loadComponent: () =>
+      import('./features/learning/saved-flashcards.component').then(
+        (m) => m.SavedFlashcardsComponent,
+      ),
+  },
+  {
     path: 'learn/saved',
     loadComponent: () =>
       import('./features/learning/saved-lessons.component').then((m) => m.SavedLessonsComponent),

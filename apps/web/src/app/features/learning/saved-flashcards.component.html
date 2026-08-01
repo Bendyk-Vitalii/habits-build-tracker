@@ -1,0 +1,142 @@
+<div class="saved-flashcards__container animate-fade-in">
+  <!-- Header -->
+  <div class="saved-flashcards__header glass-header">
+    <button
+      mat-icon-button
+      class="saved-flashcards__back-btn"
+      (click)="goBack()"
+      aria-label="Go back"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="saved-flashcards__header-title">
+      <h1>Saved Flashcards</h1>
+    </div>
+  </div>
+
+  <div class="saved-flashcards__content">
+    @if (isLoading()) {
+      <div class="saved-flashcards__loading-state">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading your flashcards...</p>
+      </div>
+    } @else if (flashcards().length === 0) {
+      <div class="saved-flashcards__empty-state glass-card">
+        <span class="material-symbols-rounded saved-flashcards__empty-icon">style</span>
+        <p>You don't have any saved flashcards.</p>
+        <p class="saved-flashcards__empty-subtext">
+          Words you don't know during learning sessions will appear here.
+        </p>
+        <button mat-flat-button color="primary" (click)="goBack()">Back to Learn</button>
+      </div>
+    } @else {
+      <div class="saved-flashcards__groups">
+        @for (group of groupedCards() | keyvalue; track group.key) {
+          <div class="saved-flashcards__group glass-card">
+            <div class="saved-flashcards__group-info">
+              <h2>{{ group.key }}</h2>
+              <span class="saved-flashcards__count">{{ group.value.length }} cards</span>
+            </div>
+            <button
+              mat-flat-button
+              color="primary"
+              class="saved-flashcards__review-btn"
+              (click)="startReview(group.key)"
+            >
+              <mat-icon>play_arrow</mat-icon>
+              Start Review
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Fullscreen Review Mode -->
+  @if (activeReviewTopic()) {
+    <div class="saved-flashcards__fullscreen">
+      <div class="saved-flashcards__fs-header">
+        <button mat-icon-button (click)="exitReview()" aria-label="Exit review">
+          <mat-icon>close</mat-icon>
+        </button>
+        <span class="saved-flashcards__fs-progress">
+          {{ currentIndex() + 1 }} / {{ currentReviewList().length }}
+        </span>
+        <span class="saved-flashcards__fs-known">{{ deletedCardIds().size }} known</span>
+      </div>
+
+      <div class="saved-flashcards__fs-progress-bar">
+        <div class="saved-flashcards__fs-progress-fill" [style.width.%]="progressPercent()"></div>
+      </div>
+
+      @if (currentReviewList().length > 0) {
+        @if (currentCard(); as card) {
+          <div
+            class="saved-flashcards__fs-card-container"
+            (click)="toggleFlip()"
+            (keydown.enter)="toggleFlip()"
+            tabindex="0"
+          >
+            <div
+              class="saved-flashcards__fs-card"
+              [class.saved-flashcards__fs-card--flipped]="isFlipped()"
+            >
+              <div class="saved-flashcards__fs-card-face saved-flashcards__fs-card-front">
+                <span class="saved-flashcards__fs-card-label">Term</span>
+                <p class="saved-flashcards__fs-card-text">{{ card.front }}</p>
+                <span class="saved-flashcards__fs-tap-hint">Tap to flip</span>
+              </div>
+              <div class="saved-flashcards__fs-card-face saved-flashcards__fs-card-back">
+                <span class="saved-flashcards__fs-card-label">Definition</span>
+                <p class="saved-flashcards__fs-card-text">{{ card.back }}</p>
+                <span class="saved-flashcards__fs-tap-hint">Tap to flip</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="saved-flashcards__fs-actions">
+            <button
+              mat-icon-button
+              (click)="prevCard()"
+              [disabled]="currentIndex() === 0"
+              aria-label="Previous card"
+            >
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button
+              mat-stroked-button
+              class="saved-flashcards__study-again-btn"
+              (click)="nextCard()"
+            >
+              <mat-icon>skip_next</mat-icon>
+              Skip
+            </button>
+            <button
+              mat-flat-button
+              color="primary"
+              class="saved-flashcards__know-it-btn"
+              (click)="markKnown(card)"
+            >
+              <mat-icon>check</mat-icon>
+              Know It
+            </button>
+            <button
+              mat-icon-button
+              (click)="nextCard()"
+              [disabled]="currentIndex() === currentReviewList().length - 1"
+              aria-label="Next card"
+            >
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        }
+      } @else {
+        <div class="saved-flashcards__fs-done">
+          <p>🎉 Awesome job!</p>
+          <p>You've mastered all the flashcards in this topic.</p>
+          <button mat-flat-button color="accent" (click)="exitReview()">Back to topics</button>
+        </div>
+      }
+    </div>
+  }
+</div>
